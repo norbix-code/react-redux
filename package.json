@@ -1,0 +1,104 @@
+{
+  "name": "@norbix/react-redux",
+  "version": "0.0.0-development",
+  "description": "Official Norbix bindings for React + Redux Toolkit. RTK Query helpers (cache, dedup, refetch, invalidation) over the typed Norbix SDK.",
+  "author": "UAB Isidos",
+  "license": "MIT",
+  "homepage": "https://norbix.ai",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/norbix-code/react-redux.git"
+  },
+  "bugs": {
+    "url": "https://github.com/norbix-code/react-redux/issues"
+  },
+  "keywords": [
+    "norbix",
+    "baas",
+    "react",
+    "redux",
+    "redux-toolkit",
+    "rtk-query",
+    "hooks",
+    "sdk"
+  ],
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "sideEffects": false,
+  "scripts": {
+    "clean": "node -e \"require('node:fs').rmSync('dist',{recursive:true,force:true})\"",
+    "build": "npm run clean && tsup",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint \"src/**/*.{ts,tsx}\" \"tests/**/*.{ts,tsx}\"",
+    "lint:fix": "eslint \"src/**/*.{ts,tsx}\" \"tests/**/*.{ts,tsx}\" --fix",
+    "format": "prettier --write \"**/*.{ts,tsx,js,json,md,yml,yaml}\"",
+    "format:check": "prettier --check \"**/*.{ts,tsx,js,json,md,yml,yaml}\"",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "audit": "npm audit --omit=dev --audit-level=high && npm audit signatures",
+    "release:dry": "semantic-release --dry-run",
+    "prepare": "husky || true",
+    "prepublishOnly": "npm run build"
+  },
+  "peerDependencies": {
+    "@reduxjs/toolkit": ">=2.0.0",
+    "norbix": ">=0.1.0",
+    "react": ">=18.0.0",
+    "react-redux": ">=9.0.0"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^19.5.0",
+    "@commitlint/config-conventional": "^19.5.0",
+    "@reduxjs/toolkit": "^2.2.7",
+    "@semantic-release/changelog": "^6.0.3",
+    "@semantic-release/commit-analyzer": "^13.0.0",
+    "@semantic-release/git": "^10.0.1",
+    "@semantic-release/github": "^11.0.0",
+    "@semantic-release/npm": "^12.0.1",
+    "@semantic-release/release-notes-generator": "^14.0.1",
+    "@testing-library/react": "^16.0.1",
+    "@types/node": "^22.7.0",
+    "@types/react": "^18.3.11",
+    "@typescript-eslint/eslint-plugin": "^8.10.0",
+    "@typescript-eslint/parser": "^8.10.0",
+    "@vitest/coverage-v8": "^2.1.3",
+    "eslint": "^9.13.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-import": "^2.31.0",
+    "eslint-plugin-prettier": "^5.2.1",
+    "eslint-plugin-react-hooks": "^5.0.0",
+    "happy-dom": "^15.7.4",
+    "husky": "^9.1.6",
+    "norbix": "^0.1.0",
+    "prettier": "^3.3.3",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-redux": "^9.1.2",
+    "semantic-release": "^24.1.2",
+    "tsup": "^8.3.0",
+    "typescript": "^5.6.3",
+    "vitest": "^2.1.3"
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  }
+}

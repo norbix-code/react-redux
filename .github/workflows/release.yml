@@ -1,0 +1,113 @@
+name: Release
+
+# Publishes @norbix/react-redux to npm via semantic-release.
+# Triggers ONLY on push to `main` (and the prerelease branches `next` / `beta`).
+#
+# Required secrets:
+#   - NPM_TOKEN     — npm automation token, granular publish scope on
+#                     @norbix/react-redux. Must be an "Automation" (not
+#                     "Publish") token so npm accepts it from CI without
+#                     2FA prompts.
+#   - GITHUB_TOKEN  — provided by Actions automatically; used to tag, write
+#                     CHANGELOG.md, and create the GH release.
+#
+# Provenance is enabled (publishConfig.provenance in package.json) so npm
+# displays the verified GitHub Actions origin badge for each release.
+#
+# Pull requests targeting main run a dry-run release via release-preview.yml,
+# so reviewers see exactly which version a merge would cut.
+
+on:
+  push:
+    branches: [main, next, beta]
+  workflow_dispatch:
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+  id-token: write # required for npm provenance
+  packages: write
+
+env:
+  NODE_VERSION: '22'
+
+jobs:
+  release:
+    name: semantic-release
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          # semantic-release needs the full history to compute the next version
+          # from conventional commits.
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Install deps
+        run: npm ci --no-audit --no-fund
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Tests
+        run: npm test
+
+      - name: Build
+        run: npm run build
+
+      - name: Verify package contents (npm pack --dry-run)
+        run: |
+          npm pack --dry-run --json > /tmp/pack.json
+          node -e "
+            const p = require('/tmp/pack.json')[0];
+            console.log('Package size:', (p.size / 1024).toFixed(1), 'KB');
+            console.log('Unpacked size:', (p.unpackedSize / 1024).toFixed(1), 'KB');
+            console.log('File count:', p.files.length);
+            const MAX_KB = 500;
+            if (p.size / 1024 > MAX_KB) { console.error('Tarball too large'); process.exit(1); }
+            const forbidden = p.files.filter(f => /^(src|tests|scripts|examples|docs|\\.github|node_modules)\\//.test(f.path));
+            if (forbidden.length) { console.error('Forbidden files:', forbidden); process.exit(1); }
+          "
+
+      - name: npm audit (production deps only)
+        # Belt-and-braces: if a CVE landed between PR merge and now, abort
+        # the release before publishing.
+        run: npm audit --omit=dev --audit-level=high
+
+      - name: npm audit signatures
+        run: npm audit signatures
+
+      - name: Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NPM_CONFIG_PROVENANCE: 'true'
+        run: npx semantic-release
+
+      - name: Summary
+        if: always()
+        run: |
+          echo "### Release · ${{ github.ref_name }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          if [ -f CHANGELOG.md ]; then
+            echo "Latest entry from CHANGELOG.md:" >> $GITHUB_STEP_SUMMARY
+            echo '```markdown' >> $GITHUB_STEP_SUMMARY
+            head -40 CHANGELOG.md >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+          fi

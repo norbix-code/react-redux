@@ -1,0 +1,14 @@
+node_modules
+dist
+build
+coverage
+.DS_Store
+.env
+.env.local
+.npm
+.eslintcache
+*.log
+.idea
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.example.json

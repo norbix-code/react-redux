@@ -1,0 +1,72 @@
+name: Security · nightly
+
+# Re-runs the full security scan suite every night against `main`. This catches
+# CVEs that are *published* against deps we already use — even when no code
+# changed in our repo. Findings appear in the Security tab the same way as
+# on-PR scans.
+
+on:
+  schedule:
+    # 04:00 UTC daily. Quiet hours, before EU work day begins.
+    - cron: '0 4 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  security-events: write
+
+env:
+  NODE_VERSION: '22'
+
+jobs:
+  scan:
+    name: Re-scan main for new CVEs
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+
+      - name: Install deps
+        run: npm ci --no-audit --no-fund
+
+      - name: npm audit (production deps only)
+        run: npm audit --omit=dev --audit-level=high
+
+      - name: npm audit signatures
+        run: npm audit signatures
+
+      - name: Trivy filesystem scan
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          scan-type: fs
+          scan-ref: .
+          format: sarif
+          output: trivy-fs.sarif
+          severity: HIGH,CRITICAL
+          ignore-unfixed: true
+          exit-code: '0' # nightly is informational; we don't fail main on a fresh CVE
+          scanners: config,secret,vuln
+
+      - name: Upload Trivy SARIF
+        if: always()
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: trivy-fs.sarif
+          category: trivy-nightly
+
+      - name: OSV scan
+        uses: google/osv-scanner-action/osv-scanner-action@v1.9.0
+        with:
+          scan-args: |-
+            --recursive
+            --skip-git
+            ./
+        continue-on-error: true

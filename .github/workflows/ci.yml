@@ -1,0 +1,141 @@
+name: CI
+
+# Runs on every PR and every push to main/develop.
+# Philosophy: ALWAYS lint, ALWAYS test, ALWAYS build, ALWAYS scan. NEVER publish.
+# Publishing happens in release.yml, gated on push to `main`.
+
+on:
+  pull_request:
+  push:
+    branches: [main, develop]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  NODE_VERSION: '22'
+
+jobs:
+  build:
+    name: Lint, typecheck, test, build
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+
+      - name: Install deps
+        run: npm ci --no-audit --no-fund
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Tests
+        run: npm test
+
+      - name: Build
+        run: npm run build
+
+      - name: Verify package contents (npm pack --dry-run)
+        # Catches accidental inclusion of src/, tests/, examples/, .env, or any
+        # file that would balloon the published tarball. The `.npmignore`
+        # whitelist + `files` field already guard this, but a sanity check
+        # in CI is cheap and traps regressions.
+        run: |
+          npm pack --dry-run --json > /tmp/pack.json
+          node -e "
+            const p = require('/tmp/pack.json')[0];
+            console.log('Package size:', (p.size / 1024).toFixed(1), 'KB');
+            console.log('Unpacked size:', (p.unpackedSize / 1024).toFixed(1), 'KB');
+            console.log('File count:', p.files.length);
+            const MAX_KB = 500;
+            if (p.size / 1024 > MAX_KB) {
+              console.error('::error::Tarball exceeds ' + MAX_KB + ' KB. Check files/.npmignore for accidentally included paths.');
+              process.exit(1);
+            }
+            const forbidden = p.files.filter(f => /^(src|tests|scripts|examples|docs|\\.github|node_modules)\\//.test(f.path));
+            if (forbidden.length) {
+              console.error('::error::Forbidden files in tarball:', forbidden.map(f => f.path));
+              process.exit(1);
+            }
+          "
+
+      - name: Upload dist (artifact for inspection)
+        if: github.event_name == 'pull_request'
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist
+          retention-days: 7
+
+  security:
+    name: Security scan
+    runs-on: ubuntu-22.04
+    permissions:
+      contents: read
+      security-events: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+
+      - name: Install deps
+        run: npm ci --no-audit --no-fund
+
+      - name: npm audit (production deps only)
+        # --omit=dev keeps the audit focused on what we ship to consumers.
+        # Dev deps (vitest, tsup, etc.) don't end up in the published package.
+        run: npm audit --omit=dev --audit-level=high
+
+      - name: npm audit signatures
+        # Verifies that every installed package was published with a valid
+        # registry signature. Catches typosquats and registry compromises.
+        run: npm audit signatures
+
+      - name: Trivy filesystem scan (config + secrets + deps)
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          scan-type: fs
+          scan-ref: .
+          format: sarif
+          output: trivy-fs.sarif
+          severity: HIGH,CRITICAL
+          ignore-unfixed: true
+          exit-code: '1'
+          # config: workflow / Dockerfile / yaml misconfigs
+          # secret: committed tokens / keys / credentials
+          # vuln:   language-level deps (npm)
+          scanners: config,secret,vuln
+
+      - name: Upload Trivy SARIF
+        if: always()
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: trivy-fs.sarif
+          category: trivy-fs
+
+      - name: OSV scan (open-source vulns from Google's database)
+        # Complements npm audit by hitting OSV's broader vulnerability index
+        # (covers ecosystems npm audit doesn't and reflects newly-published
+        # advisories faster than the npm registry's mirror).
+        uses: google/osv-scanner-action/osv-scanner-action@v1.9.0
+        with:
+          scan-args: |-
+            --recursive
+            --skip-git
+            ./
+        continue-on-error: false

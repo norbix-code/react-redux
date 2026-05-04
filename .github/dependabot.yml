@@ -1,0 +1,54 @@
+# Dependabot keeps the package's npm dependencies and GitHub Actions versions
+# fresh. CVE patches arrive out-of-band from the weekly cadence below.
+#
+# Two ecosystems are watched:
+#   - npm:             package.json at repo root
+#   - github-actions:  every `uses:` in .github/workflows/*
+
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: '06:00'
+      timezone: Europe/Vilnius
+    open-pull-requests-limit: 10
+    labels:
+      - dependencies
+      - npm
+    groups:
+      npm-minor-and-patch:
+        update-types:
+          - minor
+          - patch
+      semantic-release:
+        patterns:
+          - 'semantic-release'
+          - '@semantic-release/*'
+      react-stack:
+        patterns:
+          - 'react'
+          - 'react-dom'
+          - 'react-redux'
+          - '@reduxjs/toolkit'
+          - '@types/react'
+          - '@types/react-dom'
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: '06:00'
+      timezone: Europe/Vilnius
+    open-pull-requests-limit: 5
+    labels:
+      - dependencies
+      - ci
+    groups:
+      actions-minor-and-patch:
+        update-types:
+          - minor
+          - patch

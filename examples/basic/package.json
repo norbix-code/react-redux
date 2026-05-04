@@ -1,0 +1,28 @@
+{
+  "name": "@norbix/react-redux-example-basic",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Minimal Vite + React + Redux Toolkit example for @norbix/react-redux.",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@norbix/react-redux": "*",
+    "@reduxjs/toolkit": "^2.2.7",
+    "norbix": "*",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-redux": "^9.1.2"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.11",
+    "@types/react-dom": "^18.3.0",
+    "@vitejs/plugin-react": "^4.3.2",
+    "typescript": "^5.6.3",
+    "vite": "^5.4.8"
+  }
+}
