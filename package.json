@@ -84,7 +84,7 @@
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-import": "^2.31.0",
     "eslint-plugin-prettier": "^5.2.1",
-    "eslint-plugin-react-hooks": "^5.0.0",
+    "eslint-plugin-react-hooks": "^7.1.1",
     "happy-dom": "^15.7.4",
     "husky": "^9.1.6",
     "norbix": "file:../norbix-js",
