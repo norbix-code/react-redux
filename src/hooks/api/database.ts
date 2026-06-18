@@ -16,8 +16,11 @@ type UpdateMany = Norbix['api']['database']['updateMany'];
 type ReplaceOne = Norbix['api']['database']['replaceOne'];
 type DeleteOne = Norbix['api']['database']['deleteOne'];
 type DeleteMany = Norbix['api']['database']['deleteMany'];
+type ChangeResponsibility = Norbix['api']['database']['changeResponsibility'];
 type FindTerms = Norbix['api']['database']['findTerms'];
 type FindTermsChildren = Norbix['api']['database']['findTermsChildren'];
+type FindTermTree = Norbix['api']['database']['findTermTree'];
+type FindTaxonomyTree = Norbix['api']['database']['findTaxonomyTree'];
 type GetDatabaseSchema = Norbix['api']['database']['getDatabaseSchema'];
 type GetDatabaseSchemas = Norbix['api']['database']['getDatabaseSchemas'];
 
@@ -118,6 +121,13 @@ export const apiDatabase = (b: Builder) => ({
     ],
   }),
 
+  changeResponsibility: b.mutation<Result<ChangeResponsibility>, Arg<ChangeResponsibility>>({
+    query: (args) => (norbix) => norbix.api.database.changeResponsibility(args),
+    invalidatesTags: (_res, _err, arg) => [
+      { type: 'DatabaseCollections', id: (arg as { collectionName?: string })?.collectionName ?? 'ANY' },
+    ],
+  }),
+
   // ---- Taxonomies (read-only on api; admin lives in hub.database) ----
   findTerms: b.query<Result<FindTerms>, Arg<FindTerms>>({
     query: (args) => (norbix) => norbix.api.database.findTerms(args),
@@ -131,6 +141,20 @@ export const apiDatabase = (b: Builder) => ({
     providesTags: (_res, _err, arg) => [
       { type: 'DatabaseTaxonomyTerms', id: (arg as { taxonomyName?: string })?.taxonomyName ?? 'ANY' },
     ],
+  }),
+
+  // Whole term tree of a taxonomy (or a sub-tree from a root term) in one call.
+  findTermTree: b.query<Result<FindTermTree>, Arg<FindTermTree>>({
+    query: (args) => (norbix) => norbix.api.database.findTermTree(args),
+    providesTags: (_res, _err, arg) => [
+      { type: 'DatabaseTaxonomyTerms', id: (arg as { taxonomyName?: string })?.taxonomyName ?? 'ANY' },
+    ],
+  }),
+
+  // Single-parent taxonomy structure tree (Countries → Cities), optionally with terms.
+  findTaxonomyTree: b.query<Result<FindTaxonomyTree>, Arg<FindTaxonomyTree>>({
+    query: (args) => (norbix) => norbix.api.database.findTaxonomyTree(args),
+    providesTags: () => [{ type: 'DatabaseTaxonomyTerms', id: 'ANY' }],
   }),
 
   // ---- Schemas (read-only mirror; full CRUD lives in hub.database) ----

@@ -47,6 +47,8 @@ export function createNorbixApi(
       'AccountUsers',
       'Billing',
       'Projects',
+      'Environments',
+      'Regions',
       'ApiKey',
       // Membership
       'Membership',
@@ -99,6 +101,12 @@ export function createNorbixApi(
       'PaymentPlans',
       'PaymentDiscounts',
       'PaymentCustomers',
+      // AI
+      'Ai',
+      // Webhooks
+      'Webhooks',
+      // Contacts
+      'Contacts',
       // Other
       'Scheduler',
       'Triggers',
