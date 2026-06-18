@@ -65,7 +65,7 @@
     "react-redux": ">=9.0.0"
   },
   "devDependencies": {
-    "@commitlint/cli": "^19.5.0",
+    "@commitlint/cli": "^20.5.3",
     "@commitlint/config-conventional": "^19.5.0",
     "@reduxjs/toolkit": "^2.2.7",
     "@semantic-release/changelog": "^6.0.3",
