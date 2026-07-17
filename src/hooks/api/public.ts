@@ -5,8 +5,8 @@ import type { Norbix } from 'norbix';
 import type { Builder } from '../index.js';
 import type { Arg, Result } from '../types.js';
 
-type GetPublicConfig = Norbix['api']['public']['config'];
-type GetPublicLegal = Norbix['api']['public']['legal'];
+type GetPublicConfig = Norbix['api']['public']['getPublicProjectConfig'];
+type GetPublicLegal = Norbix['api']['public']['getPublicProjectLegal'];
 
 /**
  * `api.public` — unauthenticated, project-scoped reads used by the Admin
@@ -18,12 +18,12 @@ type GetPublicLegal = Norbix['api']['public']['legal'];
  */
 export const apiPublic = (b: Builder) => ({
   getPublicProjectConfig: b.query<Result<GetPublicConfig>, Arg<GetPublicConfig>>({
-    query: (args) => (norbix) => norbix.api.public.config(args),
+    query: (args) => (norbix) => norbix.api.public.getPublicProjectConfig(args),
     providesTags: [{ type: 'Config', id: 'PUBLIC' }],
   }),
 
   getPublicProjectLegal: b.query<Result<GetPublicLegal>, Arg<GetPublicLegal>>({
-    query: (args) => (norbix) => norbix.api.public.legal(args),
+    query: (args) => (norbix) => norbix.api.public.getPublicProjectLegal(args),
     providesTags: (_res, _err, arg) => [
       { type: 'Config', id: `LEGAL:${arg?.kind ?? 'unknown'}` },
     ],

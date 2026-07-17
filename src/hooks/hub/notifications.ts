@@ -118,16 +118,16 @@ type GetPushCampaignBatchNotifications = Norbix['hub']['notifications']['getPush
 type GetPushCampaignStatistics = Norbix['hub']['notifications']['getPushCampaignStatistics'];
 type GetPushCampaignMessage = Norbix['hub']['notifications']['getPushCampaignMessage'];
 type GetPushCampaignMessages = Norbix['hub']['notifications']['getPushCampaignMessages'];
-type CreateContact = Norbix['hub']['notifications']['createContact'];
-type DeleteContact = Norbix['hub']['notifications']['deleteContact'];
-type GetContact = Norbix['hub']['notifications']['getContact'];
-type GetAllContacts = Norbix['hub']['notifications']['getAllContacts'];
-type MergeContacts = Norbix['hub']['notifications']['mergeContacts'];
+type CreateContact = Norbix['hub']['membership']['createContact'];
+type DeleteContact = Norbix['hub']['membership']['deleteContact'];
+type GetContact = Norbix['hub']['membership']['getContact'];
+type GetAllContacts = Norbix['hub']['membership']['getAllContacts'];
+type MergeContacts = Norbix['hub']['membership']['mergeContacts'];
 type GrantContactConsent = Norbix['hub']['notifications']['grantContactConsent'];
 type UnsubscribeContact = Norbix['hub']['notifications']['unsubscribeContact'];
-type AddContactIdentity = Norbix['hub']['notifications']['addContactIdentity'];
-type PromoteContactIdentity = Norbix['hub']['notifications']['promoteContactIdentity'];
-type RemoveContactIdentity = Norbix['hub']['notifications']['removeContactIdentity'];
+type AddContactIdentity = Norbix['hub']['membership']['addContactIdentity'];
+type PromoteContactIdentity = Norbix['hub']['membership']['promoteContactIdentity'];
+type RemoveContactIdentity = Norbix['hub']['membership']['removeContactIdentity'];
 
 /**
  * `hub.notifications` — 123 endpoints, 1:1 with the core SDK.
@@ -699,27 +699,27 @@ export const hubNotifications = (b: Builder) => ({
   }),
 
   createContact: b.mutation<Result<CreateContact>, Arg<CreateContact>>({
-    query: (args) => (norbix) => norbix.hub.notifications.createContact(args),
+    query: (args) => (norbix) => norbix.hub.membership.createContact(args),
     invalidatesTags: ['Contacts'],
   }),
 
   deleteContact: b.mutation<Result<DeleteContact>, Arg<DeleteContact>>({
-    query: (args) => (norbix) => norbix.hub.notifications.deleteContact(args),
+    query: (args) => (norbix) => norbix.hub.membership.deleteContact(args),
     invalidatesTags: ['Contacts'],
   }),
 
   getContact: b.query<Result<GetContact>, Arg<GetContact>>({
-    query: (args) => (norbix) => norbix.hub.notifications.getContact(args),
+    query: (args) => (norbix) => norbix.hub.membership.getContact(args),
     providesTags: ['Contacts'],
   }),
 
   getAllContacts: b.query<Result<GetAllContacts>, Arg<GetAllContacts>>({
-    query: (args) => (norbix) => norbix.hub.notifications.getAllContacts(args),
+    query: (args) => (norbix) => norbix.hub.membership.getAllContacts(args),
     providesTags: ['Contacts'],
   }),
 
   mergeContacts: b.mutation<Result<MergeContacts>, Arg<MergeContacts>>({
-    query: (args) => (norbix) => norbix.hub.notifications.mergeContacts(args),
+    query: (args) => (norbix) => norbix.hub.membership.mergeContacts(args),
     invalidatesTags: ['Contacts'],
   }),
 
@@ -734,17 +734,17 @@ export const hubNotifications = (b: Builder) => ({
   }),
 
   addContactIdentity: b.mutation<Result<AddContactIdentity>, Arg<AddContactIdentity>>({
-    query: (args) => (norbix) => norbix.hub.notifications.addContactIdentity(args),
+    query: (args) => (norbix) => norbix.hub.membership.addContactIdentity(args),
     invalidatesTags: ['Contacts'],
   }),
 
   promoteContactIdentity: b.mutation<Result<PromoteContactIdentity>, Arg<PromoteContactIdentity>>({
-    query: (args) => (norbix) => norbix.hub.notifications.promoteContactIdentity(args),
+    query: (args) => (norbix) => norbix.hub.membership.promoteContactIdentity(args),
     invalidatesTags: ['Contacts'],
   }),
 
   removeContactIdentity: b.mutation<Result<RemoveContactIdentity>, Arg<RemoveContactIdentity>>({
-    query: (args) => (norbix) => norbix.hub.notifications.removeContactIdentity(args),
+    query: (args) => (norbix) => norbix.hub.membership.removeContactIdentity(args),
     invalidatesTags: ['Contacts'],
   }),
 });
