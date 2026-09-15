@@ -149,6 +149,7 @@ A *curated* set of hooks for the most common endpoints. Every hook is end-to-end
 | `useFindTaxonomyTreeQuery` | `api.database.findTaxonomyTree` | provides `DatabaseTaxonomyTerms/ANY` |
 | `useGetApiKeysQuery` | `api.apikeys.getApiKeys` | provides `ApiKey/LIST` |
 | `useRegenerateApiKeysMutation` | `api.apikeys.regenerateApiKeys` | invalidates `ApiKey/LIST` |
+| `useGetPublicFileQuery` | `api.files.getPublicFile` | provides `Files/PUBLIC:<publicId>` |
 
 ### Hub surface — `norbix.hub.*`
 
@@ -174,8 +175,43 @@ A *curated* set of hooks for the most common endpoints. Every hook is end-to-end
 | `useCreateEmailTemplateMutation` | `hub.notifications.createEmailTemplate` | invalidates `Notification/EMAIL_TEMPLATE_LIST` |
 | `useUpdateEmailTemplateMutation` | `hub.notifications.updateEmailTemplate` | invalidates list + per-id |
 | `useDeleteEmailTemplateMutation` | `hub.notifications.deleteEmailTemplate` | invalidates list |
+| `useTestFilesIntegrationMutation` | `hub.files.testFilesIntegration` | — |
+| `useMakeFilePublicMutation` | `hub.files.makeFilePublic` | invalidates `Files` |
+| `useMakeFilePrivateMutation` | `hub.files.makeFilePrivate` | invalidates `Files` |
+| `useMakeFolderPublicMutation` | `hub.files.makeFolderPublic` | invalidates `Files` |
+| `useMakeFolderPrivateMutation` | `hub.files.makeFolderPrivate` | invalidates `Files` |
 
 > **Need a hook we don't ship?** Two options. (1) Drop down to the SDK with `useNorbix()` for a one-off call. (2) Add a new file under `src/hooks/api/` or `src/hooks/hub/`, follow the pattern of the others, and open a PR.
+
+## Public file links
+
+A file, or a whole folder prefix, can be made readable by anyone holding its
+link. Publishing is a Hub action and needs the signed-in client; *reading* the
+link needs nothing at all.
+
+```tsx
+const [publish] = useMakeFilePublicMutation();
+const [unpublish] = useMakeFilePrivateMutation();
+
+await publish({ filesIntegrationId: 'nbin_1', path: 'docs/invoice.pdf' });
+
+// `name` is the file's name for a file link, or the path inside the folder
+// for a folder link — its slashes stay slashes.
+const { data: bytes } = useGetPublicFileQuery({
+  publicId: 'nbpf_abc',
+  name: '2026/q1/report.pdf',
+});
+```
+
+`useMakeFilePrivateMutation` is refused while a folder above the file is
+public — switch the folder off with `useMakeFolderPrivateMutation` instead.
+
+The four publish hooks invalidate the `Files` tag, so a listing re-reads and
+picks up the new `isPublic` / `publicUrl` on each file and the `publicFolders`
+on the page. `useGetPublicFileQuery` caches under its own
+`Files/PUBLIC:<publicId>` id, so two different links never share one entry;
+making a file private again invalidates `Files`, a different tag, so call
+`refetch()` if a stale entry would matter to you.
 
 ## Working with terms
 
