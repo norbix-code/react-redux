@@ -581,7 +581,7 @@ norbix.setRegion('nb-eu-germany'); // all subsequent requests
 norbix.setRegion(undefined); // clear — the backend uses the project's primary region
 ```
 
-When a region is set, every request carries the `nb-region` header, and the client itself composes the regional base URL (`https://nb-eu-germany.api.norbix.dev`) — but only when it is using the SDK's default base URLs; a custom `baseUrl` is never rewritten. There is no default region: with nothing set, no header is sent and the backend picks the project's primary region. The underlying SDK also accepts a per-call override (`norbix.hub.regions.list({}, { region: 'nb-eu-germany' })`); the shipped hooks don't expose that option, so for a one-off cross-region call drop down to the SDK via `useNorbix()`.
+When a region is set, every request carries the `nb-region` header, and the client itself composes the regional base URL (`https://nb-eu-germany.api.norbix.ai`) — but only when it is using the SDK's default base URLs; a custom `baseUrl` is never rewritten. There is no default region: with nothing set, no header is sent and the backend picks the project's primary region. The underlying SDK also accepts a per-call override (`norbix.hub.regions.list({}, { region: 'nb-eu-germany' })`); the shipped hooks don't expose that option, so for a one-off cross-region call drop down to the SDK via `useNorbix()`.
 
 **Switching regions does not refetch by itself.** Same caveat as the tenant switch above: RTK Query keys its cache by endpoint + args, and the region is part of neither. After `norbix.setRegion(...)`, data cached from the old region stays in the store until something invalidates it. Reset the cache the same way you would after a tenant switch:
 
