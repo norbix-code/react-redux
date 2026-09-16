@@ -12,3 +12,7 @@ coverage
 .vscode/*
 !.vscode/extensions.json
 !.vscode/settings.example.json
+
+# tsup / typecheck temp files
+tsup.config.bundled_*.mjs
+.tc.tmp.json
