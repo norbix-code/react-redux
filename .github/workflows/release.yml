@@ -1,15 +1,19 @@
 name: Release
 
-# Publishes @norbix/react-redux to npm via semantic-release.
+# Publishes `@norbix.ai/react-redux` to npm via semantic-release.
 # Triggers ONLY on push to `main` (and the prerelease branches `next` / `beta`).
 #
-# Required secrets:
-#   - NPM_TOKEN     — npm automation token, granular publish scope on
-#                     @norbix/react-redux. Must be an "Automation" (not
-#                     "Publish") token so npm accepts it from CI without
-#                     2FA prompts.
-#   - GITHUB_TOKEN  — provided by Actions automatically; used to tag, write
-#                     CHANGELOG.md, and create the GH release.
+# Authentication:
+#   - npm: trusted publishing (OIDC). No NPM_TOKEN — npmjs.com trusts this
+#     repo + workflow file (package Settings → Trusted Publisher). Requires
+#     `id-token: write` and npm >= 11.5.1.
+#   - GITHUB_TOKEN: provided by Actions automatically; used to push the
+#     release tag and create the GH release.
+#
+# `main` is protected (changes only through pull requests), so the release does
+# NOT commit back: no version bump in package.json on main and no CHANGELOG.md
+# commit. The git tag is the source of truth for the version; release notes live
+# on the GitHub Release.
 #
 # Provenance is enabled (publishConfig.provenance in package.json) so npm
 # displays the verified GitHub Actions origin badge for each release.
@@ -21,10 +25,18 @@ on:
   push:
     branches: [main, next, beta]
   workflow_dispatch:
+    inputs:
+      republish:
+        description: >-
+          Recovery mode — skip semantic-release and publish the version of
+          the latest git tag to npm (use when a git tag exists but npm
+          publish failed or a re-run was skipped as "behind remote").
+        type: boolean
+        default: false
 
 concurrency:
   group: release-${{ github.ref }}
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 permissions:
   contents: write
@@ -35,26 +47,41 @@ permissions:
 
 env:
   NODE_VERSION: '22'
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 jobs:
   release:
     name: semantic-release
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           # semantic-release needs the full history to compute the next version
           # from conventional commits.
           fetch-depth: 0
           persist-credentials: false
 
+      - name: Sync branch tip
+        # Re-runs and concurrent workflows check out the event SHA, which can be
+        # behind origin after later merges. Build and release from the remote tip
+        # so we never skip publish with a stale tree.
+        run: |
+          git fetch origin "${GITHUB_REF_NAME}"
+          git checkout "${GITHUB_REF_NAME}"
+          git reset --hard "origin/${GITHUB_REF_NAME}"
+
       - name: Setup Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: npm
-          registry-url: 'https://registry.npmjs.org'
+
+      - name: Use npm 11 (trusted publishing needs >= 11.5.1)
+        # Node 22 bundles npm 10, which cannot publish via OIDC.
+        run: |
+          npm install -g npm@^11.6.2
+          npm --version
 
       - name: Install deps
         run: npm ci --no-audit --no-fund
@@ -93,21 +120,77 @@ jobs:
       - name: npm audit signatures
         run: npm audit signatures
 
+      - name: Republish to npm (recovery)
+        if: github.event_name == 'workflow_dispatch' && inputs.republish == true
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_CONFIG_PROVENANCE: 'true'
+          HUSKY: '0'
+        run: |
+          # package.json on main is not bumped by releases; publish the latest
+          # tag, built from the tag's own tree.
+          NAME=$(node -pe "require('./package.json').name")
+          TAG=$(git describe --tags --abbrev=0 --match 'v[0-9]*')
+          VERSION="${TAG#v}"
+          echo "Recovery publish: ${NAME}@${VERSION} (from tag ${TAG})"
+          if npm view "${NAME}@${VERSION}" version 2>/dev/null; then
+            echo "Already published on npm — nothing to do."
+          else
+            git checkout --detach "${TAG}"
+            npm ci --no-audit --no-fund
+            npm version "${VERSION}" --no-git-tag-version --allow-same-version
+            # Trusted publishing (OIDC): no token; needs id-token: write.
+            npm publish --access public
+          fi
+          # semantic-release creates the GitHub Release after npm publish, so a
+          # failed publish leaves the tag without one.
+          if ! gh release view "${TAG}" >/dev/null 2>&1; then
+            gh release create "${TAG}" --verify-tag --title "${TAG}" --generate-notes
+          fi
+          for i in 1 2 3 4 5 6 7 8 9 10; do
+            if npm view "${NAME}@${VERSION}" version 2>/dev/null; then
+              exit 0
+            fi
+            echo "Waiting for npm registry (${i}/10)…"
+            sleep 5
+          done
+          echo "::warning::Published but npm view still empty — registry may still be propagating."
+          exit 0
+
       - name: Release
+        if: github.event_name != 'workflow_dispatch' || inputs.republish != true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
           NPM_CONFIG_PROVENANCE: 'true'
-        run: npx semantic-release
+          HUSKY: '0'
+        run: |
+          set -o pipefail
+          output="$(npx semantic-release 2>&1 | tee /dev/stderr)"
+          if echo "$output" | grep -Fq "is behind the remote one"; then
+            echo "::error::Branch is behind origin/${GITHUB_REF_NAME}. A newer commit landed while this run was in progress — check git tags and npm. To recover, run this workflow manually with republish=true."
+            exit 1
+          fi
+          if echo "$output" | grep -Fq "Published release"; then
+            NAME=$(node -pe "require('./package.json').name")
+            VERSION=$(node -pe "require('./package.json').version")
+            echo "Verifying ${NAME}@${VERSION} on npm (registry propagation can lag)…"
+            for i in 1 2 3 4 5 6 7 8 9 10; do
+              if npm view "${NAME}@${VERSION}" version 2>/dev/null; then
+                echo "npm registry confirmed."
+                exit 0
+              fi
+              echo "Waiting for npm registry (${i}/10)…"
+              sleep 5
+            done
+            echo "::warning::semantic-release reported Published release but npm view is still empty after 50s — check registry manually; publish likely succeeded."
+          fi
 
       - name: Summary
         if: always()
         run: |
           echo "### Release · ${{ github.ref_name }}" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          if [ -f CHANGELOG.md ]; then
-            echo "Latest entry from CHANGELOG.md:" >> $GITHUB_STEP_SUMMARY
-            echo '```markdown' >> $GITHUB_STEP_SUMMARY
-            head -40 CHANGELOG.md >> $GITHUB_STEP_SUMMARY
-            echo '```' >> $GITHUB_STEP_SUMMARY
+          TAG=$(git describe --tags --abbrev=0 --match 'v[0-9]*' 2>/dev/null || true)
+          if [ -n "$TAG" ]; then
+            echo "Latest tag: \`${TAG}\` — notes: ${{ github.server_url }}/${{ github.repository }}/releases/tag/${TAG}" >> $GITHUB_STEP_SUMMARY
           fi

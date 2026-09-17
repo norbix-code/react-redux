@@ -1,4 +1,4 @@
-# `@norbix/react-redux` — basic example
+# `@norbix.ai/react-redux` — basic example
 
 A small Vite + React + Redux Toolkit app showing the package end-to-end. Three panels:
 

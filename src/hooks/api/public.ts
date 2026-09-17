@@ -1,6 +1,6 @@
 // Full coverage of `norbix.api.public` (2 endpoints).
 // Admin-Portal PUBLIC (unauthenticated) reads: project config + legal docs.
-import type { Norbix } from 'norbix';
+import type { Norbix } from '@norbix.ai/ts';
 
 import type { Builder } from '../index.js';
 import type { Arg, Result } from '../types.js';

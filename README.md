@@ -12,7 +12,7 @@
   <p>
     <a href="https://github.com/norbix-code/react-redux/blob/main/LICENSE"><img alt="License" src="https://img.shields.io/badge/license-MIT-blue.svg" /></a>
     <a href="https://github.com/norbix-code/react-redux/actions"><img alt="CI" src="https://github.com/norbix-code/react-redux/actions/workflows/ci.yml/badge.svg" /></a>
-    <a href="https://www.npmjs.com/package/@norbix/react-redux"><img alt="@norbix/react-redux" src="https://img.shields.io/npm/v/@norbix/react-redux.svg?label=@norbix/react-redux&logo=npm" /></a>
+    <a href="https://www.npmjs.com/package/@norbix.ai/react-redux"><img alt="@norbix.ai/react-redux" src="https://img.shields.io/npm/v/@norbix.ai/react-redux.svg?label=@norbix.ai/react-redux&logo=npm" /></a>
   </p>
 
   <hr />
@@ -21,18 +21,18 @@
 
 ## What this is
 
-`@norbix/react-redux` is a thin, opinionated layer that wires the Norbix TypeScript SDK into a Redux Toolkit + RTK Query app. You get React hooks for the most-used Norbix endpoints with full caching, request dedup, and tag-based invalidation built in. Under the hood every hook calls the same typed `Norbix` SDK — so DTOs, auth, errors, and base URLs all stay consistent with the rest of your stack.
+`@norbix.ai/react-redux` is a thin, opinionated layer that wires the Norbix TypeScript SDK into a Redux Toolkit + RTK Query app. You get React hooks for the most-used Norbix endpoints with full caching, request dedup, and tag-based invalidation built in. Under the hood every hook calls the same typed `Norbix` SDK — so DTOs, auth, errors, and base URLs all stay consistent with the rest of your stack.
 
 | You get | Provided by |
 |---|---|
 | `useGetUsersQuery`, `useFindCollectionQuery`, `useInsertOneMutation`, ... | this package |
 | Cache, dedup, polling, refetch on focus, optimistic updates | RTK Query (`@reduxjs/toolkit/query`) |
-| Tree-shakeable typed methods, JWT auth, error mapping | `norbix` SDK |
+| Tree-shakeable typed methods, JWT auth, error mapping | `@norbix.ai/ts` SDK |
 
 ## Install
 
 ```sh
-npm install @norbix/react-redux norbix @reduxjs/toolkit react-redux react
+npm install @norbix.ai/react-redux @norbix.ai/ts @reduxjs/toolkit react-redux react
 ```
 
 ## Quickstart
@@ -41,8 +41,8 @@ Three steps: create the API slice, plug it into your store, mount the provider.
 
 ```ts
 // src/norbix.ts
-import { Norbix } from 'norbix';
-import { createNorbixApi } from '@norbix/react-redux';
+import { Norbix } from '@norbix.ai/ts';
+import { createNorbixApi } from '@norbix.ai/react-redux';
 
 export const norbix = new Norbix(); // reads env vars, or pass { apiKey, projectId }
 
@@ -78,7 +78,7 @@ export type AppDispatch = typeof store.dispatch;
 ```tsx
 // src/main.tsx
 import { Provider } from 'react-redux';
-import { NorbixProvider } from '@norbix/react-redux';
+import { NorbixProvider } from '@norbix.ai/react-redux';
 import { store } from './store';
 import { norbix } from './norbix';
 
@@ -149,6 +149,7 @@ A *curated* set of hooks for the most common endpoints. Every hook is end-to-end
 | `useFindTaxonomyTreeQuery` | `api.database.findTaxonomyTree` | provides `DatabaseTaxonomyTerms/ANY` |
 | `useGetApiKeysQuery` | `api.apikeys.getApiKeys` | provides `ApiKey/LIST` |
 | `useRegenerateApiKeysMutation` | `api.apikeys.regenerateApiKeys` | invalidates `ApiKey/LIST` |
+| `useGetPublicFileQuery` | `api.files.getPublicFile` | provides `Files/PUBLIC:<publicId>` |
 
 ### Hub surface — `norbix.hub.*`
 
@@ -174,8 +175,43 @@ A *curated* set of hooks for the most common endpoints. Every hook is end-to-end
 | `useCreateEmailTemplateMutation` | `hub.notifications.createEmailTemplate` | invalidates `Notification/EMAIL_TEMPLATE_LIST` |
 | `useUpdateEmailTemplateMutation` | `hub.notifications.updateEmailTemplate` | invalidates list + per-id |
 | `useDeleteEmailTemplateMutation` | `hub.notifications.deleteEmailTemplate` | invalidates list |
+| `useTestFilesIntegrationMutation` | `hub.files.testFilesIntegration` | — |
+| `useMakeFilePublicMutation` | `hub.files.makeFilePublic` | invalidates `Files` |
+| `useMakeFilePrivateMutation` | `hub.files.makeFilePrivate` | invalidates `Files` |
+| `useMakeFolderPublicMutation` | `hub.files.makeFolderPublic` | invalidates `Files` |
+| `useMakeFolderPrivateMutation` | `hub.files.makeFolderPrivate` | invalidates `Files` |
 
 > **Need a hook we don't ship?** Two options. (1) Drop down to the SDK with `useNorbix()` for a one-off call. (2) Add a new file under `src/hooks/api/` or `src/hooks/hub/`, follow the pattern of the others, and open a PR.
+
+## Public file links
+
+A file, or a whole folder prefix, can be made readable by anyone holding its
+link. Publishing is a Hub action and needs the signed-in client; *reading* the
+link needs nothing at all.
+
+```tsx
+const [publish] = useMakeFilePublicMutation();
+const [unpublish] = useMakeFilePrivateMutation();
+
+await publish({ filesIntegrationId: 'nbin_1', path: 'docs/invoice.pdf' });
+
+// `name` is the file's name for a file link, or the path inside the folder
+// for a folder link — its slashes stay slashes.
+const { data: bytes } = useGetPublicFileQuery({
+  publicId: 'nbpf_abc',
+  name: '2026/q1/report.pdf',
+});
+```
+
+`useMakeFilePrivateMutation` is refused while a folder above the file is
+public — switch the folder off with `useMakeFolderPrivateMutation` instead.
+
+The four publish hooks invalidate the `Files` tag, so a listing re-reads and
+picks up the new `isPublic` / `publicUrl` on each file and the `publicFolders`
+on the page. `useGetPublicFileQuery` caches under its own
+`Files/PUBLIC:<publicId>` id, so two different links never share one entry;
+making a file private again invalidates `Files`, a different tag, so call
+`refetch()` if a stale entry would matter to you.
 
 ## Working with terms
 
@@ -545,7 +581,7 @@ norbix.setRegion('nb-eu-germany'); // all subsequent requests
 norbix.setRegion(undefined); // clear — the backend uses the project's primary region
 ```
 
-When a region is set, every request carries the `nb-region` header, and the client itself composes the regional base URL (`https://nb-eu-germany.api.norbix.dev`) — but only when it is using the SDK's default base URLs; a custom `baseUrl` is never rewritten. There is no default region: with nothing set, no header is sent and the backend picks the project's primary region. The underlying SDK also accepts a per-call override (`norbix.hub.regions.list({}, { region: 'nb-eu-germany' })`); the shipped hooks don't expose that option, so for a one-off cross-region call drop down to the SDK via `useNorbix()`.
+When a region is set, every request carries the `nb-region` header, and the client itself composes the regional base URL (`https://nb-eu-germany.api.norbix.ai`) — but only when it is using the SDK's default base URLs; a custom `baseUrl` is never rewritten. There is no default region: with nothing set, no header is sent and the backend picks the project's primary region. The underlying SDK also accepts a per-call override (`norbix.hub.regions.list({}, { region: 'nb-eu-germany' })`); the shipped hooks don't expose that option, so for a one-off cross-region call drop down to the SDK via `useNorbix()`.
 
 **Switching regions does not refetch by itself.** Same caveat as the tenant switch above: RTK Query keys its cache by endpoint + args, and the region is part of neither. After `norbix.setRegion(...)`, data cached from the old region stays in the store until something invalidates it. Reset the cache the same way you would after a tenant switch:
 
@@ -600,7 +636,7 @@ function RegionSettings({ projectId }: { projectId: string }) {
 Almost every Hub module exposes the same integrations CRUD surface (`getXIntegrations`, `saveXIntegration`, `enableXIntegration`, ...). Instead of copy-pasting ~50 lines per module, use `buildIntegrationsEndpoints`. The package already uses it for `hub.database`; wire the other 8 in your app via `injectEndpoints`:
 
 ```ts
-import { norbixApi, buildIntegrationsEndpoints } from '@norbix/react-redux';
+import { norbixApi, buildIntegrationsEndpoints } from '@norbix.ai/react-redux';
 
 norbixApi.injectEndpoints({
   endpoints: (b) => ({
@@ -688,7 +724,7 @@ The package ships a curated set of hooks. When your app needs an endpoint we don
 ```ts
 // src/services/myCampaigns.ts
 import { norbixApi } from '../norbix';
-import type { useNorbix } from '@norbix/react-redux';
+import type { useNorbix } from '@norbix.ai/react-redux';
 
 export const myCampaignsService = norbixApi.injectEndpoints({
   endpoints: (builder) => ({
@@ -751,7 +787,7 @@ If your app currently calls Norbix via `fetchBaseQuery({ baseUrl })` + a custom 
 `createNorbixApi(getClient)` returns an RTK Query API. Its `baseQuery` is a thin wrapper that calls a closure you pass at endpoint definition time:
 
 ```ts
-// inside @norbix/react-redux
+// inside @norbix.ai/react-redux
 const baseQuery = async (call) => {
   try {
     return { data: await call(getClient()) };

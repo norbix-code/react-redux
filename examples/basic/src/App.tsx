@@ -6,7 +6,7 @@ export function App() {
   return (
     <main className="page">
       <header className="page__hero">
-        <h1>@norbix/react-redux</h1>
+        <h1>@norbix.ai/react-redux</h1>
         <p className="page__lede">
           Minimal example. The three panels below cover login, a paginated users
           list with invite/block/delete, and a runtime query against a database

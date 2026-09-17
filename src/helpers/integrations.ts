@@ -1,4 +1,4 @@
-import type { Norbix } from 'norbix';
+import type { Norbix } from '@norbix.ai/ts';
 
 import type { Builder, AllTags } from '../hooks/index.js';
 
@@ -145,7 +145,7 @@ export function buildIntegrationsEndpoints<
       if (typeof fn !== 'function') {
         return Promise.reject(
           new Error(
-            `@norbix/react-redux: SDK method "${methodName}" not found. ` +
+            `@norbix.ai/react-redux: SDK method "${methodName}" not found. ` +
               `Check your SDK version or pass methodNames overrides.`,
           ),
         );

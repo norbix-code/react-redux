@@ -1,6 +1,6 @@
 # Examples
 
-Each subfolder is a self-contained app demonstrating one or more patterns from `@norbix/react-redux`. To run any of them:
+Each subfolder is a self-contained app demonstrating one or more patterns from `@norbix.ai/react-redux`. To run any of them:
 
 ```sh
 cd examples/<name>

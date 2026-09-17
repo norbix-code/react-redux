@@ -1,7 +1,7 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { Provider as ReduxProvider } from 'react-redux';
-import { NorbixProvider } from '@norbix/react-redux';
+import { NorbixProvider } from '@norbix.ai/react-redux';
 
 import { App } from './App';
 import { norbix } from './norbix';
