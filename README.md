@@ -96,7 +96,7 @@ createRoot(document.getElementById('root')!).render(
 import { useGetUsersQuery, useInviteUserMutation } from './norbix';
 
 export function UsersList() {
-  const { data, isLoading, error } = useGetUsersQuery({ take: 20, skip: 0 });
+  const { data, isLoading, error } = useGetUsersQuery({ pageSize: 20 });
   const [invite, { isLoading: inviting }] = useInviteUserMutation();
 
   if (isLoading) return <p>Loading…</p>;
@@ -104,10 +104,10 @@ export function UsersList() {
 
   return (
     <ul>
-      {data?.users?.map((u) => <li key={u.id}>{u.email}</li>)}
+      {data?.list?.items.map((u) => <li key={u.id}>{u.email}</li>)}
       <button
         disabled={inviting}
-        onClick={() => invite({ email: 'maya@team.io', roleIds: [] })}
+        onClick={() => invite({ email: 'maya@team.io' })}
       >
         Invite
       </button>

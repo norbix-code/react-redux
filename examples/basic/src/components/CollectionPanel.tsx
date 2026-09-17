@@ -13,13 +13,13 @@ export function CollectionPanel() {
   const [collectionName, setCollectionName] = useState('orders');
 
   const { items, isLoading, error } = useFindCollectionQuery(
-    { collectionName, take: 5 },
+    { collectionName, pageSize: 5 },
     {
       // skip the request until the input has at least one character
       skip: !collectionName,
       selectFromResult: ({ data, isLoading: l, error: e }) => ({
-        items:
-          (data as { list?: { result?: unknown[] } } | undefined)?.list?.result ?? [],
+        // FindResponse.list is a cursor page: { items, hasMore, startingAfter, ... }
+        items: data?.list?.items ?? [],
         isLoading: l,
         error: e,
       }),
@@ -47,8 +47,8 @@ export function CollectionPanel() {
 
       {!isLoading && !error && items.length === 0 && (
         <p className="muted">
-          No documents in <code>{collectionName}</code>. Try another name, or
-          insert one with <code>useInsertOneMutation</code> in your code.
+          No documents in <code>{collectionName}</code>. Try another name, or insert one with{' '}
+          <code>useInsertOneMutation</code> in your code.
         </p>
       )}
     </div>
