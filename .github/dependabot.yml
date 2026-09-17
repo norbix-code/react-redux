@@ -19,6 +19,11 @@ updates:
       - dependencies
       - npm
     ignore:
+      # TypeScript 7 is the native compiler: @typescript-eslint 8 supports
+      # typescript <6.1 and tsup's DTS build needs the classic compiler API, so
+      # a TS 7 bump cannot even install. Revisit when both support it.
+      - dependency-name: 'typescript'
+        versions: ['>= 7']
       # conventional-changelog-conventionalcommits 10 needs
       # conventional-changelog-writer@9; @semantic-release/release-notes-generator
       # 14.x ships writer 8, so v10 breaks release notes ("Missing helper").
@@ -34,6 +39,12 @@ updates:
           - 'semantic-release'
           - '@semantic-release/*'
           - 'conventional-changelog-conventionalcommits'
+      # vitest and its plugins must move together (@vitest/coverage-v8 pins the
+      # exact vitest version).
+      vitest:
+        patterns:
+          - 'vitest'
+          - '@vitest/*'
       react-stack:
         patterns:
           - 'react'
