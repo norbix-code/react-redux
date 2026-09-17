@@ -12,7 +12,7 @@ import { ErrorBox } from './ErrorBox';
 /**
  * Membership demo. Three things are happening that you don't have to write:
  *
- * 1. **Cache + dedup.** If two components mount `useGetUsersQuery({ take:20 })`,
+ * 1. **Cache + dedup.** If two components mount `useGetUsersQuery({ pageSize: 20 })`,
  *    only one network request goes out.
  * 2. **Tag-based invalidation.** `inviteUser`, `blockUser`, `unblockUser`,
  *    and `deleteUser` all invalidate `MembershipUsers/LIST`, so the list
@@ -21,18 +21,22 @@ import { ErrorBox } from './ErrorBox';
  *    level; configure them in `createNorbixApi` if you want to opt in.
  */
 export function UsersPanel() {
-  const [take] = useState(20);
-  const [skip, setSkip] = useState(0);
+  const pageSize = 20;
+  // Cursor pagination: `cursors[i]` is the `startingAfter` of page i
+  // (undefined for the first page). Next pushes the page's cursor, Prev pops.
+  const [cursors, setCursors] = useState<Array<string | undefined>>([undefined]);
+  const startingAfter = cursors[cursors.length - 1];
   const [inviteEmail, setInviteEmail] = useState('');
 
-  // The hook returns a typed envelope from the SDK. We unwrap the inner list
+  // The hook returns a typed envelope from the SDK. We unwrap the inner page
   // here with `selectFromResult` so the component sees a plain array.
-  const { users, total, isLoading, error, refetch } = useGetUsersQuery(
-    { take, skip },
+  const { users, hasMore, nextCursor, isLoading, error, refetch } = useGetUsersQuery(
+    { pageSize, startingAfter },
     {
       selectFromResult: ({ data, isLoading: l, error: e }) => ({
-        users: (data as { list?: { result?: unknown[] } } | undefined)?.list?.result ?? [],
-        total: (data as { list?: { totalCount?: number } } | undefined)?.list?.totalCount ?? 0,
+        users: data?.list?.items ?? [],
+        hasMore: data?.list?.hasMore ?? false,
+        nextCursor: data?.list?.startingAfter,
         isLoading: l,
         error: e,
       }),
@@ -58,9 +62,7 @@ export function UsersPanel() {
   return (
     <div className="card">
       <h2>Users</h2>
-      <p className="muted">
-        {total > 0 ? `${total} total — page ${skip / take + 1}` : 'No users yet'}
-      </p>
+      <p className="muted">{users.length > 0 ? `Page ${cursors.length}` : 'No users yet'}</p>
 
       <form className="row" onSubmit={handleInvite}>
         <input
@@ -80,11 +82,11 @@ export function UsersPanel() {
 
       {!isLoading && users.length > 0 && (
         <ul className="users">
-          {(users as Array<{ id: string; email?: string; isBlocked?: boolean }>).map((u) => (
+          {users.map((u) => (
             <li key={u.id}>
-              <span>{u.email ?? u.id}</span>
+              <span>{u.email ?? u.userName ?? u.id}</span>
               <span className="row">
-                {u.isBlocked ? (
+                {isBlocked(u.status) ? (
                   <button onClick={() => unblock({ id: u.id })}>Unblock</button>
                 ) : (
                   <button onClick={() => block({ id: u.id })}>Block</button>
@@ -101,15 +103,15 @@ export function UsersPanel() {
       <div className="row pager">
         <button
           type="button"
-          disabled={skip === 0}
-          onClick={() => setSkip(Math.max(0, skip - take))}
+          disabled={cursors.length === 1}
+          onClick={() => setCursors(cursors.slice(0, -1))}
         >
           ← Prev
         </button>
         <button
           type="button"
-          disabled={skip + take >= total}
-          onClick={() => setSkip(skip + take)}
+          disabled={!hasMore || !nextCursor}
+          onClick={() => setCursors([...cursors, nextCursor])}
         >
           Next →
         </button>
@@ -119,4 +121,9 @@ export function UsersPanel() {
       </div>
     </div>
   );
+}
+
+// AuthStatus.Blocked is 128; the API may also serialize enums by name.
+function isBlocked(status: unknown): boolean {
+  return status === 128 || status === 'Blocked';
 }
