@@ -9,11 +9,11 @@ describe('createNorbixBaseQuery', () => {
 
     const result = await baseQuery(
       async (norbix) => {
-        return { ok: true, sawClient: norbix === fakeClient };
+        return { ok: true, sawClient: (norbix as unknown) === fakeClient };
       },
       // RTK Query passes a BaseQueryApi + extraOptions; we don't use them.
       {} as never,
-      undefined,
+      {},
     );
 
     expect(result).toEqual({ data: { ok: true, sawClient: true } });
@@ -32,7 +32,7 @@ describe('createNorbixBaseQuery', () => {
         };
       },
       {} as never,
-      undefined,
+      {},
     );
 
     expect(result).toMatchObject({
@@ -48,7 +48,7 @@ describe('createNorbixBaseQuery', () => {
     const baseQuery = createNorbixBaseQuery(() => null as never);
     const call = vi.fn();
 
-    const result = await baseQuery(call, {} as never, undefined);
+    const result = await baseQuery(call, {} as never, {});
 
     expect(result).toMatchObject({
       error: { code: 'NORBIX_NO_CLIENT', status: 0 },
@@ -61,7 +61,7 @@ describe('createNorbixBaseQuery', () => {
       throw new Error('client init failed');
     });
 
-    const result = await baseQuery(async () => 'never', {} as never, undefined);
+    const result = await baseQuery(async () => 'never', {} as never, {});
 
     expect(result).toMatchObject({
       error: {
@@ -79,7 +79,7 @@ describe('createNorbixBaseQuery', () => {
         throw 'oops';
       },
       {} as never,
-      undefined,
+      {},
     );
     expect(stringResult).toMatchObject({
       error: { status: 0, message: 'oops' },
