@@ -70,18 +70,17 @@
     "@eslint/js": "^10.0.1",
     "@norbix.ai/ts": "^1.3.0",
     "@reduxjs/toolkit": "^2.12.0",
-    "@semantic-release/changelog": "^6.0.3",
-    "@semantic-release/commit-analyzer": "^13.0.0",
-    "@semantic-release/git": "^10.0.1",
-    "@semantic-release/github": "^11.0.0",
-    "@semantic-release/npm": "^12.0.1",
-    "@semantic-release/release-notes-generator": "^14.0.1",
+    "@semantic-release/commit-analyzer": "^13.0.1",
+    "@semantic-release/github": "^12.0.9",
+    "@semantic-release/npm": "^13.1.5",
+    "@semantic-release/release-notes-generator": "^14.1.1",
     "@testing-library/react": "^16.3.3",
     "@types/node": "^26.6.1",
     "@types/react": "^19.3.0",
     "@typescript-eslint/eslint-plugin": "^8.70.0",
     "@typescript-eslint/parser": "^8.70.0",
     "@vitest/coverage-v8": "^4.1.11",
+    "conventional-changelog-conventionalcommits": "^9.3.1",
     "eslint": "^10.10.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-import-x": "^4.17.1",
@@ -93,7 +92,7 @@
     "react": "^19.3.0",
     "react-dom": "^19.3.0",
     "react-redux": "^9.3.0",
-    "semantic-release": "^24.1.2",
+    "semantic-release": "^25.0.9",
     "tsup": "^8.5.1",
     "typescript": "^6.0.3",
     "vitest": "^4.1.11"
@@ -101,5 +100,8 @@
   "publishConfig": {
     "access": "public",
     "provenance": true
+  },
+  "overrides": {
+    "esbuild": "^0.28.1"
   }
 }
