@@ -2,7 +2,7 @@ import js from '@eslint/js';
 import tseslint from '@typescript-eslint/eslint-plugin';
 import tsParser from '@typescript-eslint/parser';
 import reactHooks from 'eslint-plugin-react-hooks';
-import importPlugin from 'eslint-plugin-import';
+import importPlugin from 'eslint-plugin-import-x';
 import prettier from 'eslint-config-prettier';
 
 export default [
@@ -20,7 +20,7 @@ export default [
     },
     rules: {
       ...tseslint.configs.recommended.rules,
-      ...reactHooks.configs.recommended.rules,
+      ...reactHooks.configs.flat.recommended.rules,
       'import/order': ['error', { 'newlines-between': 'always', alphabetize: { order: 'asc' } }],
     },
   },
