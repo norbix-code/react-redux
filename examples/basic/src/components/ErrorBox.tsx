@@ -1,4 +1,4 @@
-import type { SerializedNorbixError } from '@norbix/react-redux';
+import type { SerializedNorbixError } from '@norbix.ai/react-redux';
 
 /**
  * Tiny error renderer that knows the `SerializedNorbixError` shape the

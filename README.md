@@ -12,7 +12,7 @@
   <p>
     <a href="https://github.com/norbix-code/react-redux/blob/main/LICENSE"><img alt="License" src="https://img.shields.io/badge/license-MIT-blue.svg" /></a>
     <a href="https://github.com/norbix-code/react-redux/actions"><img alt="CI" src="https://github.com/norbix-code/react-redux/actions/workflows/ci.yml/badge.svg" /></a>
-    <a href="https://www.npmjs.com/package/@norbix/react-redux"><img alt="@norbix/react-redux" src="https://img.shields.io/npm/v/@norbix/react-redux.svg?label=@norbix/react-redux&logo=npm" /></a>
+    <a href="https://www.npmjs.com/package/@norbix.ai/react-redux"><img alt="@norbix.ai/react-redux" src="https://img.shields.io/npm/v/@norbix.ai/react-redux.svg?label=@norbix.ai/react-redux&logo=npm" /></a>
   </p>
 
   <hr />
@@ -21,18 +21,18 @@
 
 ## What this is
 
-`@norbix/react-redux` is a thin, opinionated layer that wires the Norbix TypeScript SDK into a Redux Toolkit + RTK Query app. You get React hooks for the most-used Norbix endpoints with full caching, request dedup, and tag-based invalidation built in. Under the hood every hook calls the same typed `Norbix` SDK — so DTOs, auth, errors, and base URLs all stay consistent with the rest of your stack.
+`@norbix.ai/react-redux` is a thin, opinionated layer that wires the Norbix TypeScript SDK into a Redux Toolkit + RTK Query app. You get React hooks for the most-used Norbix endpoints with full caching, request dedup, and tag-based invalidation built in. Under the hood every hook calls the same typed `Norbix` SDK — so DTOs, auth, errors, and base URLs all stay consistent with the rest of your stack.
 
 | You get | Provided by |
 |---|---|
 | `useGetUsersQuery`, `useFindCollectionQuery`, `useInsertOneMutation`, ... | this package |
 | Cache, dedup, polling, refetch on focus, optimistic updates | RTK Query (`@reduxjs/toolkit/query`) |
-| Tree-shakeable typed methods, JWT auth, error mapping | `norbix` SDK |
+| Tree-shakeable typed methods, JWT auth, error mapping | `@norbix.ai/ts` SDK |
 
 ## Install
 
 ```sh
-npm install @norbix/react-redux norbix @reduxjs/toolkit react-redux react
+npm install @norbix.ai/react-redux @norbix.ai/ts @reduxjs/toolkit react-redux react
 ```
 
 ## Quickstart
@@ -41,8 +41,8 @@ Three steps: create the API slice, plug it into your store, mount the provider.
 
 ```ts
 // src/norbix.ts
-import { Norbix } from 'norbix';
-import { createNorbixApi } from '@norbix/react-redux';
+import { Norbix } from '@norbix.ai/ts';
+import { createNorbixApi } from '@norbix.ai/react-redux';
 
 export const norbix = new Norbix(); // reads env vars, or pass { apiKey, projectId }
 
@@ -78,7 +78,7 @@ export type AppDispatch = typeof store.dispatch;
 ```tsx
 // src/main.tsx
 import { Provider } from 'react-redux';
-import { NorbixProvider } from '@norbix/react-redux';
+import { NorbixProvider } from '@norbix.ai/react-redux';
 import { store } from './store';
 import { norbix } from './norbix';
 
@@ -636,7 +636,7 @@ function RegionSettings({ projectId }: { projectId: string }) {
 Almost every Hub module exposes the same integrations CRUD surface (`getXIntegrations`, `saveXIntegration`, `enableXIntegration`, ...). Instead of copy-pasting ~50 lines per module, use `buildIntegrationsEndpoints`. The package already uses it for `hub.database`; wire the other 8 in your app via `injectEndpoints`:
 
 ```ts
-import { norbixApi, buildIntegrationsEndpoints } from '@norbix/react-redux';
+import { norbixApi, buildIntegrationsEndpoints } from '@norbix.ai/react-redux';
 
 norbixApi.injectEndpoints({
   endpoints: (b) => ({
@@ -724,7 +724,7 @@ The package ships a curated set of hooks. When your app needs an endpoint we don
 ```ts
 // src/services/myCampaigns.ts
 import { norbixApi } from '../norbix';
-import type { useNorbix } from '@norbix/react-redux';
+import type { useNorbix } from '@norbix.ai/react-redux';
 
 export const myCampaignsService = norbixApi.injectEndpoints({
   endpoints: (builder) => ({
@@ -787,7 +787,7 @@ If your app currently calls Norbix via `fetchBaseQuery({ baseUrl })` + a custom 
 `createNorbixApi(getClient)` returns an RTK Query API. Its `baseQuery` is a thin wrapper that calls a closure you pass at endpoint definition time:
 
 ```ts
-// inside @norbix/react-redux
+// inside @norbix.ai/react-redux
 const baseQuery = async (call) => {
   try {
     return { data: await call(getClient()) };

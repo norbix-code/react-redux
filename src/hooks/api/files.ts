@@ -14,7 +14,7 @@
 //   GET    /{version}/files/{filesIntegrationId}/sign
 //   POST   /{version}/files/{filesIntegrationId}/upload-url
 //   GET    /{version}/files/public/{PublicId}/{Name*}
-import type { Norbix } from 'norbix';
+import type { Norbix } from '@norbix.ai/ts';
 
 import type { Builder } from '../index.js';
 import type { Arg, Result } from '../types.js';

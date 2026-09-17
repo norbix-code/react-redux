@@ -1,4 +1,4 @@
-import type { Norbix } from 'norbix';
+import type { Norbix } from '@norbix.ai/ts';
 import { createContext, useContext, useMemo, type ReactNode } from 'react';
 
 /**
@@ -66,7 +66,7 @@ export function useNorbix(): Norbix {
   const client = useContext(NorbixContext);
   if (!client) {
     throw new Error(
-      '@norbix/react-redux: useNorbix() must be called inside <NorbixProvider client={...}>.',
+      '@norbix.ai/react-redux: useNorbix() must be called inside <NorbixProvider client={...}>.',
     );
   }
   return client;

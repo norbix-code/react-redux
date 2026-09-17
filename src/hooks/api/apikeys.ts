@@ -1,4 +1,4 @@
-import type { Norbix } from 'norbix';
+import type { Norbix } from '@norbix.ai/ts';
 
 import type { Builder } from '../index.js';
 import type { Arg, Result } from '../types.js';

@@ -1,6 +1,6 @@
 // AUTO-GENERATED — full coverage of `norbix.hub.regions` (2 endpoints).
 // Synced from the norbix core SDK surface. Re-run the hook sync to refresh.
-import type { Norbix } from 'norbix';
+import type { Norbix } from '@norbix.ai/ts';
 
 import type { Builder } from '../index.js';
 import type { Arg, Result } from '../types.js';

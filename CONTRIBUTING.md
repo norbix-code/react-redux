@@ -1,4 +1,4 @@
-# Contributing to `@norbix/react-redux`
+# Contributing to `@norbix.ai/react-redux`
 
 This package wraps the [`norbix`](https://github.com/norbix-code/sdk-ts) TypeScript SDK in RTK Query helpers for React + Redux Toolkit apps. Releases are cut by CI on every push to `main`. The flow below mirrors what CI runs — keep your local steps aligned with CI and you'll never get a surprise on merge.
 
@@ -102,13 +102,13 @@ Opens PRs for npm + GitHub Actions updates weekly (Monday 06:00 Europe/Vilnius).
 
 | Secret | Where to set it | What it's for |
 | --- | --- | --- |
-| `NPM_TOKEN` | GitHub repo settings → Secrets → Actions | npm Automation token, granular publish scope on `@norbix/react-redux`. Must be **Automation** type so npm accepts it without 2FA prompts. |
+| `NPM_TOKEN` | GitHub repo settings → Secrets → Actions | npm Automation token, granular publish scope on `@norbix.ai/react-redux`. Must be **Automation** type so npm accepts it without 2FA prompts. |
 | `GITHUB_TOKEN` | provided by Actions | Used for git push, tag, and GH Release. No setup needed. |
 
 ### How to debug a failed release
 
 - **`semantic-release` says "no release-worthy commits"** — your commits don't bump anything. Use `feat:` / `fix:` / `feat!:` for the bump you want. Squash merging? Make sure the squash subject also follows conventional commits.
-- **`npm publish` 401** — `NPM_TOKEN` expired or doesn't have publish scope on `@norbix/react-redux`. Regenerate as Automation token.
+- **`npm publish` 401** — `NPM_TOKEN` expired or doesn't have publish scope on `@norbix.ai/react-redux`. Regenerate as Automation token.
 - **`audit` failure mid-release** — a CVE landed between the PR's CI run and the merge. Land a fix or wait for the patched version (Dependabot usually opens a PR within minutes).
 
 ## Repository layout

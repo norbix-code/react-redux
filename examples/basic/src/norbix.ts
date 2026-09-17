@@ -1,5 +1,5 @@
-import { Norbix } from 'norbix';
-import { createNorbixApi } from '@norbix/react-redux';
+import { Norbix } from '@norbix.ai/ts';
+import { createNorbixApi } from '@norbix.ai/react-redux';
 
 /**
  * One Norbix client per app. Reads `NORBIX_*` env vars (Vite exposes them

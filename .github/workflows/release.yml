@@ -1,11 +1,11 @@
 name: Release
 
-# Publishes @norbix/react-redux to npm via semantic-release.
+# Publishes @norbix.ai/react-redux to npm via semantic-release.
 # Triggers ONLY on push to `main` (and the prerelease branches `next` / `beta`).
 #
 # Required secrets:
 #   - NPM_TOKEN     — npm automation token, granular publish scope on
-#                     @norbix/react-redux. Must be an "Automation" (not
+#                     @norbix.ai/react-redux. Must be an "Automation" (not
 #                     "Publish") token so npm accepts it from CI without
 #                     2FA prompts.
 #   - GITHUB_TOKEN  — provided by Actions automatically; used to tag, write

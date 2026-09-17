@@ -8,5 +8,5 @@ export default defineConfig({
   clean: true,
   treeshake: true,
   splitting: false,
-  external: ['react', 'react-redux', '@reduxjs/toolkit', 'norbix'],
+  external: ['react', 'react-redux', '@reduxjs/toolkit', '@norbix.ai/ts'],
 });

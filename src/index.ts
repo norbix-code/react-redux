@@ -1,4 +1,4 @@
-// Public surface of @norbix/react-redux.
+// Public surface of @norbix.ai/react-redux.
 //
 // Most apps need only:
 //   - createNorbixApi  -> build the RTK Query slice

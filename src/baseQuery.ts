@@ -1,5 +1,5 @@
+import type { Norbix } from '@norbix.ai/ts';
 import type { BaseQueryFn } from '@reduxjs/toolkit/query';
-import type { Norbix } from 'norbix';
 
 import { serializeNorbixError, type SerializedNorbixError } from './errors.js';
 
