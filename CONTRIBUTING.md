@@ -90,25 +90,29 @@ Opens PRs for npm + GitHub Actions updates weekly (Monday 06:00 Europe/Vilnius).
 2. `npx semantic-release`:
    - Reads conventional commits since the last tag.
    - Computes the next version (or skips if no release-worthy commits).
-   - Updates `package.json` + `CHANGELOG.md`.
    - Tags the release.
    - Publishes to npm with **provenance** (`NPM_CONFIG_PROVENANCE=true`).
-   - Creates a GitHub Release with the changelog.
-   - Pushes the version-bump commit back to the branch.
+   - Creates a GitHub Release with the release notes.
+
+`main` only accepts changes through pull requests, so the release does **not** commit back: `package.json` on `main` keeps `0.0.0-development`. The git tag is the source of truth for the version, and release notes live on [GitHub Releases](https://github.com/norbix-code/react-redux/releases).
 
 `next` and `beta` branches publish prereleases (`1.2.0-beta.3`, etc.) and never promote to `latest` on npm.
 
-### Required secrets
+### Authentication
+
+npm publishing uses **trusted publishing (OIDC)**: there is no `NPM_TOKEN`. npm requires 2FA for token-based publishes, which CI cannot do.
+
+Setup on npmjs.com: package `@norbix.ai/react-redux` → Settings → Trusted Publisher → GitHub Actions, organization `norbix-code`, repository `react-redux`, workflow `release.yml` (no environment). npm only allows this for a package that already exists, so the very first version was published manually by a maintainer.
 
 | Secret | Where to set it | What it's for |
 | --- | --- | --- |
-| `NPM_TOKEN` | GitHub repo settings → Secrets → Actions | npm Automation token, granular publish scope on `@norbix.ai/react-redux`. Must be **Automation** type so npm accepts it without 2FA prompts. |
-| `GITHUB_TOKEN` | provided by Actions | Used for git push, tag, and GH Release. No setup needed. |
+| `GITHUB_TOKEN` | provided by Actions | Used to push the release tag and create the GH Release. No setup needed. |
 
 ### How to debug a failed release
 
 - **`semantic-release` says "no release-worthy commits"** — your commits don't bump anything. Use `feat:` / `fix:` / `feat!:` for the bump you want. Squash merging? Make sure the squash subject also follows conventional commits.
-- **`npm publish` 401** — `NPM_TOKEN` expired or doesn't have publish scope on `@norbix.ai/react-redux`. Regenerate as Automation token.
+- **`npm publish` fails with E401 / EOTP / ENONPMTOKEN, or `OIDC token exchange ... 404`**: trusted publishing is not configured on npmjs.com, or no longer matches the repository / workflow file name. Fix the Trusted Publisher settings; do not add a token.
+- **Tag exists but npm or the GitHub Release is missing**: publishing failed after tagging. Run the Release workflow manually with `republish=true`. It publishes the latest tag from the tag's own tree and creates the missing GitHub Release.
 - **`audit` failure mid-release** — a CVE landed between the PR's CI run and the merge. Land a fix or wait for the patched version (Dependabot usually opens a PR within minutes).
 
 ## Repository layout

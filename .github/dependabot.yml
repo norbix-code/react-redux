@@ -18,6 +18,12 @@ updates:
     labels:
       - dependencies
       - npm
+    ignore:
+      # conventional-changelog-conventionalcommits 10 needs
+      # conventional-changelog-writer@9; @semantic-release/release-notes-generator
+      # 14.x ships writer 8, so v10 breaks release notes ("Missing helper").
+      - dependency-name: 'conventional-changelog-conventionalcommits'
+        versions: ['>= 10']
     groups:
       npm-minor-and-patch:
         update-types:
@@ -27,6 +33,7 @@ updates:
         patterns:
           - 'semantic-release'
           - '@semantic-release/*'
+          - 'conventional-changelog-conventionalcommits'
       react-stack:
         patterns:
           - 'react'
