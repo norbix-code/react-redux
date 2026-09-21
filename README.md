@@ -150,6 +150,7 @@ A *curated* set of hooks for the most common endpoints. Every hook is end-to-end
 | `useGetApiKeysQuery` | `api.apikeys.getApiKeys` | provides `ApiKey/LIST` |
 | `useRegenerateApiKeysMutation` | `api.apikeys.regenerateApiKeys` | invalidates `ApiKey/LIST` |
 | `useGetPublicFileQuery` | `api.files.getPublicFile` | provides `Files/PUBLIC:<publicId>` |
+| `useTestFilesIntegrationApiMutation` | `api.files.testFilesIntegration` | invalidates `Files` + `FilesIntegrations` |
 
 ### Hub surface — `norbix.hub.*`
 
@@ -212,6 +213,31 @@ on the page. `useGetPublicFileQuery` caches under its own
 `Files/PUBLIC:<publicId>` id, so two different links never share one entry;
 making a file private again invalidates `Files`, a different tag, so call
 `refetch()` if a stale entry would matter to you.
+
+## Testing a files integration
+
+Two hooks run the same live probe against a files integration — upload a
+small file, read it, list the folder, delete the file — and answer one item
+per step (`UploadFile`, `GetFile`, `GetAllFiles`, `DeleteFile`) with `result`
+`OK`, `FAILED` or `NOT_TESTED`:
+
+| Hook | Wraps | Route | Use it from |
+|---|---|---|---|
+| `useTestFilesIntegrationApiMutation` | `api.files.testFilesIntegration` | `POST /{version}/files/{filesIntegrationId}/test` | your app, with an API key or a user session (needs `files:create`) |
+| `useTestFilesIntegrationMutation` | `hub.files.testFilesIntegration` | `POST /{version}/files/integrations/test` | a dashboard, signed in to the Hub |
+
+```tsx
+const [testIntegration, { data, isLoading }] = useTestFilesIntegrationApiMutation();
+
+await testIntegration({ filesIntegrationId: 'nbin_1' });
+const failed = data?.items?.filter((i) => i.result !== 'OK');
+```
+
+The API one carries the `Api` suffix because both live in one endpoint map
+(like `useDeleteFileApiMutation`). It invalidates `Files` — the probe writes to
+the storage, and a failed delete step leaves its file behind — and
+`FilesIntegrations`, because the gateway records the last test result on the
+integration.
 
 ## Working with terms
 
