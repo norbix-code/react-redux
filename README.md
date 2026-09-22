@@ -808,6 +808,37 @@ If your app currently calls Norbix via `fetchBaseQuery({ baseUrl })` + a custom 
 4. **Remove** the custom error interceptor — `createNorbixBaseQuery` already maps `NorbixError` to `SerializedNorbixError` with `code`, `status`, `message`, `fieldErrors`. Consume those in your error UI instead.
 5. **Keep** the same tag taxonomy — the package exports the full set (`Account`, `Projects`, `Regions`, `MembershipUsers`, `DatabaseSchemas`, ... 59 in total), so existing `providesTags` keep working.
 
+## Errors
+
+A failed call lands in the Redux state as a plain `SerializedNorbixError`:
+
+```ts
+const { error } = useGetFileInfoQuery({ filesIntegrationId, path });
+if (error) {
+  // httpStatus / errorCode / errors are the names every Norbix SDK uses.
+  // status / code / fieldErrors are the same values, kept for older code.
+  console.log(error.httpStatus, error.errorCode, error.message);
+  error.errors.forEach((e) => console.log(e.errorCode, e.fieldName, e.message));
+}
+```
+
+The message and the error code are the gateway's own. `@norbix.ai/ts` reads
+them out of `responseStatus.errors[]`, where the gateway puts them, and this
+package copies them into the store unchanged — it does not parse bodies
+itself.
+
+### Breaking change — a refused call now lands as an error
+
+The gateway answers a business refusal (an unknown id, a rule that says no)
+with **HTTP 200** and `responseStatus.isSuccess = false`. Until now such an
+answer arrived as `{ data }` and your components rendered it as a success.
+With the fixed `@norbix.ai/ts` it arrives as `{ error }` with `httpStatus` 200
+and the gateway's message and error code.
+
+If a component checked `data.responseStatus.isSuccess` itself, read `error`
+instead. This needs `@norbix.ai/ts` **2.0.0 or newer** — the version that
+carries the fix.
+
 ## How it works under the hood
 
 `createNorbixApi(getClient)` returns an RTK Query API. Its `baseQuery` is a thin wrapper that calls a closure you pass at endpoint definition time:

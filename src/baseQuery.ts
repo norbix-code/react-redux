@@ -45,9 +45,12 @@ export function createNorbixBaseQuery(
       return {
         error: {
           status: 0,
+          httpStatus: 0,
           code: 'NORBIX_NO_CLIENT',
+          errorCode: 'NORBIX_NO_CLIENT',
           message: 'No Norbix client available. Did you forget <NorbixProvider>?',
           fieldErrors: [],
+          errors: [],
         },
       };
     }
