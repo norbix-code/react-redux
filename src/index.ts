@@ -17,7 +17,7 @@ export type { NorbixProviderProps } from './provider.js';
 export { createNorbixBaseQuery } from './baseQuery.js';
 export type { NorbixCall, GetNorbixClient } from './baseQuery.js';
 export { serializeNorbixError } from './errors.js';
-export type { SerializedNorbixError } from './errors.js';
+export type { SerializedNorbixError, SerializedNorbixErrorItem } from './errors.js';
 
 // Endpoint helpers for app-side `injectEndpoints` patterns.
 export { buildIntegrationsEndpoints } from './helpers/integrations.js';
