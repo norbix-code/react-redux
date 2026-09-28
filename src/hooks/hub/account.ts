@@ -1,4 +1,4 @@
-// AUTO-GENERATED — full coverage of `norbix.hub.account` (37 endpoints).
+// AUTO-GENERATED — full coverage of `norbix.hub.account` (36 endpoints).
 // Synced from the norbix core SDK surface. Re-run the hook sync to refresh.
 import type { Norbix } from '@norbix.ai/ts';
 
@@ -41,10 +41,9 @@ type CreateAccount = Norbix['hub']['account']['createAccount'];
 type GetAccountCollaborators = Norbix['hub']['account']['getAccountCollaborators'];
 type SendInviteToTeamMember = Norbix['hub']['account']['sendInviteToTeamMember'];
 type GetLicenses = Norbix['hub']['account']['getLicenses'];
-type AskAccountChat = Norbix['hub']['account']['askChat'];
 
 /**
- * `hub.account` — 37 endpoints, 1:1 with the core SDK.
+ * `hub.account` — 36 endpoints, 1:1 with the core SDK.
  */
 export const hubAccount = (b: Builder) => ({
   getAccountProfile: b.query<Result<GetAccountProfile>, Arg<GetAccountProfile>>({
@@ -225,10 +224,5 @@ export const hubAccount = (b: Builder) => ({
   getLicenses: b.query<Result<GetLicenses>, Arg<GetLicenses>>({
     query: (args) => (norbix) => norbix.hub.account.getLicenses(args),
     providesTags: ['Billing'],
-  }),
-
-  askAccountChat: b.mutation<Result<AskAccountChat>, Arg<AskAccountChat>>({
-    query: (args) => (norbix) => norbix.hub.account.askChat(args),
-    invalidatesTags: ['Account'],
   }),
 });
