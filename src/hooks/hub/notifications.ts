@@ -1,4 +1,4 @@
-// AUTO-GENERATED — full coverage of `norbix.hub.notifications` (123 endpoints).
+// AUTO-GENERATED — full coverage of `norbix.hub.notifications` (124 endpoints).
 // Synced from the norbix core SDK surface. Re-run the hook sync to refresh.
 import type { Norbix } from '@norbix.ai/ts';
 
@@ -116,6 +116,7 @@ type GetPushCampaignBatches = Norbix['hub']['notifications']['getPushCampaignBat
 type GetPushCampaignBatchNotification = Norbix['hub']['notifications']['getPushCampaignBatchNotification'];
 type GetPushCampaignBatchNotifications = Norbix['hub']['notifications']['getPushCampaignBatchNotifications'];
 type GetPushCampaignStatistics = Norbix['hub']['notifications']['getPushCampaignStatistics'];
+type PreviewPushNotification = Norbix['hub']['notifications']['previewPushNotification'];
 type GetPushCampaignMessage = Norbix['hub']['notifications']['getPushCampaignMessage'];
 type GetPushCampaignMessages = Norbix['hub']['notifications']['getPushCampaignMessages'];
 type CreateContact = Norbix['hub']['membership']['createContact'];
@@ -686,6 +687,11 @@ export const hubNotifications = (b: Builder) => ({
   getPushCampaignStatistics: b.query<Result<GetPushCampaignStatistics>, Arg<GetPushCampaignStatistics>>({
     query: (args) => (norbix) => norbix.hub.notifications.getPushCampaignStatistics(args),
     providesTags: ['PushCampaigns'],
+  }),
+
+  previewPushNotification: b.query<Result<PreviewPushNotification>, Arg<PreviewPushNotification>>({
+    query: (args) => (norbix) => norbix.hub.notifications.previewPushNotification(args),
+    providesTags: ['Push'],
   }),
 
   getPushCampaignMessage: b.query<Result<GetPushCampaignMessage>, Arg<GetPushCampaignMessage>>({
