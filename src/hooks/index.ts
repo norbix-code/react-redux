@@ -5,7 +5,6 @@ import type { SerializedNorbixError } from '../errors.js';
 
 import { apiApikeys } from './api/apikeys.js';
 import { apiAuth } from './api/auth.js';
-import { apiChat } from './api/chat.js';
 import { apiDatabase } from './api/database.js';
 import { apiFiles } from './api/files.js';
 import { apiMembership } from './api/membership.js';
@@ -135,7 +134,6 @@ export function buildEndpoints(builder: Builder) {
     ...apiMembership(builder),
     ...apiDatabase(builder),
     ...apiApikeys(builder),
-    ...apiChat(builder),
     ...apiFiles(builder),
     ...apiPublic(builder),
     // Hub surface (control plane)
