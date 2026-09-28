@@ -18,19 +18,28 @@ Node 18 or newer is required. The package itself ships zero runtime dependencies
 
 The hand-written surface is small:
 
-| Area | What lives here |
-|---|---|
-| `src/baseQuery.ts` | The custom RTK Query base query that wraps the Norbix SDK. |
-| `src/createNorbixApi.ts` | Factory that builds the RTK Query API slice with the canonical tag taxonomy. |
-| `src/provider.tsx` | `<NorbixProvider>` + `useNorbix` hook. |
-| `src/errors.ts` | `SerializedNorbixError` shape + serializer. |
-| `src/helpers/integrations.ts` | One-line `*Integrations` CRUD generator. |
-| `src/hooks/api/*` | Curated hooks for `norbix.api.*` modules. |
-| `src/hooks/hub/*` | Curated hooks for `norbix.hub.*` modules. |
-| `tests/*` | Vitest specs covering the above. |
-| `examples/basic/` | Self-contained Vite + React + RTK demo app. |
+| Area                          | What lives here                                                              |
+| ----------------------------- | ---------------------------------------------------------------------------- |
+| `src/baseQuery.ts`            | The custom RTK Query base query that wraps the Norbix SDK.                   |
+| `src/createNorbixApi.ts`      | Factory that builds the RTK Query API slice with the canonical tag taxonomy. |
+| `src/provider.tsx`            | `<NorbixProvider>` + `useNorbix` hook.                                       |
+| `src/errors.ts`               | `SerializedNorbixError` shape + serializer.                                  |
+| `src/helpers/integrations.ts` | One-line `*Integrations` CRUD generator.                                     |
+| `src/hooks/api/*`             | Curated hooks for `norbix.api.*` modules.                                    |
+| `src/hooks/hub/*`             | Curated hooks for `norbix.hub.*` modules.                                    |
+| `tests/*`                     | Vitest specs covering the above.                                             |
+| `examples/basic/`             | Self-contained Vite + React + RTK demo app.                                  |
 
 Need a hook the package doesn't ship? Either add it under `src/hooks/{api,hub}/<module>.ts` and send a PR, or extend in your own app via `injectEndpoints` (see the README's "Add your own endpoints" section).
+
+## Versioning
+
+The major version is frozen at **v1** until the public launch.
+
+- A breaking change is released as a **minor** (for example v1.2.0 → v1.3.0), never as a new major.
+- Write it as `feat(<scope>): <what>` and add a line `Breaking: <what changed and what callers must do>` in plain words, in the pull-request body and in the commit message.
+- Never mark it the conventional-commits way: no `!` in the title (`feat!:`), no BREAKING CHANGE footer. The `PR title` check fails a pull request that does.
+- As a safety net, the release config (`.releaserc.json` → `releaseRules`) maps breaking commits to a minor, so one that slips through still does not bump the major.
 
 ## Conventional commits
 
@@ -38,15 +47,15 @@ Every commit message must follow [Conventional Commits](https://www.conventional
 
 The commit type maps to the version bump:
 
-| Type | Version bump | Example |
-| --- | --- | --- |
-| `feat:` | minor | `feat(hooks): add useGetEmailIntegrationsQuery` |
-| `fix:` | patch | `fix(baseQuery): preserve fieldErrors on 422` |
-| `perf:` | patch | `perf(integrations): skip unused method lookup` |
-| `refactor:` | patch | `refactor(provider): drop redundant useMemo` |
-| `docs(readme):` | patch | `docs(readme): clarify provider order with Redux` |
-| `chore:` `test:` `ci:` `style:` | none | maintenance, no release |
-| any with `!` or `BREAKING CHANGE:` footer | major | `feat!: drop React 17 support` |
+| Type                                                      | Version bump | Example                                           |
+| --------------------------------------------------------- | ------------ | ------------------------------------------------- |
+| `feat:`                                                   | minor        | `feat(hooks): add useGetEmailIntegrationsQuery`   |
+| `fix:`                                                    | patch        | `fix(baseQuery): preserve fieldErrors on 422`     |
+| `perf:`                                                   | patch        | `perf(integrations): skip unused method lookup`   |
+| `refactor:`                                               | patch        | `refactor(provider): drop redundant useMemo`      |
+| `docs(readme):`                                           | patch        | `docs(readme): clarify provider order with Redux` |
+| `chore:` `test:` `ci:` `style:`                           | none         | maintenance, no release                           |
+| breaking: `feat(...)` + `Breaking:` note (see Versioning) | minor        | `feat(react): drop React 17 support`              |
 
 You can preview what a PR would release. PRs to `main` get a sticky comment from the `release-preview` workflow showing the computed next version before you merge.
 
@@ -104,13 +113,13 @@ npm publishing uses **trusted publishing (OIDC)**: there is no `NPM_TOKEN`. npm 
 
 Setup on npmjs.com: package `@norbix.ai/react-redux` → Settings → Trusted Publisher → GitHub Actions, organization `norbix-code`, repository `react-redux`, workflow `release.yml` (no environment). npm only allows this for a package that already exists, so the very first version was published manually by a maintainer.
 
-| Secret | Where to set it | What it's for |
-| --- | --- | --- |
+| Secret         | Where to set it     | What it's for                                                            |
+| -------------- | ------------------- | ------------------------------------------------------------------------ |
 | `GITHUB_TOKEN` | provided by Actions | Used to push the release tag and create the GH Release. No setup needed. |
 
 ### How to debug a failed release
 
-- **`semantic-release` says "no release-worthy commits"** — your commits don't bump anything. Use `feat:` / `fix:` / `feat!:` for the bump you want. Squash merging? Make sure the squash subject also follows conventional commits.
+- **`semantic-release` says "no release-worthy commits"** — your commits don't bump anything. Use `feat:` / `fix:` for the bump you want (a breaking change is a `feat:` too — see Versioning). Squash merging? Make sure the squash subject also follows conventional commits.
 - **`npm publish` fails with E401 / EOTP / ENONPMTOKEN, or `OIDC token exchange ... 404`**: trusted publishing is not configured on npmjs.com, or no longer matches the repository / workflow file name. Fix the Trusted Publisher settings; do not add a token.
 - **Tag exists but npm or the GitHub Release is missing**: publishing failed after tagging. Run the Release workflow manually with `republish=true`. It publishes the latest tag from the tag's own tree and creates the missing GitHub Release.
 - **`audit` failure mid-release** — a CVE landed between the PR's CI run and the merge. Land a fix or wait for the patched version (Dependabot usually opens a PR within minutes).
