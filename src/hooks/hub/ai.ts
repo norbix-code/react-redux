@@ -1,4 +1,4 @@
-// AUTO-GENERATED — full coverage of `norbix.hub.ai` (14 endpoints).
+// AUTO-GENERATED — full coverage of `norbix.hub.ai` (20 endpoints).
 // Synced from the norbix core SDK surface. Re-run the hook sync to refresh.
 import type { Norbix } from '@norbix.ai/ts';
 
@@ -19,9 +19,16 @@ type GetMcpIntegration = Norbix['hub']['ai']['getMcpIntegration'];
 type GetMcpIntegrations = Norbix['hub']['ai']['getMcpIntegrations'];
 type SaveMcpIntegration = Norbix['hub']['ai']['saveMcpIntegration'];
 type TestMcpIntegration = Norbix['hub']['ai']['testMcpIntegration'];
+type GetEmbeddingIntegrations = Norbix['hub']['ai']['getEmbeddingIntegrations'];
+type SaveEmbeddingIntegration = Norbix['hub']['ai']['saveEmbeddingIntegration'];
+type GetEmbeddingIntegration = Norbix['hub']['ai']['getEmbeddingIntegration'];
+type DeleteEmbeddingIntegration = Norbix['hub']['ai']['deleteEmbeddingIntegration'];
+type TestEmbeddingIntegration = Norbix['hub']['ai']['testEmbeddingIntegration'];
+type SetLlmIntegrationAsDefault = Norbix['hub']['ai']['setLlmIntegrationAsDefault'];
 
 /**
- * `hub.ai` — 14 endpoints, 1:1 with the core SDK.
+ * `hub.ai` — 20 endpoints, 1:1 with the core SDK (LLM, MCP and embedding
+ * integrations; `setLlmIntegrationAsDefault`).
  */
 export const hubAi = (b: Builder) => ({
   deleteLlmIntegration: b.mutation<Result<DeleteLlmIntegration>, Arg<DeleteLlmIntegration>>({
@@ -91,6 +98,51 @@ export const hubAi = (b: Builder) => ({
 
   testMcpIntegration: b.mutation<Result<TestMcpIntegration>, Arg<TestMcpIntegration>>({
     query: (args) => (norbix) => norbix.hub.ai.testMcpIntegration(args),
+    invalidatesTags: ['Ai'],
+  }),
+
+  getEmbeddingIntegrations: b.query<
+    Result<GetEmbeddingIntegrations>,
+    Arg<GetEmbeddingIntegrations>
+  >({
+    query: (args) => (norbix) => norbix.hub.ai.getEmbeddingIntegrations(args),
+    providesTags: ['Ai'],
+  }),
+
+  saveEmbeddingIntegration: b.mutation<
+    Result<SaveEmbeddingIntegration>,
+    Arg<SaveEmbeddingIntegration>
+  >({
+    query: (args) => (norbix) => norbix.hub.ai.saveEmbeddingIntegration(args),
+    invalidatesTags: ['Ai'],
+  }),
+
+  getEmbeddingIntegration: b.query<Result<GetEmbeddingIntegration>, Arg<GetEmbeddingIntegration>>({
+    query: (args) => (norbix) => norbix.hub.ai.getEmbeddingIntegration(args),
+    providesTags: ['Ai'],
+  }),
+
+  deleteEmbeddingIntegration: b.mutation<
+    Result<DeleteEmbeddingIntegration>,
+    Arg<DeleteEmbeddingIntegration>
+  >({
+    query: (args) => (norbix) => norbix.hub.ai.deleteEmbeddingIntegration(args),
+    invalidatesTags: ['Ai'],
+  }),
+
+  testEmbeddingIntegration: b.mutation<
+    Result<TestEmbeddingIntegration>,
+    Arg<TestEmbeddingIntegration>
+  >({
+    query: (args) => (norbix) => norbix.hub.ai.testEmbeddingIntegration(args),
+    invalidatesTags: ['Ai'],
+  }),
+
+  setLlmIntegrationAsDefault: b.mutation<
+    Result<SetLlmIntegrationAsDefault>,
+    Arg<SetLlmIntegrationAsDefault>
+  >({
+    query: (args) => (norbix) => norbix.hub.ai.setLlmIntegrationAsDefault(args),
     invalidatesTags: ['Ai'],
   }),
 });

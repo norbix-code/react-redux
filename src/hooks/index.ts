@@ -3,6 +3,7 @@ import type { BaseQueryFn, EndpointBuilder } from '@reduxjs/toolkit/query';
 import type { NorbixCall } from '../baseQuery.js';
 import type { SerializedNorbixError } from '../errors.js';
 
+import { apiAi } from './api/ai.js';
 import { apiApikeys } from './api/apikeys.js';
 import { apiAuth } from './api/auth.js';
 import { apiDatabase } from './api/database.js';
@@ -99,6 +100,7 @@ export type AllTags =
   | 'PaymentCustomers'
   // ---- AI ----
   | 'Ai'
+  | 'AiChat'
   // ---- Webhooks ----
   | 'Webhooks'
   // ---- Contacts ----
@@ -130,6 +132,7 @@ export type Builder = EndpointBuilder<
 export function buildEndpoints(builder: Builder) {
   return {
     // API surface (runtime, project-scoped)
+    ...apiAi(builder),
     ...apiAuth(builder),
     ...apiMembership(builder),
     ...apiDatabase(builder),

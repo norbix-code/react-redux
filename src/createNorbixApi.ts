@@ -103,6 +103,7 @@ export function createNorbixApi(
       'PaymentCustomers',
       // AI
       'Ai',
+      'AiChat',
       // Webhooks
       'Webhooks',
       // Contacts

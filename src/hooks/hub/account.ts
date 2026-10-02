@@ -41,6 +41,13 @@ type CreateAccount = Norbix['hub']['account']['createAccount'];
 type GetAccountCollaborators = Norbix['hub']['account']['getAccountCollaborators'];
 type SendInviteToTeamMember = Norbix['hub']['account']['sendInviteToTeamMember'];
 type GetLicenses = Norbix['hub']['account']['getLicenses'];
+type GetProjectAiSettings = Norbix['hub']['account']['getProjectAiSettings'];
+type UpdateProjectAiSettings = Norbix['hub']['account']['updateProjectAiSettings'];
+type CreateProjectAiAssistant = Norbix['hub']['account']['createProjectAiAssistant'];
+type UpdateProjectAiAssistant = Norbix['hub']['account']['updateProjectAiAssistant'];
+type DeleteProjectAiAssistant = Norbix['hub']['account']['deleteProjectAiAssistant'];
+type GetProjectAiUsage = Norbix['hub']['account']['getProjectAiUsage'];
+type SetAdminPortalEnabled = Norbix['hub']['account']['setAdminPortalEnabled'];
 
 /**
  * `hub.account` — 36 endpoints, 1:1 with the core SDK.
@@ -56,7 +63,10 @@ export const hubAccount = (b: Builder) => ({
     invalidatesTags: ['Account'],
   }),
 
-  resendAccountVerificationToken: b.mutation<Result<ResendAccountVerificationToken>, Arg<ResendAccountVerificationToken>>({
+  resendAccountVerificationToken: b.mutation<
+    Result<ResendAccountVerificationToken>,
+    Arg<ResendAccountVerificationToken>
+  >({
     query: (args) => (norbix) => norbix.hub.account.resendAccountVerificationToken(args),
     invalidatesTags: ['Account'],
   }),
@@ -66,17 +76,26 @@ export const hubAccount = (b: Builder) => ({
     providesTags: ['Account'],
   }),
 
-  createStripeCheckoutSession: b.mutation<Result<CreateStripeCheckoutSession>, Arg<CreateStripeCheckoutSession>>({
+  createStripeCheckoutSession: b.mutation<
+    Result<CreateStripeCheckoutSession>,
+    Arg<CreateStripeCheckoutSession>
+  >({
     query: (args) => (norbix) => norbix.hub.account.createStripeCheckoutSession(args),
     invalidatesTags: ['Billing'],
   }),
 
-  getStripeBillingPortalUrl: b.query<Result<GetStripeBillingPortalUrl>, Arg<GetStripeBillingPortalUrl>>({
+  getStripeBillingPortalUrl: b.query<
+    Result<GetStripeBillingPortalUrl>,
+    Arg<GetStripeBillingPortalUrl>
+  >({
     query: (args) => (norbix) => norbix.hub.account.getStripeBillingPortalUrl(args),
     providesTags: ['Billing'],
   }),
 
-  createTeamMemberFromInvitation: b.mutation<Result<CreateTeamMemberFromInvitation>, Arg<CreateTeamMemberFromInvitation>>({
+  createTeamMemberFromInvitation: b.mutation<
+    Result<CreateTeamMemberFromInvitation>,
+    Arg<CreateTeamMemberFromInvitation>
+  >({
     query: (args) => (norbix) => norbix.hub.account.createTeamMemberFromInvitation(args),
     invalidatesTags: ['Account'],
   }),
@@ -86,7 +105,10 @@ export const hubAccount = (b: Builder) => ({
     invalidatesTags: ['Account'],
   }),
 
-  deleteNotificationsGroup: b.mutation<Result<DeleteNotificationsGroup>, Arg<DeleteNotificationsGroup>>({
+  deleteNotificationsGroup: b.mutation<
+    Result<DeleteNotificationsGroup>,
+    Arg<DeleteNotificationsGroup>
+  >({
     query: (args) => (norbix) => norbix.hub.account.deleteNotificationsGroup(args),
     invalidatesTags: ['Account'],
   }),
@@ -96,7 +118,10 @@ export const hubAccount = (b: Builder) => ({
     invalidatesTags: ['Account'],
   }),
 
-  removeTagFromNotificationsGroup: b.mutation<Result<RemoveTagFromNotificationsGroup>, Arg<RemoveTagFromNotificationsGroup>>({
+  removeTagFromNotificationsGroup: b.mutation<
+    Result<RemoveTagFromNotificationsGroup>,
+    Arg<RemoveTagFromNotificationsGroup>
+  >({
     query: (args) => (norbix) => norbix.hub.account.removeTagFromNotificationsGroup(args),
     invalidatesTags: ['Account'],
   }),
@@ -141,7 +166,10 @@ export const hubAccount = (b: Builder) => ({
     providesTags: ['Projects'],
   }),
 
-  updateProjectAccentColor: b.mutation<Result<UpdateProjectAccentColor>, Arg<UpdateProjectAccentColor>>({
+  updateProjectAccentColor: b.mutation<
+    Result<UpdateProjectAccentColor>,
+    Arg<UpdateProjectAccentColor>
+  >({
     query: (args) => (norbix) => norbix.hub.account.updateProjectAccentColor(args),
     invalidatesTags: ['Projects'],
   }),
@@ -161,17 +189,26 @@ export const hubAccount = (b: Builder) => ({
     invalidatesTags: ['Projects'],
   }),
 
-  updateProjectAllowedOrigins: b.mutation<Result<UpdateProjectAllowedOrigins>, Arg<UpdateProjectAllowedOrigins>>({
+  updateProjectAllowedOrigins: b.mutation<
+    Result<UpdateProjectAllowedOrigins>,
+    Arg<UpdateProjectAllowedOrigins>
+  >({
     query: (args) => (norbix) => norbix.hub.account.updateProjectAllowedOrigins(args),
     invalidatesTags: ['Projects'],
   }),
 
-  updateProjectDefaultLanguage: b.mutation<Result<UpdateProjectDefaultLanguage>, Arg<UpdateProjectDefaultLanguage>>({
+  updateProjectDefaultLanguage: b.mutation<
+    Result<UpdateProjectDefaultLanguage>,
+    Arg<UpdateProjectDefaultLanguage>
+  >({
     query: (args) => (norbix) => norbix.hub.account.updateProjectDefaultLanguage(args),
     invalidatesTags: ['Projects'],
   }),
 
-  updateProjectDescription: b.mutation<Result<UpdateProjectDescription>, Arg<UpdateProjectDescription>>({
+  updateProjectDescription: b.mutation<
+    Result<UpdateProjectDescription>,
+    Arg<UpdateProjectDescription>
+  >({
     query: (args) => (norbix) => norbix.hub.account.updateProjectDescription(args),
     invalidatesTags: ['Projects'],
   }),
@@ -224,5 +261,52 @@ export const hubAccount = (b: Builder) => ({
   getLicenses: b.query<Result<GetLicenses>, Arg<GetLicenses>>({
     query: (args) => (norbix) => norbix.hub.account.getLicenses(args),
     providesTags: ['Billing'],
+  }),
+
+  getProjectAiSettings: b.query<Result<GetProjectAiSettings>, Arg<GetProjectAiSettings>>({
+    query: (args) => (norbix) => norbix.hub.account.getProjectAiSettings(args),
+    providesTags: ['Projects'],
+  }),
+
+  updateProjectAiSettings: b.mutation<
+    Result<UpdateProjectAiSettings>,
+    Arg<UpdateProjectAiSettings>
+  >({
+    query: (args) => (norbix) => norbix.hub.account.updateProjectAiSettings(args),
+    invalidatesTags: ['Projects'],
+  }),
+
+  createProjectAiAssistant: b.mutation<
+    Result<CreateProjectAiAssistant>,
+    Arg<CreateProjectAiAssistant>
+  >({
+    query: (args) => (norbix) => norbix.hub.account.createProjectAiAssistant(args),
+    invalidatesTags: ['Projects'],
+  }),
+
+  updateProjectAiAssistant: b.mutation<
+    Result<UpdateProjectAiAssistant>,
+    Arg<UpdateProjectAiAssistant>
+  >({
+    query: (args) => (norbix) => norbix.hub.account.updateProjectAiAssistant(args),
+    invalidatesTags: ['Projects'],
+  }),
+
+  deleteProjectAiAssistant: b.mutation<
+    Result<DeleteProjectAiAssistant>,
+    Arg<DeleteProjectAiAssistant>
+  >({
+    query: (args) => (norbix) => norbix.hub.account.deleteProjectAiAssistant(args),
+    invalidatesTags: ['Projects'],
+  }),
+
+  getProjectAiUsage: b.query<Result<GetProjectAiUsage>, Arg<GetProjectAiUsage>>({
+    query: (args) => (norbix) => norbix.hub.account.getProjectAiUsage(args),
+    providesTags: ['Projects'],
+  }),
+
+  setAdminPortalEnabled: b.mutation<Result<SetAdminPortalEnabled>, Arg<SetAdminPortalEnabled>>({
+    query: (args) => (norbix) => norbix.hub.account.setAdminPortalEnabled(args),
+    invalidatesTags: ['Projects'],
   }),
 });

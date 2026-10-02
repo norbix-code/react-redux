@@ -5,12 +5,16 @@ import type { Norbix } from '@norbix.ai/ts';
 import type { Builder } from '../index.js';
 import type { Arg, Result } from '../types.js';
 
-type GetUserNotificationPreferences = Norbix['hub']['notifications']['getUserNotificationPreferences'];
-type UpdateUserNotificationsPreferences = Norbix['hub']['notifications']['updateUserNotificationsPreferences'];
+type GetUserNotificationPreferences =
+  Norbix['hub']['notifications']['getUserNotificationPreferences'];
+type UpdateUserNotificationsPreferences =
+  Norbix['hub']['notifications']['updateUserNotificationsPreferences'];
 type DisableEmail = Norbix['hub']['notifications']['disableEmail'];
 type EnableEmail = Norbix['hub']['notifications']['enableEmail'];
-type SaveEmailValidationIntegration = Norbix['hub']['notifications']['saveEmailValidationIntegration'];
-type TestEmailValidationIntegration = Norbix['hub']['notifications']['testEmailValidationIntegration'];
+type SaveEmailValidationIntegration =
+  Norbix['hub']['notifications']['saveEmailValidationIntegration'];
+type TestEmailValidationIntegration =
+  Norbix['hub']['notifications']['testEmailValidationIntegration'];
 type AttachFileToTemplate = Norbix['hub']['notifications']['attachFileToTemplate'];
 type CreateEmailTemplate = Norbix['hub']['notifications']['createEmailTemplate'];
 type DeleteEmailTemplate = Norbix['hub']['notifications']['deleteEmailTemplate'];
@@ -19,21 +23,24 @@ type GetEmailTemplates = Norbix['hub']['notifications']['getEmailTemplates'];
 type GetMjml = Norbix['hub']['notifications']['getMjml'];
 type GetSystemEmailTemplate = Norbix['hub']['notifications']['getSystemEmailTemplate'];
 type GetSystemEmailTemplates = Norbix['hub']['notifications']['getSystemEmailTemplates'];
-type GetEmailTemplateAvailableTokens = Norbix['hub']['notifications']['getEmailTemplateAvailableTokens'];
+type GetEmailTemplateAvailableTokens =
+  Norbix['hub']['notifications']['getEmailTemplateAvailableTokens'];
 type UpdateEmailTemplate = Norbix['hub']['notifications']['updateEmailTemplate'];
 type DeleteEmailSignature = Norbix['hub']['notifications']['deleteEmailSignature'];
 type GetEmailSignature = Norbix['hub']['notifications']['getEmailSignature'];
 type GetEmailSignatures = Norbix['hub']['notifications']['getEmailSignatures'];
 type SaveEmailSignature = Norbix['hub']['notifications']['saveEmailSignature'];
 type GetEmailSettings = Norbix['hub']['notifications']['getEmailSettings'];
-type ConfirmEmailIntegrationHumanDelivery = Norbix['hub']['notifications']['confirmEmailIntegrationHumanDelivery'];
+type ConfirmEmailIntegrationHumanDelivery =
+  Norbix['hub']['notifications']['confirmEmailIntegrationHumanDelivery'];
 type DeleteEmailIntegration = Norbix['hub']['notifications']['deleteEmailIntegration'];
 type DisableEmailIntegration = Norbix['hub']['notifications']['disableEmailIntegration'];
 type EnableEmailIntegration = Norbix['hub']['notifications']['enableEmailIntegration'];
 type GetEmailIntegration = Norbix['hub']['notifications']['getEmailIntegration'];
 type GetEmailIntegrations = Norbix['hub']['notifications']['getEmailIntegrations'];
 type SaveEmailIntegration = Norbix['hub']['notifications']['saveEmailIntegration'];
-type SetEmailsIntegrationAsDefault = Norbix['hub']['notifications']['setEmailsIntegrationAsDefault'];
+type SetEmailsIntegrationAsDefault =
+  Norbix['hub']['notifications']['setEmailsIntegrationAsDefault'];
 type TestEmailIntegration = Norbix['hub']['notifications']['testEmailIntegration'];
 type ArchiveEmailTemplate = Norbix['hub']['notifications']['archiveEmailTemplate'];
 type CloneEmailTemplate = Norbix['hub']['notifications']['cloneEmailTemplate'];
@@ -47,8 +54,10 @@ type DeleteEmailCampaign = Norbix['hub']['notifications']['deleteEmailCampaign']
 type GetEmailCampaign = Norbix['hub']['notifications']['getEmailCampaign'];
 type GetEmailCampaigns = Norbix['hub']['notifications']['getEmailCampaigns'];
 type GetEmailCampaignBatches = Norbix['hub']['notifications']['getEmailCampaignBatches'];
-type GetEmailCampaignBatchNotification = Norbix['hub']['notifications']['getEmailCampaignBatchNotification'];
-type GetEmailCampaignBatchNotifications = Norbix['hub']['notifications']['getEmailCampaignBatchNotifications'];
+type GetEmailCampaignBatchNotification =
+  Norbix['hub']['notifications']['getEmailCampaignBatchNotification'];
+type GetEmailCampaignBatchNotifications =
+  Norbix['hub']['notifications']['getEmailCampaignBatchNotifications'];
 type GetEmailCampaignStatistics = Norbix['hub']['notifications']['getEmailCampaignStatistics'];
 type PreviewEmailNotification = Norbix['hub']['notifications']['previewEmailNotification'];
 type GetEmailCampaignMessage = Norbix['hub']['notifications']['getEmailCampaignMessage'];
@@ -65,7 +74,8 @@ type GetSmsMessageContentTokens = Norbix['hub']['notifications']['getSmsMessageC
 type UnArchiveSmsTemplate = Norbix['hub']['notifications']['unArchiveSmsTemplate'];
 type UpdateSmsTemplate = Norbix['hub']['notifications']['updateSmsTemplate'];
 type GetSmsSettings = Norbix['hub']['notifications']['getSmsSettings'];
-type ConfirmSmsIntegrationHumanDelivery = Norbix['hub']['notifications']['confirmSmsIntegrationHumanDelivery'];
+type ConfirmSmsIntegrationHumanDelivery =
+  Norbix['hub']['notifications']['confirmSmsIntegrationHumanDelivery'];
 type DeleteSmsIntegration = Norbix['hub']['notifications']['deleteSmsIntegration'];
 type DisableSmsIntegration = Norbix['hub']['notifications']['disableSmsIntegration'];
 type EnableSmsIntegration = Norbix['hub']['notifications']['enableSmsIntegration'];
@@ -79,8 +89,10 @@ type DeleteSmsCampaign = Norbix['hub']['notifications']['deleteSmsCampaign'];
 type GetSmsCampaign = Norbix['hub']['notifications']['getSmsCampaign'];
 type GetSmsCampaigns = Norbix['hub']['notifications']['getSmsCampaigns'];
 type GetSmsCampaignBatches = Norbix['hub']['notifications']['getSmsCampaignBatches'];
-type GetSmsCampaignBatchNotification = Norbix['hub']['notifications']['getSmsCampaignBatchNotification'];
-type GetSmsCampaignBatchNotifications = Norbix['hub']['notifications']['getSmsCampaignBatchNotifications'];
+type GetSmsCampaignBatchNotification =
+  Norbix['hub']['notifications']['getSmsCampaignBatchNotification'];
+type GetSmsCampaignBatchNotifications =
+  Norbix['hub']['notifications']['getSmsCampaignBatchNotifications'];
 type GetSmsCampaignStatistics = Norbix['hub']['notifications']['getSmsCampaignStatistics'];
 type PreviewSmsNotification = Norbix['hub']['notifications']['previewSmsNotification'];
 type GetSmsCampaignMessage = Norbix['hub']['notifications']['getSmsCampaignMessage'];
@@ -97,7 +109,8 @@ type GetPushMessageContentTokens = Norbix['hub']['notifications']['getPushMessag
 type UnArchivePushTemplate = Norbix['hub']['notifications']['unArchivePushTemplate'];
 type UpdatePushTemplate = Norbix['hub']['notifications']['updatePushTemplate'];
 type GetPushSettings = Norbix['hub']['notifications']['getPushSettings'];
-type ConfirmPushIntegrationHumanDelivery = Norbix['hub']['notifications']['confirmPushIntegrationHumanDelivery'];
+type ConfirmPushIntegrationHumanDelivery =
+  Norbix['hub']['notifications']['confirmPushIntegrationHumanDelivery'];
 type DeletePushIntegration = Norbix['hub']['notifications']['deletePushIntegration'];
 type DisablePushIntegration = Norbix['hub']['notifications']['disablePushIntegration'];
 type EnablePushIntegration = Norbix['hub']['notifications']['enablePushIntegration'];
@@ -106,15 +119,16 @@ type GetPushIntegrations = Norbix['hub']['notifications']['getPushIntegrations']
 type SavePushIntegration = Norbix['hub']['notifications']['savePushIntegration'];
 type SetPushIntegrationAsDefault = Norbix['hub']['notifications']['setPushIntegrationAsDefault'];
 type TestPushIntegration = Norbix['hub']['notifications']['testPushIntegration'];
-type RegisterCodeMashAppPushIntegration = Norbix['hub']['notifications']['registerCodeMashAppPushIntegration'];
 type RegisterDevice = Norbix['hub']['notifications']['registerDevice'];
 type CreatePushCampaign = Norbix['hub']['notifications']['createPushCampaign'];
 type DeletePushCampaign = Norbix['hub']['notifications']['deletePushCampaign'];
 type GetPushCampaign = Norbix['hub']['notifications']['getPushCampaign'];
 type GetPushCampaigns = Norbix['hub']['notifications']['getPushCampaigns'];
 type GetPushCampaignBatches = Norbix['hub']['notifications']['getPushCampaignBatches'];
-type GetPushCampaignBatchNotification = Norbix['hub']['notifications']['getPushCampaignBatchNotification'];
-type GetPushCampaignBatchNotifications = Norbix['hub']['notifications']['getPushCampaignBatchNotifications'];
+type GetPushCampaignBatchNotification =
+  Norbix['hub']['notifications']['getPushCampaignBatchNotification'];
+type GetPushCampaignBatchNotifications =
+  Norbix['hub']['notifications']['getPushCampaignBatchNotifications'];
 type GetPushCampaignStatistics = Norbix['hub']['notifications']['getPushCampaignStatistics'];
 type PreviewPushNotification = Norbix['hub']['notifications']['previewPushNotification'];
 type GetPushCampaignMessage = Norbix['hub']['notifications']['getPushCampaignMessage'];
@@ -134,12 +148,18 @@ type RemoveContactIdentity = Norbix['hub']['membership']['removeContactIdentity'
  * `hub.notifications` — 123 endpoints, 1:1 with the core SDK.
  */
 export const hubNotifications = (b: Builder) => ({
-  getUserNotificationPreferences: b.query<Result<GetUserNotificationPreferences>, Arg<GetUserNotificationPreferences>>({
+  getUserNotificationPreferences: b.query<
+    Result<GetUserNotificationPreferences>,
+    Arg<GetUserNotificationPreferences>
+  >({
     query: (args) => (norbix) => norbix.hub.notifications.getUserNotificationPreferences(args),
     providesTags: ['Account'],
   }),
 
-  updateUserNotificationsPreferences: b.mutation<Result<UpdateUserNotificationsPreferences>, Arg<UpdateUserNotificationsPreferences>>({
+  updateUserNotificationsPreferences: b.mutation<
+    Result<UpdateUserNotificationsPreferences>,
+    Arg<UpdateUserNotificationsPreferences>
+  >({
     query: (args) => (norbix) => norbix.hub.notifications.updateUserNotificationsPreferences(args),
     invalidatesTags: ['Emails'],
   }),
@@ -154,12 +174,18 @@ export const hubNotifications = (b: Builder) => ({
     invalidatesTags: ['Emails'],
   }),
 
-  saveEmailValidationIntegration: b.mutation<Result<SaveEmailValidationIntegration>, Arg<SaveEmailValidationIntegration>>({
+  saveEmailValidationIntegration: b.mutation<
+    Result<SaveEmailValidationIntegration>,
+    Arg<SaveEmailValidationIntegration>
+  >({
     query: (args) => (norbix) => norbix.hub.notifications.saveEmailValidationIntegration(args),
     invalidatesTags: ['EmailIntegrations'],
   }),
 
-  testEmailValidationIntegration: b.mutation<Result<TestEmailValidationIntegration>, Arg<TestEmailValidationIntegration>>({
+  testEmailValidationIntegration: b.mutation<
+    Result<TestEmailValidationIntegration>,
+    Arg<TestEmailValidationIntegration>
+  >({
     query: (args) => (norbix) => norbix.hub.notifications.testEmailValidationIntegration(args),
     invalidatesTags: ['EmailIntegrations'],
   }),
@@ -204,7 +230,10 @@ export const hubNotifications = (b: Builder) => ({
     providesTags: ['EmailTemplates'],
   }),
 
-  getEmailTemplateAvailableTokens: b.query<Result<GetEmailTemplateAvailableTokens>, Arg<GetEmailTemplateAvailableTokens>>({
+  getEmailTemplateAvailableTokens: b.query<
+    Result<GetEmailTemplateAvailableTokens>,
+    Arg<GetEmailTemplateAvailableTokens>
+  >({
     query: (args) => (norbix) => norbix.hub.notifications.getEmailTemplateAvailableTokens(args),
     providesTags: ['EmailTemplates'],
   }),
@@ -239,8 +268,12 @@ export const hubNotifications = (b: Builder) => ({
     providesTags: ['EmailSettings'],
   }),
 
-  confirmEmailIntegrationHumanDelivery: b.mutation<Result<ConfirmEmailIntegrationHumanDelivery>, Arg<ConfirmEmailIntegrationHumanDelivery>>({
-    query: (args) => (norbix) => norbix.hub.notifications.confirmEmailIntegrationHumanDelivery(args),
+  confirmEmailIntegrationHumanDelivery: b.mutation<
+    Result<ConfirmEmailIntegrationHumanDelivery>,
+    Arg<ConfirmEmailIntegrationHumanDelivery>
+  >({
+    query: (args) => (norbix) =>
+      norbix.hub.notifications.confirmEmailIntegrationHumanDelivery(args),
     invalidatesTags: ['EmailIntegrations'],
   }),
 
@@ -249,7 +282,10 @@ export const hubNotifications = (b: Builder) => ({
     invalidatesTags: ['EmailIntegrations'],
   }),
 
-  disableEmailIntegration: b.mutation<Result<DisableEmailIntegration>, Arg<DisableEmailIntegration>>({
+  disableEmailIntegration: b.mutation<
+    Result<DisableEmailIntegration>,
+    Arg<DisableEmailIntegration>
+  >({
     query: (args) => (norbix) => norbix.hub.notifications.disableEmailIntegration(args),
     invalidatesTags: ['EmailIntegrations'],
   }),
@@ -274,7 +310,10 @@ export const hubNotifications = (b: Builder) => ({
     invalidatesTags: ['EmailIntegrations'],
   }),
 
-  setEmailsIntegrationAsDefault: b.mutation<Result<SetEmailsIntegrationAsDefault>, Arg<SetEmailsIntegrationAsDefault>>({
+  setEmailsIntegrationAsDefault: b.mutation<
+    Result<SetEmailsIntegrationAsDefault>,
+    Arg<SetEmailsIntegrationAsDefault>
+  >({
     query: (args) => (norbix) => norbix.hub.notifications.setEmailsIntegrationAsDefault(args),
     invalidatesTags: ['Emails'],
   }),
@@ -344,22 +383,34 @@ export const hubNotifications = (b: Builder) => ({
     providesTags: ['EmailCampaigns'],
   }),
 
-  getEmailCampaignBatchNotification: b.query<Result<GetEmailCampaignBatchNotification>, Arg<GetEmailCampaignBatchNotification>>({
+  getEmailCampaignBatchNotification: b.query<
+    Result<GetEmailCampaignBatchNotification>,
+    Arg<GetEmailCampaignBatchNotification>
+  >({
     query: (args) => (norbix) => norbix.hub.notifications.getEmailCampaignBatchNotification(args),
     providesTags: ['EmailCampaigns'],
   }),
 
-  getEmailCampaignBatchNotifications: b.query<Result<GetEmailCampaignBatchNotifications>, Arg<GetEmailCampaignBatchNotifications>>({
+  getEmailCampaignBatchNotifications: b.query<
+    Result<GetEmailCampaignBatchNotifications>,
+    Arg<GetEmailCampaignBatchNotifications>
+  >({
     query: (args) => (norbix) => norbix.hub.notifications.getEmailCampaignBatchNotifications(args),
     providesTags: ['EmailCampaigns'],
   }),
 
-  getEmailCampaignStatistics: b.query<Result<GetEmailCampaignStatistics>, Arg<GetEmailCampaignStatistics>>({
+  getEmailCampaignStatistics: b.query<
+    Result<GetEmailCampaignStatistics>,
+    Arg<GetEmailCampaignStatistics>
+  >({
     query: (args) => (norbix) => norbix.hub.notifications.getEmailCampaignStatistics(args),
     providesTags: ['EmailCampaigns'],
   }),
 
-  previewEmailNotification: b.query<Result<PreviewEmailNotification>, Arg<PreviewEmailNotification>>({
+  previewEmailNotification: b.query<
+    Result<PreviewEmailNotification>,
+    Arg<PreviewEmailNotification>
+  >({
     query: (args) => (norbix) => norbix.hub.notifications.previewEmailNotification(args),
     providesTags: ['Emails'],
   }),
@@ -369,7 +420,10 @@ export const hubNotifications = (b: Builder) => ({
     providesTags: ['EmailCampaigns'],
   }),
 
-  getEmailCampaignMessages: b.query<Result<GetEmailCampaignMessages>, Arg<GetEmailCampaignMessages>>({
+  getEmailCampaignMessages: b.query<
+    Result<GetEmailCampaignMessages>,
+    Arg<GetEmailCampaignMessages>
+  >({
     query: (args) => (norbix) => norbix.hub.notifications.getEmailCampaignMessages(args),
     providesTags: ['EmailCampaigns'],
   }),
@@ -414,7 +468,10 @@ export const hubNotifications = (b: Builder) => ({
     providesTags: ['SmsTemplates'],
   }),
 
-  getSmsMessageContentTokens: b.query<Result<GetSmsMessageContentTokens>, Arg<GetSmsMessageContentTokens>>({
+  getSmsMessageContentTokens: b.query<
+    Result<GetSmsMessageContentTokens>,
+    Arg<GetSmsMessageContentTokens>
+  >({
     query: (args) => (norbix) => norbix.hub.notifications.getSmsMessageContentTokens(args),
     providesTags: ['Sms'],
   }),
@@ -434,7 +491,10 @@ export const hubNotifications = (b: Builder) => ({
     providesTags: ['SmsSettings'],
   }),
 
-  confirmSmsIntegrationHumanDelivery: b.mutation<Result<ConfirmSmsIntegrationHumanDelivery>, Arg<ConfirmSmsIntegrationHumanDelivery>>({
+  confirmSmsIntegrationHumanDelivery: b.mutation<
+    Result<ConfirmSmsIntegrationHumanDelivery>,
+    Arg<ConfirmSmsIntegrationHumanDelivery>
+  >({
     query: (args) => (norbix) => norbix.hub.notifications.confirmSmsIntegrationHumanDelivery(args),
     invalidatesTags: ['SmsIntegrations'],
   }),
@@ -469,7 +529,10 @@ export const hubNotifications = (b: Builder) => ({
     invalidatesTags: ['SmsIntegrations'],
   }),
 
-  setSmsIntegrationAsDefault: b.mutation<Result<SetSmsIntegrationAsDefault>, Arg<SetSmsIntegrationAsDefault>>({
+  setSmsIntegrationAsDefault: b.mutation<
+    Result<SetSmsIntegrationAsDefault>,
+    Arg<SetSmsIntegrationAsDefault>
+  >({
     query: (args) => (norbix) => norbix.hub.notifications.setSmsIntegrationAsDefault(args),
     invalidatesTags: ['SmsIntegrations'],
   }),
@@ -504,17 +567,26 @@ export const hubNotifications = (b: Builder) => ({
     providesTags: ['SmsCampaigns'],
   }),
 
-  getSmsCampaignBatchNotification: b.query<Result<GetSmsCampaignBatchNotification>, Arg<GetSmsCampaignBatchNotification>>({
+  getSmsCampaignBatchNotification: b.query<
+    Result<GetSmsCampaignBatchNotification>,
+    Arg<GetSmsCampaignBatchNotification>
+  >({
     query: (args) => (norbix) => norbix.hub.notifications.getSmsCampaignBatchNotification(args),
     providesTags: ['SmsCampaigns'],
   }),
 
-  getSmsCampaignBatchNotifications: b.query<Result<GetSmsCampaignBatchNotifications>, Arg<GetSmsCampaignBatchNotifications>>({
+  getSmsCampaignBatchNotifications: b.query<
+    Result<GetSmsCampaignBatchNotifications>,
+    Arg<GetSmsCampaignBatchNotifications>
+  >({
     query: (args) => (norbix) => norbix.hub.notifications.getSmsCampaignBatchNotifications(args),
     providesTags: ['SmsCampaigns'],
   }),
 
-  getSmsCampaignStatistics: b.query<Result<GetSmsCampaignStatistics>, Arg<GetSmsCampaignStatistics>>({
+  getSmsCampaignStatistics: b.query<
+    Result<GetSmsCampaignStatistics>,
+    Arg<GetSmsCampaignStatistics>
+  >({
     query: (args) => (norbix) => norbix.hub.notifications.getSmsCampaignStatistics(args),
     providesTags: ['SmsCampaigns'],
   }),
@@ -574,7 +646,10 @@ export const hubNotifications = (b: Builder) => ({
     providesTags: ['PushTemplates'],
   }),
 
-  getPushMessageContentTokens: b.query<Result<GetPushMessageContentTokens>, Arg<GetPushMessageContentTokens>>({
+  getPushMessageContentTokens: b.query<
+    Result<GetPushMessageContentTokens>,
+    Arg<GetPushMessageContentTokens>
+  >({
     query: (args) => (norbix) => norbix.hub.notifications.getPushMessageContentTokens(args),
     providesTags: ['Push'],
   }),
@@ -594,7 +669,10 @@ export const hubNotifications = (b: Builder) => ({
     providesTags: ['Push'],
   }),
 
-  confirmPushIntegrationHumanDelivery: b.mutation<Result<ConfirmPushIntegrationHumanDelivery>, Arg<ConfirmPushIntegrationHumanDelivery>>({
+  confirmPushIntegrationHumanDelivery: b.mutation<
+    Result<ConfirmPushIntegrationHumanDelivery>,
+    Arg<ConfirmPushIntegrationHumanDelivery>
+  >({
     query: (args) => (norbix) => norbix.hub.notifications.confirmPushIntegrationHumanDelivery(args),
     invalidatesTags: ['PushIntegrations'],
   }),
@@ -629,18 +707,16 @@ export const hubNotifications = (b: Builder) => ({
     invalidatesTags: ['PushIntegrations'],
   }),
 
-  setPushIntegrationAsDefault: b.mutation<Result<SetPushIntegrationAsDefault>, Arg<SetPushIntegrationAsDefault>>({
+  setPushIntegrationAsDefault: b.mutation<
+    Result<SetPushIntegrationAsDefault>,
+    Arg<SetPushIntegrationAsDefault>
+  >({
     query: (args) => (norbix) => norbix.hub.notifications.setPushIntegrationAsDefault(args),
     invalidatesTags: ['PushIntegrations'],
   }),
 
   testPushIntegration: b.mutation<Result<TestPushIntegration>, Arg<TestPushIntegration>>({
     query: (args) => (norbix) => norbix.hub.notifications.testPushIntegration(args),
-    invalidatesTags: ['PushIntegrations'],
-  }),
-
-  registerCodeMashAppPushIntegration: b.mutation<Result<RegisterCodeMashAppPushIntegration>, Arg<RegisterCodeMashAppPushIntegration>>({
-    query: (args) => (norbix) => norbix.hub.notifications.registerCodeMashAppPushIntegration(args),
     invalidatesTags: ['PushIntegrations'],
   }),
 
@@ -674,17 +750,26 @@ export const hubNotifications = (b: Builder) => ({
     providesTags: ['PushCampaigns'],
   }),
 
-  getPushCampaignBatchNotification: b.query<Result<GetPushCampaignBatchNotification>, Arg<GetPushCampaignBatchNotification>>({
+  getPushCampaignBatchNotification: b.query<
+    Result<GetPushCampaignBatchNotification>,
+    Arg<GetPushCampaignBatchNotification>
+  >({
     query: (args) => (norbix) => norbix.hub.notifications.getPushCampaignBatchNotification(args),
     providesTags: ['PushCampaigns'],
   }),
 
-  getPushCampaignBatchNotifications: b.query<Result<GetPushCampaignBatchNotifications>, Arg<GetPushCampaignBatchNotifications>>({
+  getPushCampaignBatchNotifications: b.query<
+    Result<GetPushCampaignBatchNotifications>,
+    Arg<GetPushCampaignBatchNotifications>
+  >({
     query: (args) => (norbix) => norbix.hub.notifications.getPushCampaignBatchNotifications(args),
     providesTags: ['PushCampaigns'],
   }),
 
-  getPushCampaignStatistics: b.query<Result<GetPushCampaignStatistics>, Arg<GetPushCampaignStatistics>>({
+  getPushCampaignStatistics: b.query<
+    Result<GetPushCampaignStatistics>,
+    Arg<GetPushCampaignStatistics>
+  >({
     query: (args) => (norbix) => norbix.hub.notifications.getPushCampaignStatistics(args),
     providesTags: ['PushCampaigns'],
   }),
