@@ -1,0 +1,65 @@
+# OSV-Scanner ignores — read by the Security scan in ci.yml.
+# Only advisories that cannot be fixed by an update, in development-only packages
+# (release tooling), never in the published package. Each one expires: when
+# ignoreUntil passes, the scan fails again and the entry must be re-checked.
+# Added 2026-10-03 (react-redux pull request 34).
+
+[[IgnoredVulns]]
+id = "GHSA-6j4f-fj2g-mc7p"  # brace-expansion 5.0.9 (npm bundle)
+ignoreUntil = 2026-11-03
+reason = "dev-only: bundled inside the npm CLI that @semantic-release/npm runs at release time; the latest npm 11 (11.21.0, the range semantic-release accepts) still bundles this version and overrides cannot change bundled packages. Not part of the published package."
+
+[[IgnoredVulns]]
+id = "GHSA-q2hr-2g5m-vwhr"  # brace-expansion 5.0.9 (npm bundle)
+ignoreUntil = 2026-11-03
+reason = "dev-only: bundled inside the npm CLI that @semantic-release/npm runs at release time; the latest npm 11 (11.21.0, the range semantic-release accepts) still bundles this version and overrides cannot change bundled packages. Not part of the published package."
+
+[[IgnoredVulns]]
+id = "GHSA-qhr7-859c-m2p7"  # brace-expansion 5.0.9 (npm bundle)
+ignoreUntil = 2026-11-03
+reason = "dev-only: bundled inside the npm CLI that @semantic-release/npm runs at release time; the latest npm 11 (11.21.0, the range semantic-release accepts) still bundles this version and overrides cannot change bundled packages. Not part of the published package."
+
+[[IgnoredVulns]]
+id = "GHSA-vfj7-8cjw-p6xm"  # braces 3.0.3
+ignoreUntil = 2026-11-03
+reason = "dev-only: @semantic-release/commit-analyzer -> micromatch -> braces; 3.0.3 is the latest release, no fix published. Not part of the published package."
+
+[[IgnoredVulns]]
+id = "GHSA-ch52-4w7c-c8xp"  # http-cache-semantics 4.2.0 (npm bundle)
+ignoreUntil = 2026-11-03
+reason = "dev-only: bundled inside the npm CLI that @semantic-release/npm runs at release time; the latest npm 11 (11.21.0, the range semantic-release accepts) still bundles this version (also the latest release, no fix published) and overrides cannot change bundled packages. Not part of the published package."
+
+[[IgnoredVulns]]
+id = "GHSA-2vr4-cq9g-pvrc"  # ip-address 10.5.0 (npm bundle)
+ignoreUntil = 2026-11-03
+reason = "dev-only: bundled inside the npm CLI that @semantic-release/npm runs at release time; the latest npm 11 (11.21.0, the range semantic-release accepts) still bundles this version and overrides cannot change bundled packages. Not part of the published package."
+
+[[IgnoredVulns]]
+id = "GHSA-h3mg-xc3c-68pw"  # ip-address 10.5.0 (npm bundle)
+ignoreUntil = 2026-11-03
+reason = "dev-only: bundled inside the npm CLI that @semantic-release/npm runs at release time; the latest npm 11 (11.21.0, the range semantic-release accepts) still bundles this version and overrides cannot change bundled packages. Not part of the published package."
+
+[[IgnoredVulns]]
+id = "GHSA-j6r3-76f7-8jcv"  # ip-address 10.5.0 (npm bundle)
+ignoreUntil = 2026-11-03
+reason = "dev-only: bundled inside the npm CLI that @semantic-release/npm runs at release time; the latest npm 11 (11.21.0, the range semantic-release accepts) still bundles this version and overrides cannot change bundled packages. Not part of the published package."
+
+[[IgnoredVulns]]
+id = "GHSA-rpw4-54j3-4h4q"  # ip-address 10.5.0 (npm bundle)
+ignoreUntil = 2026-11-03
+reason = "dev-only: bundled inside the npm CLI that @semantic-release/npm runs at release time; the latest npm 11 (11.21.0, the range semantic-release accepts) still bundles this version and overrides cannot change bundled packages. Not part of the published package."
+
+[[IgnoredVulns]]
+id = "GHSA-3wwx-pv8p-q78v"  # undici 6.28.0 (npm bundle)
+ignoreUntil = 2026-11-03
+reason = "dev-only: bundled inside the npm CLI that @semantic-release/npm runs at release time; the latest npm 11 (11.21.0, the range semantic-release accepts) still bundles this version and overrides cannot change bundled packages. Not part of the published package."
+
+[[IgnoredVulns]]
+id = "GHSA-r53p-7pc4-xj5r"  # undici 6.28.0 (npm bundle)
+ignoreUntil = 2026-11-03
+reason = "dev-only: bundled inside the npm CLI that @semantic-release/npm runs at release time; the latest npm 11 (11.21.0, the range semantic-release accepts) still bundles this version and overrides cannot change bundled packages. Not part of the published package."
+
+[[IgnoredVulns]]
+id = "GHSA-rfgv-xxqx-mfg5"  # undici 6.28.0 (npm bundle)
+ignoreUntil = 2026-11-03
+reason = "dev-only: bundled inside the npm CLI that @semantic-release/npm runs at release time; the latest npm 11 (11.21.0, the range semantic-release accepts) still bundles this version and overrides cannot change bundled packages. Not part of the published package."
