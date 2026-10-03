@@ -1,4 +1,4 @@
-// AUTO-GENERATED — full coverage of `norbix.hub.account` (36 endpoints).
+// AUTO-GENERATED — full coverage of the `norbix.hub.account` Project surface (46 endpoints).
 // Synced from the norbix core SDK surface. Re-run the hook sync to refresh.
 import type { Norbix } from '@norbix.ai/ts';
 
@@ -48,9 +48,22 @@ type UpdateProjectAiAssistant = Norbix['hub']['account']['updateProjectAiAssista
 type DeleteProjectAiAssistant = Norbix['hub']['account']['deleteProjectAiAssistant'];
 type GetProjectAiUsage = Norbix['hub']['account']['getProjectAiUsage'];
 type SetAdminPortalEnabled = Norbix['hub']['account']['setAdminPortalEnabled'];
+type UpdateProjectAdminUrl = Norbix['hub']['account']['updateProjectAdminUrl'];
+type UpdateProjectLegalDocuments = Norbix['hub']['account']['updateProjectLegalDocuments'];
+type UpdateProjectExposeLegal = Norbix['hub']['account']['updateProjectExposeLegal'];
+type GetAdminPortalStructure = Norbix['hub']['account']['getAdminPortalStructure'];
+type AssignAdminPortalServiceUser = Norbix['hub']['account']['assignAdminPortalServiceUser'];
+type CreateAiServiceUser = Norbix['hub']['account']['createAiServiceUser'];
+type ListAiServiceUsers = Norbix['hub']['account']['listAiServiceUsers'];
+type DeleteAiServiceUser = Norbix['hub']['account']['deleteAiServiceUser'];
+type RotateAiServiceUserKey = Norbix['hub']['account']['rotateAiServiceUserKey'];
+type RevokeAiServiceUserKey = Norbix['hub']['account']['revokeAiServiceUserKey'];
 
 /**
- * `hub.account` — 36 endpoints, 1:1 with the core SDK.
+ * `hub.account` — 46 endpoints, 1:1 with the core SDK.
+ *
+ * Not wrapped: `mcp` (`/account/mcp`) — a JSON-RPC stream for MCP clients,
+ * not a request/response call a cached hook can model. Use `useNorbix()`.
  */
 export const hubAccount = (b: Builder) => ({
   getAccountProfile: b.query<Result<GetAccountProfile>, Arg<GetAccountProfile>>({
@@ -307,6 +320,65 @@ export const hubAccount = (b: Builder) => ({
 
   setAdminPortalEnabled: b.mutation<Result<SetAdminPortalEnabled>, Arg<SetAdminPortalEnabled>>({
     query: (args) => (norbix) => norbix.hub.account.setAdminPortalEnabled(args),
+    invalidatesTags: ['Projects'],
+  }),
+
+  updateProjectAdminUrl: b.mutation<Result<UpdateProjectAdminUrl>, Arg<UpdateProjectAdminUrl>>({
+    query: (args) => (norbix) => norbix.hub.account.updateProjectAdminUrl(args),
+    invalidatesTags: ['Projects'],
+  }),
+
+  updateProjectLegalDocuments: b.mutation<
+    Result<UpdateProjectLegalDocuments>,
+    Arg<UpdateProjectLegalDocuments>
+  >({
+    query: (args) => (norbix) => norbix.hub.account.updateProjectLegalDocuments(args),
+    invalidatesTags: ['Projects'],
+  }),
+
+  updateProjectExposeLegal: b.mutation<
+    Result<UpdateProjectExposeLegal>,
+    Arg<UpdateProjectExposeLegal>
+  >({
+    query: (args) => (norbix) => norbix.hub.account.updateProjectExposeLegal(args),
+    invalidatesTags: ['Projects'],
+  }),
+
+  getAdminPortalStructure: b.query<Result<GetAdminPortalStructure>, Arg<GetAdminPortalStructure>>({
+    query: (args) => (norbix) => norbix.hub.account.getAdminPortalStructure(args),
+    providesTags: ['Projects'],
+  }),
+
+  assignAdminPortalServiceUser: b.mutation<
+    Result<AssignAdminPortalServiceUser>,
+    Arg<AssignAdminPortalServiceUser>
+  >({
+    query: (args) => (norbix) => norbix.hub.account.assignAdminPortalServiceUser(args),
+    invalidatesTags: ['Projects'],
+  }),
+
+  createAiServiceUser: b.mutation<Result<CreateAiServiceUser>, Arg<CreateAiServiceUser>>({
+    query: (args) => (norbix) => norbix.hub.account.createAiServiceUser(args),
+    invalidatesTags: ['Projects'],
+  }),
+
+  listAiServiceUsers: b.query<Result<ListAiServiceUsers>, Arg<ListAiServiceUsers>>({
+    query: (args) => (norbix) => norbix.hub.account.listAiServiceUsers(args),
+    providesTags: ['Projects'],
+  }),
+
+  deleteAiServiceUser: b.mutation<Result<DeleteAiServiceUser>, Arg<DeleteAiServiceUser>>({
+    query: (args) => (norbix) => norbix.hub.account.deleteAiServiceUser(args),
+    invalidatesTags: ['Projects'],
+  }),
+
+  rotateAiServiceUserKey: b.mutation<Result<RotateAiServiceUserKey>, Arg<RotateAiServiceUserKey>>({
+    query: (args) => (norbix) => norbix.hub.account.rotateAiServiceUserKey(args),
+    invalidatesTags: ['Projects'],
+  }),
+
+  revokeAiServiceUserKey: b.mutation<Result<RevokeAiServiceUserKey>, Arg<RevokeAiServiceUserKey>>({
+    query: (args) => (norbix) => norbix.hub.account.revokeAiServiceUserKey(args),
     invalidatesTags: ['Projects'],
   }),
 });
