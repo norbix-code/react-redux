@@ -239,6 +239,42 @@ the storage, and a failed delete step leaves its file behind — and
 `FilesIntegrations`, because the gateway records the last test result on the
 integration.
 
+## SMS
+
+Every SMS Hub endpoint (35) has a hook, 1:1 with `norbix.hub.notifications`.
+Queries provide a tag, mutations invalidate it, so a list re-reads after a
+write without any manual refetch:
+
+| Area | Hooks | Cache tag |
+|---|---|---|
+| Module switch | `useEnableSmsMutation`, `useDisableSmsMutation`, `useGetSmsDisableDependenciesQuery` (what a switch-off would affect — read it before disabling), `useGetSmsSettingsQuery` | `Sms`, `SmsSettings` |
+| Integrations (providers) | `useGetSmsIntegrationsQuery`, `useGetSmsIntegrationQuery`, `useSaveSmsIntegrationMutation`, `useTestSmsIntegrationMutation`, `useConfirmSmsIntegrationHumanDeliveryMutation`, `useDeleteSmsIntegrationMutation`, `useSetSmsIntegrationAsDefaultMutation`, `useEnableSmsIntegrationMutation`, `useDisableSmsIntegrationMutation` | `SmsIntegrations` |
+| Templates | `useGetSmsTemplatesQuery`, `useGetSmsTemplateQuery`, `useCreateSmsTemplateMutation`, `useUpdateSmsTemplateMutation`, `useDeleteSmsTemplateMutation`, `useArchiveSmsTemplateMutation`, `useUnArchiveSmsTemplateMutation`, `useCloneSmsTemplateMutation`, `useGetSmsMessageContentTokensQuery`, `useRenderSmsMutation` | `SmsTemplates`, `Sms` |
+| Campaigns | `useGetSmsCampaignsQuery`, `useCreateSmsCampaignMutation`, `useGetSmsCampaignQuery`, `useDeleteSmsCampaignMutation`, `useStopSmsCampaignMutation`, `useGetSmsCampaignStatisticsQuery`, `useGetSmsCampaignBatchesQuery`, `useGetSmsCampaignBatchNotificationsQuery`, `useGetSmsCampaignBatchNotificationQuery`, `useGetSmsCampaignMessagesQuery`, `useGetSmsCampaignMessageQuery` | `SmsCampaigns` |
+| Preview | `usePreviewSmsNotificationQuery` (opens with the signed link `hash`, no sign-in — see above) | `Sms` |
+
+```tsx
+const [stop, { isLoading }] = useStopSmsCampaignMutation();
+const [render] = useRenderSmsMutation();
+
+// Stop a running campaign — no further messages go out; this cannot be undone.
+await stop({ id: 'cmp_1' });
+
+// Render a template's Razor code with token values before saving it.
+const { data } = await render({
+  code: 'Hi @Model.FirstName, your code is @Model.Code',
+  tokens: [
+    { name: 'FirstName', value: 'Ada' },
+    { name: 'Code', value: '4242' },
+  ],
+});
+```
+
+`useRenderSmsMutation` saves nothing on the server, so it invalidates nothing;
+it is a mutation only so a render is never served from the cache. The
+integration hooks can also be produced by `buildIntegrationsEndpoints` (next
+section) — the shipped ones above are the typed variants.
+
 ## Working with terms
 
 A **taxonomy** is a named tree of **terms** (labels). A term can have one parent (a clean hierarchy) or several parents (the same item under many categories). There is one read hook per scenario — pick the one that matches what you want:

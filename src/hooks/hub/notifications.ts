@@ -1,4 +1,4 @@
-// AUTO-GENERATED — full coverage of `norbix.hub.notifications` (124 endpoints).
+// AUTO-GENERATED — full coverage of `norbix.hub.notifications` (127 endpoints).
 // Synced from the norbix core SDK surface. Re-run the hook sync to refresh.
 import type { Norbix } from '@norbix.ai/ts';
 
@@ -85,6 +85,9 @@ type GetSmsCampaignStatistics = Norbix['hub']['notifications']['getSmsCampaignSt
 type PreviewSmsNotification = Norbix['hub']['notifications']['previewSmsNotification'];
 type GetSmsCampaignMessage = Norbix['hub']['notifications']['getSmsCampaignMessage'];
 type GetSmsCampaignMessages = Norbix['hub']['notifications']['getSmsCampaignMessages'];
+type StopSmsCampaign = Norbix['hub']['notifications']['stopSmsCampaign'];
+type GetSmsDisableDependencies = Norbix['hub']['notifications']['getSmsDisableDependencies'];
+type RenderSms = Norbix['hub']['notifications']['renderSms'];
 type DisablePush = Norbix['hub']['notifications']['disablePush'];
 type EnablePush = Norbix['hub']['notifications']['enablePush'];
 type ArchivePushTemplate = Norbix['hub']['notifications']['archivePushTemplate'];
@@ -131,7 +134,7 @@ type PromoteContactIdentity = Norbix['hub']['membership']['promoteContactIdentit
 type RemoveContactIdentity = Norbix['hub']['membership']['removeContactIdentity'];
 
 /**
- * `hub.notifications` — 123 endpoints, 1:1 with the core SDK.
+ * `hub.notifications` — 127 endpoints, 1:1 with the core SDK.
  */
 export const hubNotifications = (b: Builder) => ({
   getUserNotificationPreferences: b.query<Result<GetUserNotificationPreferences>, Arg<GetUserNotificationPreferences>>({
@@ -532,6 +535,27 @@ export const hubNotifications = (b: Builder) => ({
   getSmsCampaignMessages: b.query<Result<GetSmsCampaignMessages>, Arg<GetSmsCampaignMessages>>({
     query: (args) => (norbix) => norbix.hub.notifications.getSmsCampaignMessages(args),
     providesTags: ['SmsCampaigns'],
+  }),
+
+  // Stops a scheduled or running campaign (cannot be undone). The campaign
+  // and its lists change status, so the SmsCampaigns reads re-fetch.
+  stopSmsCampaign: b.mutation<Result<StopSmsCampaign>, Arg<StopSmsCampaign>>({
+    query: (args) => (norbix) => norbix.hub.notifications.stopSmsCampaign(args),
+    invalidatesTags: ['SmsCampaigns'],
+  }),
+
+  // What disabling the SMS module would affect (running campaigns,
+  // integrations) — read it before disableSms to warn the user.
+  getSmsDisableDependencies: b.query<Result<GetSmsDisableDependencies>, Arg<GetSmsDisableDependencies>>({
+    query: (args) => (norbix) => norbix.hub.notifications.getSmsDisableDependencies(args),
+    providesTags: ['Sms'],
+  }),
+
+  // Renders a Razor SMS template with token values. It saves nothing, so it
+  // invalidates nothing; it is a mutation only so a render is never served
+  // from the cache (the same template code with other tokens is a new answer).
+  renderSms: b.mutation<Result<RenderSms>, Arg<RenderSms>>({
+    query: (args) => (norbix) => norbix.hub.notifications.renderSms(args),
   }),
 
   disablePush: b.mutation<Result<DisablePush>, Arg<DisablePush>>({
