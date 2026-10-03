@@ -5,7 +5,7 @@ import { createNorbixBaseQuery } from '../src/baseQuery.js';
 import { hubNotifications } from '../src/hooks/hub/notifications.js';
 
 /**
- * The SMS hooks — all 35 SMS Hub endpoints of the core SDK. The hooks are a
+ * The SMS hooks — all 34 SMS Hub endpoints of the core SDK. The hooks are a
  * 1:1 wrapper, so the contract is: the hook reaches the right SDK method with
  * the caller's arguments, is a query or a mutation as expected, and carries
  * the cache tags the dashboard relies on. No HTTP here except the last
@@ -66,7 +66,6 @@ const SMS: Record<string, ['query' | 'mutation', string | undefined]> = {
   getSmsCampaignBatchNotifications: ['query', 'SmsCampaigns'],
   getSmsCampaignBatchNotification: ['query', 'SmsCampaigns'],
   getSmsCampaignMessages: ['query', 'SmsCampaigns'],
-  getSmsCampaignMessage: ['query', 'SmsCampaigns'],
 };
 const NAMES = Object.keys(SMS);
 
@@ -83,9 +82,9 @@ function fakeNorbix() {
 const endpoints = hubNotifications(fakeBuilder()) as unknown as Record<string, Def>;
 
 describe('hubNotifications — SMS', () => {
-  it('covers all 35 SMS endpoints of the core SDK', () => {
+  it('covers all 34 SMS endpoints of the core SDK', () => {
     const smsKeys = Object.keys(endpoints).filter((k) => /Sms/.test(k));
-    expect(NAMES).toHaveLength(35);
+    expect(NAMES).toHaveLength(34);
     expect(smsKeys.sort()).toEqual([...NAMES].sort());
   });
 
