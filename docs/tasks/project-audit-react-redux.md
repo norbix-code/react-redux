@@ -15,7 +15,7 @@ modules, a hook generator.
 3. test(project): one test file that checks every Project hook (old + new, Hub + public) reaches the right SDK method with the right kind and cache tag — done, `tests/project.test.ts`, 37 tests, commit 0dc2a40
 4. docs(project): README section that lists every Project hook — done, commit 9d26bca
 5. checks: lint, typecheck, tests, build — done: lint clean, typecheck clean, 10 files / 161 tests pass, build ok
-6. push + pull request — todo
+6. push + pull request — done, https://github.com/norbix-code/react-redux/pull/33 (not merged)
 
 ## Changes
 
