@@ -155,13 +155,13 @@ A _curated_ set of hooks for the most common endpoints. Every hook is end-to-end
 
 | Hook                               | Wraps                                   | Cache tags                                     |
 | ---------------------------------- | --------------------------------------- | ---------------------------------------------- |
-| `useGetAccountProfileQuery`        | `hub.account.getAccountProfile`         | provides `AccountProfile/CURRENT`              |
-| `useGetAccountStatusQuery`         | `hub.account.getAccountStatus`          | provides `AccountProfile/STATUS`               |
-| `useUpdateAccountProfileMutation`  | `hub.account.updateAccountProfile`      | invalidates `AccountProfile/CURRENT`           |
-| `useGetProjectsQuery`              | `hub.account.getProjects`               | provides `AccountProfile/PROJECTS`             |
-| `useGetProjectQuery`               | `hub.account.getProject`                | provides `AccountProfile/PROJECT/<id>`         |
-| `useCreateProjectMutation`         | `hub.account.createProject`             | invalidates `AccountProfile/PROJECTS`          |
-| `useDeleteProjectMutation`         | `hub.account.deleteProject`             | invalidates `AccountProfile/PROJECTS`          |
+| `useGetAccountProfileQuery`        | `hub.account.getAccountProfile`         | provides `Account`                             |
+| `useGetAccountStatusQuery`         | `hub.account.getAccountStatus`          | provides `Account`                             |
+| `useUpdateAccountProfileMutation`  | `hub.account.updateAccountProfile`      | invalidates `Account`                          |
+| `useGetProjectsQuery`              | `hub.account.getProjects`               | provides `Projects`                            |
+| `useGetProjectQuery`               | `hub.account.getProject`                | provides `Projects`                            |
+| `useCreateProjectMutation`         | `hub.account.createProject`             | invalidates `Projects`                         |
+| `useDeleteProjectMutation`         | `hub.account.deleteProject`             | invalidates `Projects`                         |
 | `useListRegionsQuery`              | `hub.regions.list`                      | provides `Regions`                             |
 | `useUpdateProjectRegionsMutation`  | `hub.regions.updateProjectRegions`      | invalidates `Regions` + `Projects`             |
 | `useGetDatabaseSchemasQuery`       | `hub.database.getDatabaseSchemas`       | provides `Schema/LIST`                         |
@@ -224,6 +224,57 @@ For a signed-in project user. `useStartEndUserChatTurnMutation` answers at once 
 | `useTestEmbeddingIntegrationMutation`   | `hub.ai.testEmbeddingIntegration`      | invalidates `Ai`       |
 | `useSetLlmIntegrationAsDefaultMutation` | `hub.ai.setLlmIntegrationAsDefault`    | invalidates `Ai`       |
 
+### Project settings, CORS, languages, admin portal, legal, AI service users — `norbix.hub.account`
+
+Every call takes the `projectId` (or the `norbix-project-id` header your client sets) plus the field it changes. Queries provide `Projects`; mutations invalidate `Projects`, so an open `useGetProjectQuery` refetches after a change. AI settings, assistants and usage are in the table above; LLM / MCP integrations are `hub.ai` (`useGetLlmIntegrationsQuery`, `useSaveLlmIntegrationMutation`, `useSetLlmIntegrationAsDefaultMutation`, …). Regions: `useUpdateProjectRegionsMutation` is served by `hub.regions` (it is spread after `hub.account`).
+
+| Hook                                      | SDK method                                 | Cache                  |
+| ----------------------------------------- | ------------------------------------------ | ---------------------- |
+| `useGetProjectsQuery`                     | `hub.account.getProjects`                  | provides `Projects`    |
+| `useGetProjectQuery`                      | `hub.account.getProject`                   | provides `Projects`    |
+| `useGetProjectTokensQuery`                | `hub.account.getProjectTokens`             | provides `Projects`    |
+| `useCreateProjectMutation`                | `hub.account.createProject`                | invalidates `Projects` |
+| `useEnableProjectMutation`                | `hub.account.enableProject`                | invalidates `Projects` |
+| `useDisableProjectMutation`               | `hub.account.disableProject`               | invalidates `Projects` |
+| `useDeleteProjectMutation`                | `hub.account.deleteProject`                | invalidates `Projects` |
+| `useUpdateProjectNameMutation`            | `hub.account.updateProjectName`            | invalidates `Projects` |
+| `useUpdateProjectDescriptionMutation`     | `hub.account.updateProjectDescription`     | invalidates `Projects` |
+| `useUpdateProjectUrlMutation`             | `hub.account.updateProjectUrl`             | invalidates `Projects` |
+| `useUpdateProjectLogoMutation`            | `hub.account.updateProjectLogo`            | invalidates `Projects` |
+| `useUpdateProjectIconMutation`            | `hub.account.updateProjectIcon`            | invalidates `Projects` |
+| `useUpdateProjectMainColorMutation`       | `hub.account.updateProjectMainColor`       | invalidates `Projects` |
+| `useUpdateProjectAccentColorMutation`     | `hub.account.updateProjectAccentColor`     | invalidates `Projects` |
+| `useUpdateProjectAllowedOriginsMutation`  | `hub.account.updateProjectAllowedOrigins`  | invalidates `Projects` |
+| `useUpdateProjectLanguagesMutation`       | `hub.account.updateProjectLanguages`       | invalidates `Projects` |
+| `useUpdateProjectDefaultLanguageMutation` | `hub.account.updateProjectDefaultLanguage` | invalidates `Projects` |
+| `useUpdateProjectAdminUrlMutation`        | `hub.account.updateProjectAdminUrl`        | invalidates `Projects` |
+| `useUpdateProjectLegalDocumentsMutation`  | `hub.account.updateProjectLegalDocuments`  | invalidates `Projects` |
+| `useUpdateProjectExposeLegalMutation`     | `hub.account.updateProjectExposeLegal`     | invalidates `Projects` |
+| `useGetAdminPortalStructureQuery`         | `hub.account.getAdminPortalStructure`      | provides `Projects`    |
+| `useAssignAdminPortalServiceUserMutation` | `hub.account.assignAdminPortalServiceUser` | invalidates `Projects` |
+| `useCreateAiServiceUserMutation`          | `hub.account.createAiServiceUser`          | invalidates `Projects` |
+| `useListAiServiceUsersQuery`              | `hub.account.listAiServiceUsers`           | provides `Projects`    |
+| `useDeleteAiServiceUserMutation`          | `hub.account.deleteAiServiceUser`          | invalidates `Projects` |
+| `useRotateAiServiceUserKeyMutation`       | `hub.account.rotateAiServiceUserKey`       | invalidates `Projects` |
+| `useRevokeAiServiceUserKeyMutation`       | `hub.account.revokeAiServiceUserKey`       | invalidates `Projects` |
+
+`useCreateAiServiceUserMutation` and `useRotateAiServiceUserKeyMutation` return the new key **once** — show it, then drop it from state. The developer MCP endpoint (`hub.account.mcp`, `/account/mcp`) is a JSON-RPC stream for MCP clients and has no hook; call it with `useNorbix()` if you need it.
+
+```tsx
+const { data: project } = useGetProjectQuery({ projectId });
+const [setOrigins] = useUpdateProjectAllowedOriginsMutation();
+await setOrigins({ projectId, origins: ['https://app.example.com'] }).unwrap();
+```
+
+### Public project config and legal — `norbix.api.public` (no sign-in)
+
+| Hook                             | SDK method                          | Cache                          |
+| -------------------------------- | ----------------------------------- | ------------------------------ |
+| `useGetPublicProjectConfigQuery` | `api.public.getPublicProjectConfig` | provides `Config/PUBLIC`       |
+| `useGetPublicProjectLegalQuery`  | `api.public.getPublicProjectLegal`  | provides `Config/LEGAL:<kind>` |
+
+The legal document is served only when the project exposes it (`useUpdateProjectExposeLegalMutation`).
+
 ## Public file links
 
 A file, or a whole folder prefix, can be made readable by anyone holding its
@@ -285,13 +336,13 @@ Every SMS Hub endpoint (35) has a hook, 1:1 with `norbix.hub.notifications`.
 Queries provide a tag, mutations invalidate it, so a list re-reads after a
 write without any manual refetch:
 
-| Area | Hooks | Cache tag |
-|---|---|---|
-| Module switch | `useEnableSmsMutation`, `useDisableSmsMutation`, `useGetSmsDisableDependenciesQuery` (what a switch-off would affect — read it before disabling), `useGetSmsSettingsQuery` | `Sms`, `SmsSettings` |
-| Integrations (providers) | `useGetSmsIntegrationsQuery`, `useGetSmsIntegrationQuery`, `useSaveSmsIntegrationMutation`, `useTestSmsIntegrationMutation`, `useConfirmSmsIntegrationHumanDeliveryMutation`, `useDeleteSmsIntegrationMutation`, `useSetSmsIntegrationAsDefaultMutation`, `useEnableSmsIntegrationMutation`, `useDisableSmsIntegrationMutation` | `SmsIntegrations` |
-| Templates | `useGetSmsTemplatesQuery`, `useGetSmsTemplateQuery`, `useCreateSmsTemplateMutation`, `useUpdateSmsTemplateMutation`, `useDeleteSmsTemplateMutation`, `useArchiveSmsTemplateMutation`, `useUnArchiveSmsTemplateMutation`, `useCloneSmsTemplateMutation`, `useGetSmsMessageContentTokensQuery`, `useRenderSmsMutation` | `SmsTemplates`, `Sms` |
-| Campaigns | `useGetSmsCampaignsQuery`, `useCreateSmsCampaignMutation`, `useGetSmsCampaignQuery`, `useDeleteSmsCampaignMutation`, `useStopSmsCampaignMutation`, `useGetSmsCampaignStatisticsQuery`, `useGetSmsCampaignBatchesQuery`, `useGetSmsCampaignBatchNotificationsQuery`, `useGetSmsCampaignBatchNotificationQuery`, `useGetSmsCampaignMessagesQuery`, `useGetSmsCampaignMessageQuery` | `SmsCampaigns` |
-| Preview | `usePreviewSmsNotificationQuery` (opens with the signed link `hash`, no sign-in — see above) | `Sms` |
+| Area                     | Hooks                                                                                                                                                                                                                                                                                                                                                                            | Cache tag             |
+| ------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------- |
+| Module switch            | `useEnableSmsMutation`, `useDisableSmsMutation`, `useGetSmsDisableDependenciesQuery` (what a switch-off would affect — read it before disabling), `useGetSmsSettingsQuery`                                                                                                                                                                                                       | `Sms`, `SmsSettings`  |
+| Integrations (providers) | `useGetSmsIntegrationsQuery`, `useGetSmsIntegrationQuery`, `useSaveSmsIntegrationMutation`, `useTestSmsIntegrationMutation`, `useConfirmSmsIntegrationHumanDeliveryMutation`, `useDeleteSmsIntegrationMutation`, `useSetSmsIntegrationAsDefaultMutation`, `useEnableSmsIntegrationMutation`, `useDisableSmsIntegrationMutation`                                                  | `SmsIntegrations`     |
+| Templates                | `useGetSmsTemplatesQuery`, `useGetSmsTemplateQuery`, `useCreateSmsTemplateMutation`, `useUpdateSmsTemplateMutation`, `useDeleteSmsTemplateMutation`, `useArchiveSmsTemplateMutation`, `useUnArchiveSmsTemplateMutation`, `useCloneSmsTemplateMutation`, `useGetSmsMessageContentTokensQuery`, `useRenderSmsMutation`                                                             | `SmsTemplates`, `Sms` |
+| Campaigns                | `useGetSmsCampaignsQuery`, `useCreateSmsCampaignMutation`, `useGetSmsCampaignQuery`, `useDeleteSmsCampaignMutation`, `useStopSmsCampaignMutation`, `useGetSmsCampaignStatisticsQuery`, `useGetSmsCampaignBatchesQuery`, `useGetSmsCampaignBatchNotificationsQuery`, `useGetSmsCampaignBatchNotificationQuery`, `useGetSmsCampaignMessagesQuery`, `useGetSmsCampaignMessageQuery` | `SmsCampaigns`        |
+| Preview                  | `usePreviewSmsNotificationQuery` (opens with the signed link `hash`, no sign-in — see above)                                                                                                                                                                                                                                                                                     | `Sms`                 |
 
 ```tsx
 const [stop, { isLoading }] = useStopSmsCampaignMutation();
