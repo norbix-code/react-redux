@@ -23,11 +23,11 @@
 
 `@norbix.ai/react-redux` is a thin, opinionated layer that wires the Norbix TypeScript SDK into a Redux Toolkit + RTK Query app. You get React hooks for the most-used Norbix endpoints with full caching, request dedup, and tag-based invalidation built in. Under the hood every hook calls the same typed `Norbix` SDK — so DTOs, auth, errors, and base URLs all stay consistent with the rest of your stack.
 
-| You get | Provided by |
-|---|---|
-| `useGetUsersQuery`, `useFindCollectionQuery`, `useInsertOneMutation`, ... | this package |
-| Cache, dedup, polling, refetch on focus, optimistic updates | RTK Query (`@reduxjs/toolkit/query`) |
-| Tree-shakeable typed methods, JWT auth, error mapping | `@norbix.ai/ts` SDK |
+| You get                                                                   | Provided by                          |
+| ------------------------------------------------------------------------- | ------------------------------------ |
+| `useGetUsersQuery`, `useFindCollectionQuery`, `useInsertOneMutation`, ... | this package                         |
+| Cache, dedup, polling, refetch on focus, optimistic updates               | RTK Query (`@reduxjs/toolkit/query`) |
+| Tree-shakeable typed methods, JWT auth, error mapping                     | `@norbix.ai/ts` SDK                  |
 
 ## Install
 
@@ -104,11 +104,10 @@ export function UsersList() {
 
   return (
     <ul>
-      {data?.list?.items.map((u) => <li key={u.id}>{u.email}</li>)}
-      <button
-        disabled={inviting}
-        onClick={() => invite({ email: 'maya@team.io' })}
-      >
+      {data?.list?.items.map((u) => (
+        <li key={u.id}>{u.email}</li>
+      ))}
+      <button disabled={inviting} onClick={() => invite({ email: 'maya@team.io' })}>
         Invite
       </button>
     </ul>
@@ -120,74 +119,115 @@ After `invite()` resolves, the `User/LIST` tag is invalidated and `useGetUsersQu
 
 ## What ships in the box
 
-A *curated* set of hooks for the most common endpoints. Every hook is end-to-end typed from the SDK's own DTOs.
+A _curated_ set of hooks for the most common endpoints. Every hook is end-to-end typed from the SDK's own DTOs.
 
 ### API surface — `norbix.api.*`
 
-| Hook | Wraps | Cache tags |
-|---|---|---|
-| `useLoginMutation` | `client.login(...)` | invalidates `User/LIST`, `AccountProfile/CURRENT` |
-| `useLogoutMutation` | `client.logout()` | invalidates `User`, `AccountProfile`, `Collection`, `Schema` |
-| `useAuthenticateMutation` | `api.auth.authenticate` | — |
-| `useGetUsersQuery` | `api.membership.getUsers` | provides `User/LIST` |
-| `useGetUserQuery` | `api.membership.getUser` | provides `User/<id>` |
-| `useInviteUserMutation` | `api.membership.inviteUser` | invalidates `User/LIST` |
-| `useUpdateUserMutation` | `api.membership.updateUser` | invalidates `User/<id>` + `User/LIST` |
-| `useBlockUserMutation` | `api.membership.blockUser` | invalidates `User/LIST` |
-| `useUnblockUserMutation` | `api.membership.unblockUser` | invalidates `User/LIST` |
-| `useDeleteUserMutation` | `api.membership.deleteUser` | invalidates `User/LIST` |
-| `useFindCollectionQuery` | `api.database.find` | provides `Collection/<name>` |
-| `useFindOneQuery` | `api.database.findOne` | provides `Collection/<name>` |
-| `useCountCollectionQuery` | `api.database.count` | provides `Collection/<name>` |
-| `useInsertOneMutation` | `api.database.insertOne` | invalidates `Collection/<name>` |
-| `useUpdateOneMutation` | `api.database.updateOne` | invalidates `Collection/<name>` |
-| `useReplaceOneMutation` | `api.database.replaceOne` | invalidates `Collection/<name>` |
-| `useDeleteOneMutation` | `api.database.deleteOne` | invalidates `Collection/<name>` |
-| `useFindTermsQuery` | `api.database.findTerms` | provides `DatabaseTaxonomyTerms/<taxonomyName>` |
-| `useFindTermsChildrenQuery` | `api.database.findTermsChildren` | provides `DatabaseTaxonomyTerms/<taxonomyName>` |
-| `useFindTermTreeQuery` | `api.database.findTermTree` | provides `DatabaseTaxonomyTerms/<taxonomyName>` |
-| `useFindTaxonomyTreeQuery` | `api.database.findTaxonomyTree` | provides `DatabaseTaxonomyTerms/ANY` |
-| `useGetApiKeysQuery` | `api.apikeys.getApiKeys` | provides `ApiKey/LIST` |
-| `useRegenerateApiKeysMutation` | `api.apikeys.regenerateApiKeys` | invalidates `ApiKey/LIST` |
-| `useGetPublicFileQuery` | `api.files.getPublicFile` | provides `Files/PUBLIC:<publicId>` |
-| `useTestFilesIntegrationApiMutation` | `api.files.testFilesIntegration` | invalidates `Files` + `FilesIntegrations` |
+| Hook                                 | Wraps                            | Cache tags                                                   |
+| ------------------------------------ | -------------------------------- | ------------------------------------------------------------ |
+| `useLoginMutation`                   | `client.login(...)`              | invalidates `User/LIST`, `AccountProfile/CURRENT`            |
+| `useLogoutMutation`                  | `client.logout()`                | invalidates `User`, `AccountProfile`, `Collection`, `Schema` |
+| `useAuthenticateMutation`            | `api.auth.authenticate`          | —                                                            |
+| `useGetUsersQuery`                   | `api.membership.getUsers`        | provides `User/LIST`                                         |
+| `useGetUserQuery`                    | `api.membership.getUser`         | provides `User/<id>`                                         |
+| `useInviteUserMutation`              | `api.membership.inviteUser`      | invalidates `User/LIST`                                      |
+| `useUpdateUserMutation`              | `api.membership.updateUser`      | invalidates `User/<id>` + `User/LIST`                        |
+| `useBlockUserMutation`               | `api.membership.blockUser`       | invalidates `User/LIST`                                      |
+| `useUnblockUserMutation`             | `api.membership.unblockUser`     | invalidates `User/LIST`                                      |
+| `useDeleteUserMutation`              | `api.membership.deleteUser`      | invalidates `User/LIST`                                      |
+| `useFindCollectionQuery`             | `api.database.find`              | provides `Collection/<name>`                                 |
+| `useFindOneQuery`                    | `api.database.findOne`           | provides `Collection/<name>`                                 |
+| `useCountCollectionQuery`            | `api.database.count`             | provides `Collection/<name>`                                 |
+| `useInsertOneMutation`               | `api.database.insertOne`         | invalidates `Collection/<name>`                              |
+| `useUpdateOneMutation`               | `api.database.updateOne`         | invalidates `Collection/<name>`                              |
+| `useReplaceOneMutation`              | `api.database.replaceOne`        | invalidates `Collection/<name>`                              |
+| `useDeleteOneMutation`               | `api.database.deleteOne`         | invalidates `Collection/<name>`                              |
+| `useFindTermsQuery`                  | `api.database.findTerms`         | provides `DatabaseTaxonomyTerms/<taxonomyName>`              |
+| `useFindTermsChildrenQuery`          | `api.database.findTermsChildren` | provides `DatabaseTaxonomyTerms/<taxonomyName>`              |
+| `useFindTermTreeQuery`               | `api.database.findTermTree`      | provides `DatabaseTaxonomyTerms/<taxonomyName>`              |
+| `useFindTaxonomyTreeQuery`           | `api.database.findTaxonomyTree`  | provides `DatabaseTaxonomyTerms/ANY`                         |
+| `useGetApiKeysQuery`                 | `api.apikeys.getApiKeys`         | provides `ApiKey/LIST`                                       |
+| `useRegenerateApiKeysMutation`       | `api.apikeys.regenerateApiKeys`  | invalidates `ApiKey/LIST`                                    |
+| `useGetPublicFileQuery`              | `api.files.getPublicFile`        | provides `Files/PUBLIC:<publicId>`                           |
+| `useTestFilesIntegrationApiMutation` | `api.files.testFilesIntegration` | invalidates `Files` + `FilesIntegrations`                    |
 
 ### Hub surface — `norbix.hub.*`
 
-| Hook | Wraps | Cache tags |
-|---|---|---|
-| `useGetAccountProfileQuery` | `hub.account.getAccountProfile` | provides `AccountProfile/CURRENT` |
-| `useGetAccountStatusQuery` | `hub.account.getAccountStatus` | provides `AccountProfile/STATUS` |
-| `useUpdateAccountProfileMutation` | `hub.account.updateAccountProfile` | invalidates `AccountProfile/CURRENT` |
-| `useGetProjectsQuery` | `hub.account.getProjects` | provides `AccountProfile/PROJECTS` |
-| `useGetProjectQuery` | `hub.account.getProject` | provides `AccountProfile/PROJECT/<id>` |
-| `useCreateProjectMutation` | `hub.account.createProject` | invalidates `AccountProfile/PROJECTS` |
-| `useDeleteProjectMutation` | `hub.account.deleteProject` | invalidates `AccountProfile/PROJECTS` |
-| `useListRegionsQuery` | `hub.regions.list` | provides `Regions` |
-| `useUpdateProjectRegionsMutation` | `hub.regions.updateProjectRegions` | invalidates `Regions` + `Projects` |
-| `useGetDatabaseSchemasQuery` | `hub.database.getDatabaseSchemas` | provides `Schema/LIST` |
-| `useGetDatabaseSchemaQuery` | `hub.database.getDatabaseSchema` | provides `Schema/<id>` |
-| `useSaveDatabaseSchemaMutation` | `hub.database.saveDatabaseSchema` | invalidates `Schema/LIST` |
-| `useRenameDatabaseSchemaMutation` | `hub.database.renameDatabaseSchema` | invalidates `Schema/LIST` + `Schema/<id>` |
-| `usePublishDatabaseSchemaMutation` | `hub.database.publishDatabaseSchema` | invalidates `Schema` + `Collection` |
-| `useDeleteDatabaseSchemaMutation` | `hub.database.deleteDatabaseSchema` | invalidates `Schema/LIST` + `Collection` |
-| `useGetEmailTemplatesQuery` | `hub.notifications.getEmailTemplates` | provides `Notification/EMAIL_TEMPLATE_LIST` |
-| `useGetEmailTemplateQuery` | `hub.notifications.getEmailTemplate` | provides `Notification/EMAIL_TEMPLATE/<id>` |
-| `useCreateEmailTemplateMutation` | `hub.notifications.createEmailTemplate` | invalidates `Notification/EMAIL_TEMPLATE_LIST` |
-| `useUpdateEmailTemplateMutation` | `hub.notifications.updateEmailTemplate` | invalidates list + per-id |
-| `useDeleteEmailTemplateMutation` | `hub.notifications.deleteEmailTemplate` | invalidates list |
-| `useTestFilesIntegrationMutation` | `hub.files.testFilesIntegration` | — |
-| `useMakeFilePublicMutation` | `hub.files.makeFilePublic` | invalidates `Files` |
-| `useMakeFilePrivateMutation` | `hub.files.makeFilePrivate` | invalidates `Files` |
-| `useMakeFolderPublicMutation` | `hub.files.makeFolderPublic` | invalidates `Files` |
-| `useMakeFolderPrivateMutation` | `hub.files.makeFolderPrivate` | invalidates `Files` |
+| Hook                               | Wraps                                   | Cache tags                                     |
+| ---------------------------------- | --------------------------------------- | ---------------------------------------------- |
+| `useGetAccountProfileQuery`        | `hub.account.getAccountProfile`         | provides `AccountProfile/CURRENT`              |
+| `useGetAccountStatusQuery`         | `hub.account.getAccountStatus`          | provides `AccountProfile/STATUS`               |
+| `useUpdateAccountProfileMutation`  | `hub.account.updateAccountProfile`      | invalidates `AccountProfile/CURRENT`           |
+| `useGetProjectsQuery`              | `hub.account.getProjects`               | provides `AccountProfile/PROJECTS`             |
+| `useGetProjectQuery`               | `hub.account.getProject`                | provides `AccountProfile/PROJECT/<id>`         |
+| `useCreateProjectMutation`         | `hub.account.createProject`             | invalidates `AccountProfile/PROJECTS`          |
+| `useDeleteProjectMutation`         | `hub.account.deleteProject`             | invalidates `AccountProfile/PROJECTS`          |
+| `useListRegionsQuery`              | `hub.regions.list`                      | provides `Regions`                             |
+| `useUpdateProjectRegionsMutation`  | `hub.regions.updateProjectRegions`      | invalidates `Regions` + `Projects`             |
+| `useGetDatabaseSchemasQuery`       | `hub.database.getDatabaseSchemas`       | provides `Schema/LIST`                         |
+| `useGetDatabaseSchemaQuery`        | `hub.database.getDatabaseSchema`        | provides `Schema/<id>`                         |
+| `useSaveDatabaseSchemaMutation`    | `hub.database.saveDatabaseSchema`       | invalidates `Schema/LIST`                      |
+| `useRenameDatabaseSchemaMutation`  | `hub.database.renameDatabaseSchema`     | invalidates `Schema/LIST` + `Schema/<id>`      |
+| `usePublishDatabaseSchemaMutation` | `hub.database.publishDatabaseSchema`    | invalidates `Schema` + `Collection`            |
+| `useDeleteDatabaseSchemaMutation`  | `hub.database.deleteDatabaseSchema`     | invalidates `Schema/LIST` + `Collection`       |
+| `useGetEmailTemplatesQuery`        | `hub.notifications.getEmailTemplates`   | provides `Notification/EMAIL_TEMPLATE_LIST`    |
+| `useGetEmailTemplateQuery`         | `hub.notifications.getEmailTemplate`    | provides `Notification/EMAIL_TEMPLATE/<id>`    |
+| `useCreateEmailTemplateMutation`   | `hub.notifications.createEmailTemplate` | invalidates `Notification/EMAIL_TEMPLATE_LIST` |
+| `useUpdateEmailTemplateMutation`   | `hub.notifications.updateEmailTemplate` | invalidates list + per-id                      |
+| `useDeleteEmailTemplateMutation`   | `hub.notifications.deleteEmailTemplate` | invalidates list                               |
+| `useTestFilesIntegrationMutation`  | `hub.files.testFilesIntegration`        | —                                              |
+| `useMakeFilePublicMutation`        | `hub.files.makeFilePublic`              | invalidates `Files`                            |
+| `useMakeFilePrivateMutation`       | `hub.files.makeFilePrivate`             | invalidates `Files`                            |
+| `useMakeFolderPublicMutation`      | `hub.files.makeFolderPublic`            | invalidates `Files`                            |
+| `useMakeFolderPrivateMutation`     | `hub.files.makeFolderPrivate`           | invalidates `Files`                            |
 
 > **Need a hook we don't ship?** Two options. (1) Drop down to the SDK with `useNorbix()` for a one-off call. (2) Add a new file under `src/hooks/api/` or `src/hooks/hub/`, follow the pattern of the others, and open a PR.
+
+### End-user AI chat — `norbix.api.ai`
+
+For a signed-in project user. `useStartEndUserChatTurnMutation` answers at once with a `turnId`; the answer streams on the user's SSE channel `ai-chat:{projectId}:{authId}` — open it with `norbix.aiChat({ authId })` from `@norbix.ai/ts` (a foreign channel is refused with 403 `AiChatChannelRefused`, no retry). Needs `@norbix.ai/ts` >= 4.3.0.
+
+| Hook                                     | SDK method                           | Cache                |
+| ---------------------------------------- | ------------------------------------ | -------------------- |
+| `useGetEndUserChatAvailabilityQuery`     | `api.ai.getEndUserChatAvailability`  | provides `AiChat`    |
+| `useListEndUserChatSessionsQuery`        | `api.ai.listEndUserChatSessions`     | provides `AiChat`    |
+| `useCreateEndUserChatSessionMutation`    | `api.ai.createEndUserChatSession`    | invalidates `AiChat` |
+| `useGetEndUserChatSessionQuery`          | `api.ai.getEndUserChatSession`       | provides `AiChat`    |
+| `useRenameEndUserChatSessionMutation`    | `api.ai.renameEndUserChatSession`    | invalidates `AiChat` |
+| `useDeleteEndUserChatSessionMutation`    | `api.ai.deleteEndUserChatSession`    | invalidates `AiChat` |
+| `usePinEndUserChatSessionMutation`       | `api.ai.pinEndUserChatSession`       | invalidates `AiChat` |
+| `useArchiveEndUserChatSessionMutation`   | `api.ai.archiveEndUserChatSession`   | invalidates `AiChat` |
+| `useGetEndUserChatEntriesQuery`          | `api.ai.getEndUserChatEntries`       | provides `AiChat`    |
+| `useSetEndUserChatEntryFeedbackMutation` | `api.ai.setEndUserChatEntryFeedback` | invalidates `AiChat` |
+| `useListEndUserChatAttachmentsQuery`     | `api.ai.listEndUserChatAttachments`  | provides `AiChat`    |
+| `useUploadEndUserChatAttachmentMutation` | `api.ai.uploadEndUserChatAttachment` | invalidates `AiChat` |
+| `useDeleteEndUserChatAttachmentMutation` | `api.ai.deleteEndUserChatAttachment` | invalidates `AiChat` |
+| `useListEndUserChatMemoryQuery`          | `api.ai.listEndUserChatMemory`       | provides `AiChat`    |
+| `useForgetEndUserChatMemoryMutation`     | `api.ai.forgetEndUserChatMemory`     | invalidates `AiChat` |
+| `useStartEndUserChatTurnMutation`        | `api.ai.startEndUserChatTurn`        | invalidates `AiChat` |
+
+### Project AI settings, assistants, usage, Admin Portal — `norbix.hub.account` / embeddings — `norbix.hub.ai`
+
+| Hook                                    | SDK method                             | Cache                  |
+| --------------------------------------- | -------------------------------------- | ---------------------- |
+| `useGetProjectAiSettingsQuery`          | `hub.account.getProjectAiSettings`     | provides `Projects`    |
+| `useUpdateProjectAiSettingsMutation`    | `hub.account.updateProjectAiSettings`  | invalidates `Projects` |
+| `useCreateProjectAiAssistantMutation`   | `hub.account.createProjectAiAssistant` | invalidates `Projects` |
+| `useUpdateProjectAiAssistantMutation`   | `hub.account.updateProjectAiAssistant` | invalidates `Projects` |
+| `useDeleteProjectAiAssistantMutation`   | `hub.account.deleteProjectAiAssistant` | invalidates `Projects` |
+| `useGetProjectAiUsageQuery`             | `hub.account.getProjectAiUsage`        | provides `Projects`    |
+| `useSetAdminPortalEnabledMutation`      | `hub.account.setAdminPortalEnabled`    | invalidates `Projects` |
+| `useGetEmbeddingIntegrationsQuery`      | `hub.ai.getEmbeddingIntegrations`      | provides `Ai`          |
+| `useSaveEmbeddingIntegrationMutation`   | `hub.ai.saveEmbeddingIntegration`      | invalidates `Ai`       |
+| `useGetEmbeddingIntegrationQuery`       | `hub.ai.getEmbeddingIntegration`       | provides `Ai`          |
+| `useDeleteEmbeddingIntegrationMutation` | `hub.ai.deleteEmbeddingIntegration`    | invalidates `Ai`       |
+| `useTestEmbeddingIntegrationMutation`   | `hub.ai.testEmbeddingIntegration`      | invalidates `Ai`       |
+| `useSetLlmIntegrationAsDefaultMutation` | `hub.ai.setLlmIntegrationAsDefault`    | invalidates `Ai`       |
 
 ## Public file links
 
 A file, or a whole folder prefix, can be made readable by anyone holding its
-link. Publishing is a Hub action and needs the signed-in client; *reading* the
+link. Publishing is a Hub action and needs the signed-in client; _reading_ the
 link needs nothing at all.
 
 ```tsx
@@ -221,10 +261,10 @@ small file, read it, list the folder, delete the file — and answer one item
 per step (`UploadFile`, `GetFile`, `GetAllFiles`, `DeleteFile`) with `result`
 `OK`, `FAILED` or `NOT_TESTED`:
 
-| Hook | Wraps | Route | Use it from |
-|---|---|---|---|
+| Hook                                 | Wraps                            | Route                                             | Use it from                                                        |
+| ------------------------------------ | -------------------------------- | ------------------------------------------------- | ------------------------------------------------------------------ |
 | `useTestFilesIntegrationApiMutation` | `api.files.testFilesIntegration` | `POST /{version}/files/{filesIntegrationId}/test` | your app, with an API key or a user session (needs `files:create`) |
-| `useTestFilesIntegrationMutation` | `hub.files.testFilesIntegration` | `POST /{version}/files/integrations/test` | a dashboard, signed in to the Hub |
+| `useTestFilesIntegrationMutation`    | `hub.files.testFilesIntegration` | `POST /{version}/files/integrations/test`         | a dashboard, signed in to the Hub                                  |
 
 ```tsx
 const [testIntegration, { data, isLoading }] = useTestFilesIntegrationApiMutation();
@@ -279,12 +319,12 @@ section) — the shipped ones above are the typed variants.
 
 A **taxonomy** is a named tree of **terms** (labels). A term can have one parent (a clean hierarchy) or several parents (the same item under many categories). There is one read hook per scenario — pick the one that matches what you want:
 
-| I want to… | Hook | `data` holds |
-| --- | --- | --- |
-| Get a taxonomy's terms as a flat list | `useFindTermsQuery` | a paginated `list` of terms |
-| Get only the children of one term | `useFindTermsChildrenQuery` | a `list` of child terms (direct + multi-parent) |
-| Get a taxonomy's terms as a ready-made tree | `useFindTermTreeQuery` | a `tree` of nested term nodes |
-| Get the taxonomy structure (e.g. Countries → Cities) | `useFindTaxonomyTreeQuery` | a `tree` of taxonomy nodes |
+| I want to…                                           | Hook                        | `data` holds                                    |
+| ---------------------------------------------------- | --------------------------- | ----------------------------------------------- |
+| Get a taxonomy's terms as a flat list                | `useFindTermsQuery`         | a paginated `list` of terms                     |
+| Get only the children of one term                    | `useFindTermsChildrenQuery` | a `list` of child terms (direct + multi-parent) |
+| Get a taxonomy's terms as a ready-made tree          | `useFindTermTreeQuery`      | a `tree` of nested term nodes                   |
+| Get the taxonomy structure (e.g. Countries → Cities) | `useFindTaxonomyTreeQuery`  | a `tree` of taxonomy nodes                      |
 
 All four share the same cache tag, so a write to a taxonomy refreshes every term view automatically. The examples below all use one example `services` taxonomy shaped like this:
 
@@ -310,13 +350,46 @@ const { data, isLoading } = useFindTermsQuery({ taxonomyName: 'services' });
 {
   "list": {
     "items": [
-      { "id": "term_indoors",   "taxonomyName": "services", "parentId": null,           "order": 1, "name": "Indoors" },
-      { "id": "term_air_con",   "taxonomyName": "services", "parentId": "term_indoors", "order": 1, "name": "Air conditioning" },
-      { "id": "term_wall",      "taxonomyName": "services", "parentId": "term_air_con", "order": 1, "name": "Wall-mounted" },
-      { "id": "term_outdoors",  "taxonomyName": "services", "parentId": null,           "order": 2, "name": "Outdoors" },
-      { "id": "term_solar",     "taxonomyName": "services", "parentId": "term_outdoors","order": 1, "name": "Solar panels" }
+      {
+        "id": "term_indoors",
+        "taxonomyName": "services",
+        "parentId": null,
+        "order": 1,
+        "name": "Indoors"
+      },
+      {
+        "id": "term_air_con",
+        "taxonomyName": "services",
+        "parentId": "term_indoors",
+        "order": 1,
+        "name": "Air conditioning"
+      },
+      {
+        "id": "term_wall",
+        "taxonomyName": "services",
+        "parentId": "term_air_con",
+        "order": 1,
+        "name": "Wall-mounted"
+      },
+      {
+        "id": "term_outdoors",
+        "taxonomyName": "services",
+        "parentId": null,
+        "order": 2,
+        "name": "Outdoors"
+      },
+      {
+        "id": "term_solar",
+        "taxonomyName": "services",
+        "parentId": "term_outdoors",
+        "order": 1,
+        "name": "Solar panels"
+      }
     ],
-    "hasMore": false, "hasPrevious": false, "startingAfter": null, "endingBefore": null
+    "hasMore": false,
+    "hasPrevious": false,
+    "startingAfter": null,
+    "endingBefore": null
   },
   "responseStatus": { "isSuccess": true }
 }
@@ -341,10 +414,25 @@ const { data } = useFindTermsQuery({
 {
   "list": {
     "items": [
-      { "id": "term_indoors",  "taxonomyName": "services", "parentId": null, "order": 1, "name": "Indoors" },
-      { "id": "term_outdoors", "taxonomyName": "services", "parentId": null, "order": 2, "name": "Outdoors" }
+      {
+        "id": "term_indoors",
+        "taxonomyName": "services",
+        "parentId": null,
+        "order": 1,
+        "name": "Indoors"
+      },
+      {
+        "id": "term_outdoors",
+        "taxonomyName": "services",
+        "parentId": null,
+        "order": 2,
+        "name": "Outdoors"
+      }
     ],
-    "hasMore": false, "hasPrevious": false, "startingAfter": null, "endingBefore": null
+    "hasMore": false,
+    "hasPrevious": false,
+    "startingAfter": null,
+    "endingBefore": null
   },
   "responseStatus": { "isSuccess": true }
 }
@@ -356,7 +444,7 @@ const { data } = useFindTermsQuery({
 
 ### Get a term's children
 
-**Goal:** the user expanded *Indoors* — load what is directly under it.
+**Goal:** the user expanded _Indoors_ — load what is directly under it.
 
 ```tsx
 const { data } = useFindTermsChildrenQuery({
@@ -376,12 +464,17 @@ const { data } = useFindTermsChildrenQuery({
         "order": 1,
         "name": "Air conditioning",
         "multiParents": [
-          { "taxonomyId": "tax_service_types", "parentId": "term_indoors",          "name": "Indoors" },
-          { "taxonomyId": "tax_service_types", "parentId": "term_energy_efficient", "name": "Energy efficient" }
+          { "taxonomyId": "tax_service_types", "parentId": "term_indoors", "name": "Indoors" },
+          {
+            "taxonomyId": "tax_service_types",
+            "parentId": "term_energy_efficient",
+            "name": "Energy efficient"
+          }
         ]
       }
     ],
-    "hasMore": false, "hasPrevious": false
+    "hasMore": false,
+    "hasPrevious": false
   },
   "responseStatus": { "isSuccess": true }
 }
@@ -393,7 +486,7 @@ This returns **both** direct children (their `parentId` is `term_indoors`) **and
 
 ### Multi-parent: one product in several categories
 
-**Goal:** in a `products` taxonomy, a *Relaxing massage oil* belongs to *For couples*, *Gift ideas*, **and** *Body care*. Listing the children of **any** of those categories returns it.
+**Goal:** in a `products` taxonomy, a _Relaxing massage oil_ belongs to _For couples_, _Gift ideas_, **and** _Body care_. Listing the children of **any** of those categories returns it.
 
 ```tsx
 const { data } = useFindTermsChildrenQuery({
@@ -412,12 +505,13 @@ const { data } = useFindTermsChildrenQuery({
         "name": "Relaxing massage oil",
         "multiParents": [
           { "taxonomyId": "tax_categories", "parentId": "term_for_couples", "name": "For couples" },
-          { "taxonomyId": "tax_categories", "parentId": "term_gift_ideas",  "name": "Gift ideas" },
-          { "taxonomyId": "tax_categories", "parentId": "term_body_care",   "name": "Body care" }
+          { "taxonomyId": "tax_categories", "parentId": "term_gift_ideas", "name": "Gift ideas" },
+          { "taxonomyId": "tax_categories", "parentId": "term_body_care", "name": "Body care" }
         ]
       }
     ],
-    "hasMore": false, "hasPrevious": false
+    "hasMore": false,
+    "hasPrevious": false
   },
   "responseStatus": { "isSuccess": true }
 }
@@ -447,9 +541,7 @@ const { data } = useFindTermTreeQuery({ taxonomyName: 'services' });
           "id": "term_air_con",
           "name": "Air conditioning",
           "order": 1,
-          "children": [
-            { "id": "term_wall", "name": "Wall-mounted", "order": 1, "children": null }
-          ]
+          "children": [{ "id": "term_wall", "name": "Wall-mounted", "order": 1, "children": null }]
         }
       ]
     },
@@ -457,9 +549,7 @@ const { data } = useFindTermTreeQuery({ taxonomyName: 'services' });
       "id": "term_outdoors",
       "name": "Outdoors",
       "order": 2,
-      "children": [
-        { "id": "term_solar", "name": "Solar panels", "order": 1, "children": null }
-      ]
+      "children": [{ "id": "term_solar", "name": "Solar panels", "order": 1, "children": null }]
     }
   ],
   "responseStatus": { "isSuccess": true }
@@ -472,7 +562,7 @@ Roots are in `tree`; each node carries its own `children`; a leaf has `children:
 
 ### Get only a sub-tree, capped by depth
 
-**Goal:** start from *Indoors* and go at most 2 levels deep.
+**Goal:** start from _Indoors_ and go at most 2 levels deep.
 
 ```tsx
 const { data } = useFindTermTreeQuery({
@@ -498,7 +588,7 @@ const { data } = useFindTermTreeQuery({
 }
 ```
 
-With `depth: 2` you get *Indoors* (level 1) and *Air conditioning* (level 2); *Wall-mounted* (level 3) is cut off, so *Air conditioning* shows `children: null`.
+With `depth: 2` you get _Indoors_ (level 1) and _Air conditioning_ (level 2); _Wall-mounted_ (level 3) is cut off, so _Air conditioning_ shows `children: null`.
 
 ---
 
@@ -519,7 +609,14 @@ const { data } = useFindTaxonomyTreeQuery({});
       "taxonomySlug": "countries",
       "parentId": null,
       "children": [
-        { "viewId": "txn_cities", "taxonomyName": "Cities", "taxonomySlug": "cities", "parentId": "txn_countries", "children": null, "terms": null }
+        {
+          "viewId": "txn_cities",
+          "taxonomyName": "Cities",
+          "taxonomySlug": "cities",
+          "parentId": "txn_countries",
+          "children": null,
+          "terms": null
+        }
       ],
       "terms": null
     }
@@ -550,7 +647,7 @@ const { data } = useFindTaxonomyTreeQuery({ includeTerms: true });
       "parentId": null,
       "terms": [
         { "id": "term_lt", "name": "Lithuania", "order": 1, "children": null },
-        { "id": "term_lv", "name": "Latvia",    "order": 2, "children": null }
+        { "id": "term_lv", "name": "Latvia", "order": 2, "children": null }
       ],
       "children": [
         {
@@ -560,7 +657,7 @@ const { data } = useFindTaxonomyTreeQuery({ includeTerms: true });
           "parentId": "txn_countries",
           "terms": [
             { "id": "term_vilnius", "name": "Vilnius", "order": 1, "children": null },
-            { "id": "term_kaunas",  "name": "Kaunas",  "order": 2, "children": null }
+            { "id": "term_kaunas", "name": "Kaunas", "order": 2, "children": null }
           ],
           "children": null
         }
@@ -571,7 +668,7 @@ const { data } = useFindTaxonomyTreeQuery({ includeTerms: true });
 }
 ```
 
-Now each taxonomy node's `terms` holds that taxonomy's full term tree (same shape as `useFindTermTreeQuery`) — *Countries* carries its countries, *Cities* carries its cities.
+Now each taxonomy node's `terms` holds that taxonomy's full term tree (same shape as `useFindTermTreeQuery`) — _Countries_ carries its countries, _Cities_ carries its cities.
 
 > All four hooks also accept the usual RTK Query options (e.g. `{ skip: !ready }`), and an optional `databaseIntegrationId` in the argument to target a non-default database.
 
@@ -627,7 +724,7 @@ For RTK Query to follow tenant changes, recreate the API slice or pass a tenant-
 
 ### Multi-region projects
 
-A Norbix project spans one **primary region** plus any number of **additional regions**. Two concerns, two homes: *which region your requests target* is configured on the wrapped `norbix` client (this package inherits it — every hook just calls the client you passed to `createNorbixApi`), while *which regions a project spans* is managed through the two hooks below.
+A Norbix project spans one **primary region** plus any number of **additional regions**. Two concerns, two homes: _which region your requests target_ is configured on the wrapped `norbix` client (this package inherits it — every hook just calls the client you passed to `createNorbixApi`), while _which regions a project spans_ is managed through the two hooks below.
 
 **Configure the target region on the wrapped client.**
 
@@ -689,7 +786,7 @@ function RegionSettings({ projectId }: { projectId: string }) {
 ```
 
 - `useListRegionsQuery` wraps `norbix.hub.regions.list` and **provides the `Regions` tag**. As with every query hook, a lazy variant — `useLazyListRegionsQuery` — is generated alongside it.
-- `useUpdateProjectRegionsMutation` wraps `norbix.hub.regions.updateProjectRegions({ projectId, primaryRegion?, additionalRegions? })` and **invalidates `Regions` and `Projects`** — changing the regions a project spans updates the project DTO (`primaryRegion` / `additionalRegions`), so cached region lists *and* project queries refetch automatically once the mutation resolves.
+- `useUpdateProjectRegionsMutation` wraps `norbix.hub.regions.updateProjectRegions({ projectId, primaryRegion?, additionalRegions? })` and **invalidates `Regions` and `Projects`** — changing the regions a project spans updates the project DTO (`primaryRegion` / `additionalRegions`), so cached region lists _and_ project queries refetch automatically once the mutation resolves.
 
 > `hub.account` carries `getAccountRegions` / `updateProjectRegions` aliases for the same wire endpoints (`useGetAccountRegionsQuery` tags `Account`). The `hub.regions` hooks above are the canonical pair — they are the ones wired to the `Regions` tag.
 
@@ -765,17 +862,17 @@ norbixApi.injectEndpoints({
 
 This produces all hooks automatically — `useGetEmailIntegrationsQuery`, `useSaveEmailIntegrationMutation`, `useTestEmailIntegrationMutation`, `useConfirmEmailIntegrationHumanDeliveryMutation`, and the same for push/sms/files/payments/etc.
 
-| Module | Prefix | Namespace | Tag | Notes |
-|---|---|---|---|---|
-| Email | `Email` | `n.hub.notifications` | `EmailIntegrations` | has `test` + `confirmHumanDelivery` |
-| Push | `Push` | `n.hub.notifications` | `PushIntegrations` | has `test` + `confirmHumanDelivery` |
-| Sms | `Sms` | `n.hub.notifications` | `SmsIntegrations` | has `test` + `confirmHumanDelivery` |
-| Files | `Files` | `n.hub.files` | `FilesIntegrations` | has `test` |
-| Payments | `Payments` | `n.hub.payments` | `PaymentIntegrations` | has `test` + `confirmHumanDelivery` |
-| Code | `Code` | `n.hub.code` | `CodeIntegrations` | has `test` |
-| Membership | `Membership` | `n.hub.membership` | `MembershipIntegrations` | no `test` |
-| Logs | `Logging` *(uses `Logging`, not `Logs`)* | `n.hub.logs` | `LogsIntegrations` | no `test` |
-| Database | `Database` | `n.hub.database` | `DatabaseIntegrations` | already wired in package |
+| Module     | Prefix                                   | Namespace             | Tag                      | Notes                               |
+| ---------- | ---------------------------------------- | --------------------- | ------------------------ | ----------------------------------- |
+| Email      | `Email`                                  | `n.hub.notifications` | `EmailIntegrations`      | has `test` + `confirmHumanDelivery` |
+| Push       | `Push`                                   | `n.hub.notifications` | `PushIntegrations`       | has `test` + `confirmHumanDelivery` |
+| Sms        | `Sms`                                    | `n.hub.notifications` | `SmsIntegrations`        | has `test` + `confirmHumanDelivery` |
+| Files      | `Files`                                  | `n.hub.files`         | `FilesIntegrations`      | has `test`                          |
+| Payments   | `Payments`                               | `n.hub.payments`      | `PaymentIntegrations`    | has `test` + `confirmHumanDelivery` |
+| Code       | `Code`                                   | `n.hub.code`          | `CodeIntegrations`       | has `test`                          |
+| Membership | `Membership`                             | `n.hub.membership`    | `MembershipIntegrations` | no `test`                           |
+| Logs       | `Logging` _(uses `Logging`, not `Logs`)_ | `n.hub.logs`          | `LogsIntegrations`       | no `test`                           |
+| Database   | `Database`                               | `n.hub.database`      | `DatabaseIntegrations`   | already wired in package            |
 
 **Trade-off.** The helper is terse but loses static request/response typing — generated hooks return `any` data, because endpoint keys are computed at runtime. If you need full types on a specific integration surface (autocompletion in your IDE), define those endpoints manually instead, following the canonical shape used by `hub.database` integrations in `src/hooks/hub/database.ts`.
 
@@ -791,9 +888,10 @@ import type { useNorbix } from '@norbix.ai/react-redux';
 export const myCampaignsService = norbixApi.injectEndpoints({
   endpoints: (builder) => ({
     getEmailCampaigns: builder.query({
-      query: (args) => (norbix) => norbix.hub.notifications
-        ? norbix.hub.notifications.getEmailTemplates(args) // example only
-        : Promise.resolve({}),
+      query: (args) => (norbix) =>
+        norbix.hub.notifications
+          ? norbix.hub.notifications.getEmailTemplates(args) // example only
+          : Promise.resolve({}),
       providesTags: [{ type: 'EmailCampaigns', id: 'LIST' }],
     }),
     // ...more app-specific endpoints
