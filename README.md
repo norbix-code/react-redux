@@ -366,6 +366,38 @@ it is a mutation only so a render is never served from the cache. The
 integration hooks can also be produced by `buildIntegrationsEndpoints` (next
 section) — the shipped ones above are the typed variants.
 
+## Scheduler
+
+Every scheduler Hub endpoint (8) has a hook, 1:1 with `norbix.hub.scheduler`.
+A task runs on a 5-field cron in UTC; only `EmailCampaign` tasks exist today.
+
+| Area          | Hooks                                                                                                                                                                                          | Cache tag                                                    |
+| ------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------ |
+| Module switch | `useEnableSchedulerModuleMutation`, `useDisableSchedulerModuleMutation` (`PUT` on the wire from `@norbix.ai/ts` 4.6.0)                                                                         | invalidates `Account`, `Projects`, `Scheduler`               |
+| Tasks         | `useGetSchedulerTasksQuery`, `useGetSchedulerTaskQuery`, `useSaveSchedulerTaskMutation`, `useEnableSchedulerTaskMutation`, `useDisableSchedulerTaskMutation`, `useDeleteSchedulerTaskMutation` | provides / invalidates `Scheduler/LIST` and `Scheduler/<id>` |
+
+```tsx
+const [save, { isLoading }] = useSaveSchedulerTaskMutation();
+
+// Every Monday 09:00 UTC, send template tpl_123 to all users.
+// initiatorUserId is the user the task runs as: you, or a project service user.
+await save({
+  name: 'Weekly digest',
+  cron: '0 9 * * 1',
+  initiatorUserId: 'usr_123',
+  isEnabled: true,
+  stopOnError: false,
+  task: {
+    type: 'EmailCampaign',
+    campaign: { source: 'AllUsers', templateId: 'tpl_123' },
+  },
+});
+```
+
+The typed `task` body (plain `'EmailCampaign'` / `'AllUsers'` strings, no
+cast) comes from `@norbix.ai/ts` 4.6.0. Full method reference: the core SDK's
+`docs/hub/scheduler.md`.
+
 ## Working with terms
 
 A **taxonomy** is a named tree of **terms** (labels). A term can have one parent (a clean hierarchy) or several parents (the same item under many categories). There is one read hook per scenario — pick the one that matches what you want:
