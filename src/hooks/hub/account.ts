@@ -1,4 +1,4 @@
-// AUTO-GENERATED — full coverage of the `norbix.hub.account` Project surface (46 endpoints).
+// AUTO-GENERATED — full coverage of the `norbix.hub.account` Project surface (48 endpoints).
 // Synced from the norbix core SDK surface. Re-run the hook sync to refresh.
 import type { Norbix } from '@norbix.ai/ts';
 
@@ -39,6 +39,8 @@ type UpdateProjectName = Norbix['hub']['account']['updateProjectName'];
 type UpdateProjectRegions = Norbix['hub']['account']['updateProjectRegions'];
 type CreateAccount = Norbix['hub']['account']['createAccount'];
 type GetAccountCollaborators = Norbix['hub']['account']['getAccountCollaborators'];
+type GetMyAccountUserProfile = Norbix['hub']['account']['getMyAccountUserProfile'];
+type UpdateMyAccountUserPhone = Norbix['hub']['account']['updateMyAccountUserPhone'];
 type SendInviteToTeamMember = Norbix['hub']['account']['sendInviteToTeamMember'];
 type GetLicenses = Norbix['hub']['account']['getLicenses'];
 type GetProjectAiSettings = Norbix['hub']['account']['getProjectAiSettings'];
@@ -60,7 +62,7 @@ type RotateAiServiceUserKey = Norbix['hub']['account']['rotateAiServiceUserKey']
 type RevokeAiServiceUserKey = Norbix['hub']['account']['revokeAiServiceUserKey'];
 
 /**
- * `hub.account` — 46 endpoints, 1:1 with the core SDK.
+ * `hub.account` — 48 endpoints, 1:1 with the core SDK.
  *
  * Not wrapped: `mcp` (`/account/mcp`) — a JSON-RPC stream for MCP clients,
  * not a request/response call a cached hook can model. Use `useNorbix()`.
@@ -264,6 +266,25 @@ export const hubAccount = (b: Builder) => ({
   getAccountCollaborators: b.query<Result<GetAccountCollaborators>, Arg<GetAccountCollaborators>>({
     query: (args) => (norbix) => norbix.hub.account.getAccountCollaborators(args),
     providesTags: ['Account'],
+  }),
+
+  /** `GET /account/me` — the signed-in owner or team member's own profile, phone included. */
+  getMyAccountUserProfile: b.query<Result<GetMyAccountUserProfile>, Arg<GetMyAccountUserProfile>>({
+    query: (args) => (norbix) => norbix.hub.account.getMyAccountUserProfile(args),
+    providesTags: ['Account'],
+  }),
+
+  /**
+   * `PUT /account/me/phone` — set (E.164, e.g. `+37060000000`) or clear (empty)
+   * your own phone. "Account users" SMS campaigns send to it, so the team list
+   * (`getAccountCollaborators`, also tagged `Account`) re-reads after a change.
+   */
+  updateMyAccountUserPhone: b.mutation<
+    Result<UpdateMyAccountUserPhone>,
+    Arg<UpdateMyAccountUserPhone>
+  >({
+    query: (args) => (norbix) => norbix.hub.account.updateMyAccountUserPhone(args),
+    invalidatesTags: ['Account'],
   }),
 
   sendInviteToTeamMember: b.mutation<Result<SendInviteToTeamMember>, Arg<SendInviteToTeamMember>>({
