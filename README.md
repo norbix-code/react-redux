@@ -221,6 +221,40 @@ Every `hub.database` method (73) and every `api.database` method (22) of `@norbi
 | `useFindOwnQuery`                             | `api.database.findOwn`                          | provides `DatabaseCollections/<collectionName>`                    |
 | `useFindMergedTermTreeQuery`                  | `api.database.findMergedTermTree`               | provides `DatabaseTaxonomyTerms/<taxonomyName>`                    |
 
+### Module switches send `PUT` (core SDK 4.10.0)
+
+The module enable / disable hooks were always mutations, so nothing changes in your code. From `@norbix.ai/ts` 4.10.0 they send `PUT` instead of `GET` on the wire, matching the gateway:
+
+| Hooks                                                         | Route                                                | Cache                    |
+| ------------------------------------------------------------- | ---------------------------------------------------- | ------------------------ |
+| `useEnableDatabaseMutation`, `useDisableDatabaseMutation`     | `PUT /{version}/database/enable\|disable`            | invalidates `Database`   |
+| `useEnableFilesMutation`, `useDisableFilesMutation`           | `PUT /{version}/files/enable\|disable`               | invalidates `Files`      |
+| `useEnableLoggingMutation`, `useDisableLoggingMutation`       | `PUT /{version}/logs/enable\|disable`                | invalidates `Logs`       |
+| `useEnablePaymentsMutation`, `useDisablePaymentsMutation`     | `PUT /{version}/payments/enable\|disable`            | invalidates `Payments`   |
+| `useEnableMembershipMutation`, `useDisableMembershipMutation` | `PUT /{version}/membership/enable\|disable`          | invalidates `Membership` |
+| `useEnableEmailMutation`, `useDisableEmailMutation`           | `PUT /{version}/notifications/email/enable\|disable` | invalidates `Emails`     |
+| `useEnableSmsMutation`, `useDisableSmsMutation`               | `PUT /{version}/notifications/sms/enable\|disable`   | invalidates `Sms`        |
+| `useEnablePushMutation`, `useDisablePushMutation`             | `PUT /{version}/notifications/push/enable\|disable`  | invalidates `Push`       |
+
+The gateway still answers the old `GET` on these paths for now (it logs a deprecation warning) and will drop it after gateway 0.2, so upgrade the core SDK before then. The scheduler switch moved to `PUT` earlier (core SDK 4.6.0). The code module (`hub.code`) has no hooks in this package yet; call `useNorbix().hub.code.enableCode(...)` directly.
+
+### Schemas per environment
+
+`useGetDatabaseSchemasQuery` returns only the schemas of the environment the request targets: the `env` argument, or else the client's environment (`norbix.setEnvironment(...)`, sent as the `norbix-env` header), or `PROD` when neither is set. Each row carries `env`. The schema list settings (`useGetDatabaseSchemaListSettingsQuery` / `useUpdateDatabaseSchemaListSettingsMutation`) are stored per environment too.
+
+RTK Query keys its cache by endpoint + arguments, and the client's environment is not an argument. So either pass `env` in the arguments — each environment then has its own cache entry — or reset the cache when you switch:
+
+```tsx
+// Per call: TEST and PROD cache apart.
+const { data } = useGetDatabaseSchemasQuery({ env: 'TEST' });
+
+// Or switch the whole client and drop what was cached for the old environment.
+norbix.setEnvironment('TEST');
+dispatch(norbixApi.util.invalidateTags(['DatabaseSchemas']));
+```
+
+The paging cursors of the schema list (`startingAfter` / `endingBefore`) are schema view ids (`sch_…`). A cursor saved against an older gateway will not match; start the list again from the first page.
+
 ### End-user AI chat — `norbix.api.ai`
 
 For a signed-in project user. `useStartEndUserChatTurnMutation` answers at once with a `turnId`; the answer streams on the user's SSE channel `ai-chat:{projectId}:{authId}` — open it with `norbix.aiChat({ authId })` from `@norbix.ai/ts` (a foreign channel is refused with 403 `AiChatChannelRefused`, no retry). Needs `@norbix.ai/ts` >= 4.3.0.
