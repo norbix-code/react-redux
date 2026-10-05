@@ -59,7 +59,7 @@
     "prepublishOnly": "npm run build"
   },
   "peerDependencies": {
-    "@norbix.ai/ts": ">=4.10.0",
+    "@norbix.ai/ts": ">=4.11.0",
     "@reduxjs/toolkit": ">=2.0.0",
     "react": ">=18.0.0",
     "react-redux": ">=9.0.0"
@@ -68,7 +68,7 @@
     "@commitlint/cli": "^21.2.2",
     "@commitlint/config-conventional": "^21.2.2",
     "@eslint/js": "^10.0.1",
-    "@norbix.ai/ts": "^4.10.0",
+    "@norbix.ai/ts": "^4.11.0",
     "@reduxjs/toolkit": "^2.12.0",
     "@semantic-release/commit-analyzer": "^13.0.1",
     "@semantic-release/github": "^12.0.9",
