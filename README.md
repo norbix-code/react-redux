@@ -238,6 +238,17 @@ The module enable / disable hooks were always mutations, so nothing changes in y
 
 The gateway still answers the old `GET` on these paths for now (it logs a deprecation warning) and will drop it after gateway 0.2, so upgrade the core SDK before then. The scheduler switch moved to `PUT` earlier (core SDK 4.6.0). The code module (`hub.code`) has no hooks in this package yet; call `useNorbix().hub.code.enableCode(...)` directly.
 
+### Bulk record writes (core SDK 4.11.0)
+
+`useUpdateManyRecordsMutation` / `useDeleteManyRecordsMutation` (Hub) and `useUpdateManyMutation` / `useDeleteManyMutation` (Api) take a new optional `allRecords` argument. An empty filter (`{}`, or no filter on update) matches the whole collection and the gateway refuses it with `CM-ERRORS-DATABASE-037` unless you pass `allRecords: true`:
+
+```ts
+const [deleteMany] = useDeleteManyRecordsMutation();
+await deleteMany({ collectionName: 'orders', filter: '{}', allRecords: true });
+```
+
+Other gateway rules that now show up as errors from these hooks: an update body with `$` operators (`$inc`, `$set`, …) is refused with `CM-ERRORS-DATABASE-035` (send the plain fields to set); a broken insert or replace document answers `CM-ERRORS-DATABASE-036`; soft-deleted records are "not found" for update, replace and change-owner, and a bulk update skips them. A caller with only own-record rights may now use the bulk hooks; they touch only that caller's records.
+
 ### Schemas per environment
 
 `useGetDatabaseSchemasQuery` returns only the schemas of the environment the request targets: the `env` argument, or else the client's environment (`norbix.setEnvironment(...)`, sent as the `norbix-env` header), or `PROD` when neither is set. Each row carries `env`. The schema list settings (`useGetDatabaseSchemaListSettingsQuery` / `useUpdateDatabaseSchemaListSettingsMutation`) are stored per environment too.
