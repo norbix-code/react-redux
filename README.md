@@ -183,6 +183,44 @@ A _curated_ set of hooks for the most common endpoints. Every hook is end-to-end
 
 > **Need a hook we don't ship?** Two options. (1) Drop down to the SDK with `useNorbix()` for a one-off call. (2) Add a new file under `src/hooks/api/` or `src/hooks/hub/`, follow the pattern of the others, and open a PR.
 
+### Database — records, trees, bundle, imports — `norbix.hub.database` / `norbix.api.database`
+
+Every `hub.database` method (73) and every `api.database` method (22) of `@norbix.ai/ts` has a hook; Hub hooks keep the SDK method name. The rows below are the ones added for `@norbix.ai/ts` >= 4.9.0.
+
+| Hook                                          | SDK method                                      | Cache                                                              |
+| --------------------------------------------- | ----------------------------------------------- | ------------------------------------------------------------------ |
+| `useFindRecordsQuery`                         | `hub.database.findRecords`                      | provides `DatabaseRecords/<collectionName>`                        |
+| `useFindOneRecordQuery`                       | `hub.database.findOneRecord`                    | provides `DatabaseRecords/<collectionName>`                        |
+| `useCountRecordsQuery`                        | `hub.database.countRecords`                     | provides `DatabaseRecords/<collectionName>`                        |
+| `useDistinctRecordValuesQuery`                | `hub.database.distinctRecordValues`             | provides `DatabaseRecords/<collectionName>`                        |
+| `useAggregateRecordsMutation`                 | `hub.database.aggregateRecords`                 | — (never cached)                                                   |
+| `useExecuteRecordsAggregateMutation`          | `hub.database.executeRecordsAggregate`          | — (never cached)                                                   |
+| `useGetCollectionIndexesQuery`                | `hub.database.getCollectionIndexes`             | provides `DatabaseCollections/<collectionName>`                    |
+| `useInsertRecordMutation`                     | `hub.database.insertRecord`                     | invalidates `DatabaseRecords/<collectionName>`                     |
+| `useInsertManyRecordsMutation`                | `hub.database.insertManyRecords`                | invalidates `DatabaseRecords/<collectionName>`                     |
+| `useUpdateOneRecordMutation`                  | `hub.database.updateOneRecord`                  | invalidates `DatabaseRecords/<collectionName>`                     |
+| `useUpdateManyRecordsMutation`                | `hub.database.updateManyRecords`                | invalidates `DatabaseRecords/<collectionName>`                     |
+| `useReplaceRecordMutation`                    | `hub.database.replaceRecord`                    | invalidates `DatabaseRecords/<collectionName>`                     |
+| `useDeleteRecordMutation`                     | `hub.database.deleteRecord`                     | invalidates `DatabaseRecords/<collectionName>`                     |
+| `useDeleteManyRecordsMutation`                | `hub.database.deleteManyRecords`                | invalidates `DatabaseRecords/<collectionName>`                     |
+| `useChangeRecordResponsibilityMutation`       | `hub.database.changeRecordResponsibility`       | invalidates `DatabaseRecords/<collectionName>`                     |
+| `useSeedCollectionRecordsMutation`            | `hub.database.seedCollectionRecords`            | invalidates `DatabaseRecords`                                      |
+| `useGetDatabaseTaxonomyTreeQuery`             | `hub.database.getDatabaseTaxonomyTree`          | provides `DatabaseTaxonomies` + `DatabaseTaxonomyTerms`            |
+| `useGetDatabaseTaxonomyTermTreeQuery`         | `hub.database.getDatabaseTaxonomyTermTree`      | provides `DatabaseTaxonomyTerms/<taxonomyName>`                    |
+| `useGetDatabaseMergedTermTreeQuery`           | `hub.database.getDatabaseMergedTermTree`        | provides `DatabaseTaxonomyTerms/<taxonomyName>`                    |
+| `useApplyDatabaseSchemaBundleMutation`        | `hub.database.applyDatabaseSchemaBundle`        | invalidates `DatabaseSchemas` + taxonomies + terms                 |
+| `useUpdateDatabaseSchemaEmbedMutation`        | `hub.database.updateDatabaseSchemaEmbed`        | invalidates `DatabaseSchemas`                                      |
+| `useGetDatabaseSchemaListSettingsQuery`       | `hub.database.getDatabaseSchemaListSettings`    | provides `DatabaseSchemas`                                         |
+| `useUpdateDatabaseSchemaListSettingsMutation` | `hub.database.updateDatabaseSchemaListSettings` | invalidates `DatabaseSchemas`                                      |
+| `useGetCollectionImportsQuery`                | `hub.database.getCollectionImports`             | provides `DatabaseImports`                                         |
+| `useGetCollectionImportQuery`                 | `hub.database.getCollectionImport`              | provides `DatabaseImports`                                         |
+| `useCreateCollectionImportMutation`           | `hub.database.createCollectionImport`           | invalidates `DatabaseImports` + `DatabaseRecords/<collectionName>` |
+| `useDeleteCollectionImportMutation`           | `hub.database.deleteCollectionImport`           | invalidates `DatabaseImports`                                      |
+| `useAnalyzeImportFileMutation`                | `hub.database.analyzeImportFile`                | —                                                                  |
+| `useRequestImportUploadUrlMutation`           | `hub.database.requestImportUploadUrl`           | —                                                                  |
+| `useFindOwnQuery`                             | `api.database.findOwn`                          | provides `DatabaseCollections/<collectionName>`                    |
+| `useFindMergedTermTreeQuery`                  | `api.database.findMergedTermTree`               | provides `DatabaseTaxonomyTerms/<taxonomyName>`                    |
+
 ### End-user AI chat — `norbix.api.ai`
 
 For a signed-in project user. `useStartEndUserChatTurnMutation` answers at once with a `turnId`; the answer streams on the user's SSE channel `ai-chat:{projectId}:{authId}` — open it with `norbix.aiChat({ authId })` from `@norbix.ai/ts` (a foreign channel is refused with 403 `AiChatChannelRefused`, no retry). Needs `@norbix.ai/ts` >= 4.3.0.
