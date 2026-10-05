@@ -332,17 +332,17 @@ integration.
 
 ## SMS
 
-Every SMS Hub endpoint (35) has a hook, 1:1 with `norbix.hub.notifications`.
+Every SMS Hub endpoint (34) has a hook, 1:1 with `norbix.hub.notifications`.
 Queries provide a tag, mutations invalidate it, so a list re-reads after a
 write without any manual refetch:
 
-| Area                     | Hooks                                                                                                                                                                                                                                                                                                                                                                            | Cache tag             |
-| ------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------- |
-| Module switch            | `useEnableSmsMutation`, `useDisableSmsMutation`, `useGetSmsDisableDependenciesQuery` (what a switch-off would affect — read it before disabling), `useGetSmsSettingsQuery`                                                                                                                                                                                                       | `Sms`, `SmsSettings`  |
-| Integrations (providers) | `useGetSmsIntegrationsQuery`, `useGetSmsIntegrationQuery`, `useSaveSmsIntegrationMutation`, `useTestSmsIntegrationMutation`, `useConfirmSmsIntegrationHumanDeliveryMutation`, `useDeleteSmsIntegrationMutation`, `useSetSmsIntegrationAsDefaultMutation`, `useEnableSmsIntegrationMutation`, `useDisableSmsIntegrationMutation`                                                  | `SmsIntegrations`     |
-| Templates                | `useGetSmsTemplatesQuery`, `useGetSmsTemplateQuery`, `useCreateSmsTemplateMutation`, `useUpdateSmsTemplateMutation`, `useDeleteSmsTemplateMutation`, `useArchiveSmsTemplateMutation`, `useUnArchiveSmsTemplateMutation`, `useCloneSmsTemplateMutation`, `useGetSmsMessageContentTokensQuery`, `useRenderSmsMutation`                                                             | `SmsTemplates`, `Sms` |
-| Campaigns                | `useGetSmsCampaignsQuery`, `useCreateSmsCampaignMutation`, `useGetSmsCampaignQuery`, `useDeleteSmsCampaignMutation`, `useStopSmsCampaignMutation`, `useGetSmsCampaignStatisticsQuery`, `useGetSmsCampaignBatchesQuery`, `useGetSmsCampaignBatchNotificationsQuery`, `useGetSmsCampaignBatchNotificationQuery`, `useGetSmsCampaignMessagesQuery`, `useGetSmsCampaignMessageQuery` | `SmsCampaigns`        |
-| Preview                  | `usePreviewSmsNotificationQuery` (opens with the signed link `hash`, no sign-in — see above)                                                                                                                                                                                                                                                                                     | `Sms`                 |
+| Area                     | Hooks                                                                                                                                                                                                                                                                                                                                           | Cache tag             |
+| ------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------- |
+| Module switch            | `useEnableSmsMutation`, `useDisableSmsMutation`, `useGetSmsDisableDependenciesQuery` (what a switch-off would affect — read it before disabling), `useGetSmsSettingsQuery`                                                                                                                                                                      | `Sms`, `SmsSettings`  |
+| Integrations (providers) | `useGetSmsIntegrationsQuery`, `useGetSmsIntegrationQuery`, `useSaveSmsIntegrationMutation`, `useTestSmsIntegrationMutation`, `useConfirmSmsIntegrationHumanDeliveryMutation`, `useDeleteSmsIntegrationMutation`, `useSetSmsIntegrationAsDefaultMutation`, `useEnableSmsIntegrationMutation`, `useDisableSmsIntegrationMutation`                 | `SmsIntegrations`     |
+| Templates                | `useGetSmsTemplatesQuery`, `useGetSmsTemplateQuery`, `useCreateSmsTemplateMutation`, `useUpdateSmsTemplateMutation`, `useDeleteSmsTemplateMutation`, `useArchiveSmsTemplateMutation`, `useUnArchiveSmsTemplateMutation`, `useCloneSmsTemplateMutation`, `useGetSmsMessageContentTokensQuery`, `useRenderSmsMutation`                            | `SmsTemplates`, `Sms` |
+| Campaigns                | `useGetSmsCampaignsQuery`, `useCreateSmsCampaignMutation`, `useGetSmsCampaignQuery`, `useDeleteSmsCampaignMutation`, `useStopSmsCampaignMutation`, `useGetSmsCampaignStatisticsQuery`, `useGetSmsCampaignBatchesQuery`, `useGetSmsCampaignBatchNotificationsQuery`, `useGetSmsCampaignBatchNotificationQuery`, `useGetSmsCampaignMessagesQuery` | `SmsCampaigns`        |
+| Preview                  | `usePreviewSmsNotificationQuery` (opens with the signed link `hash`, no sign-in — see above)                                                                                                                                                                                                                                                    | `Sms`                 |
 
 ```tsx
 const [stop, { isLoading }] = useStopSmsCampaignMutation();
@@ -365,6 +365,30 @@ const { data } = await render({
 it is a mutation only so a render is never served from the cache. The
 integration hooks can also be produced by `buildIntegrationsEndpoints` (next
 section) — the shipped ones above are the typed variants.
+
+### Your own profile and phone — `norbix.hub.account` (core SDK 4.8.0)
+
+An "Account users" SMS campaign (`accountUsers` on `useCreateSmsCampaignMutation`,
+the ids of the account owner / team members) sends to each member's own phone.
+A member reads and sets it with two hooks; members without a phone are skipped.
+
+| Hook                                  | SDK method                             | Wire                    | Cache                 |
+| ------------------------------------- | -------------------------------------- | ----------------------- | --------------------- |
+| `useGetMyAccountUserProfileQuery`     | `hub.account.getMyAccountUserProfile`  | `GET /account/me`       | provides `Account`    |
+| `useUpdateMyAccountUserPhoneMutation` | `hub.account.updateMyAccountUserPhone` | `PUT /account/me/phone` | invalidates `Account` |
+
+```tsx
+const { data } = useGetMyAccountUserProfileQuery();
+const [setPhone] = useUpdateMyAccountUserPhoneMutation();
+
+// E.164: + and the country code, then digits. An empty string clears it.
+await setPhone({ phone: '+37060000000' }).unwrap();
+```
+
+The team list (`useGetAccountCollaboratorsQuery`) also provides `Account`, so it
+re-reads after a phone change. It now pages with flat `startingAfter`,
+`endingBefore` and `pageSize` (default 20), and `projectId` without
+`includeAccountOwner` lists only that project's collaborators.
 
 ## Scheduler
 
