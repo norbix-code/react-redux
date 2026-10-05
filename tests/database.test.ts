@@ -341,6 +341,40 @@ describe('hub records through the real SDK (fake fetch)', () => {
     expect(out.data?.result).toBe('r2');
   });
 
+  it('updateManyRecords sends PUT /many with allRecords for an empty filter', async () => {
+    const { seen, result } = run(
+      'updateManyRecords',
+      { collectionName: 'orders', filter: '{}', update: '{"status":"archived"}', allRecords: true },
+      200,
+      { result: { matchedCount: 3, modifiedCount: 3 } },
+    );
+
+    const out = (await result) as { error?: unknown };
+
+    expect(out.error).toBeUndefined();
+    expect(seen[0].method).toBe('PUT');
+    expect(seen[0].url).toBe('https://hub.norbix.io/v2/database/collections/orders/many');
+    expect(seen[0].body).toMatchObject({ filter: '{}', allRecords: true });
+  });
+
+  it('deleteManyRecords sends DELETE /many with allRecords for an empty filter', async () => {
+    const { seen, result } = run(
+      'deleteManyRecords',
+      { collectionName: 'orders', filter: '{}', allRecords: true },
+      200,
+      { result: { deletedCount: 3 } },
+    );
+
+    const out = (await result) as { error?: unknown };
+
+    expect(out.error).toBeUndefined();
+    expect(seen[0].method).toBe('DELETE');
+    const url = new globalThis.URL(seen[0].url);
+    expect(url.pathname).toBe('/v2/database/collections/orders/many');
+    const sent = { ...Object.fromEntries(url.searchParams), ...(seen[0].body as object) };
+    expect(String(sent.allRecords)).toBe('true');
+  });
+
   it('a gateway error ResponseStatus comes back as the usual serialized error', async () => {
     const { result } = run('findRecords', { collectionName: 'orders' }, 403, {
       responseStatus: { errorCode: 'Forbidden', message: 'Missing permission database:read' },
