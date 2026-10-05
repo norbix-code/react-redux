@@ -5,8 +5,8 @@
 // see them (it looks for the route string in the source). This file never
 // builds a URL itself — the core SDK does — so these are documentation:
 //
-//   GET    /{version}/files/enable
-//   GET    /{version}/files/disable
+//   PUT    /{version}/files/enable
+//   PUT    /{version}/files/disable
 //   GET    /{version}/files/folder
 //   GET    /{version}/files/item
 //   POST   /{version}/files/item/public
