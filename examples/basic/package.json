@@ -11,8 +11,8 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@norbix.ai/react-redux": "^0.1.0",
-    "@norbix.ai/ts": "^1.3.0",
+    "@norbix.ai/react-redux": "^1.8.2",
+    "@norbix.ai/ts": "^4.11.0",
     "@reduxjs/toolkit": "^2.12.0",
     "react": "^19.2.5",
     "react-dom": "^19.2.5",
