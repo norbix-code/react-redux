@@ -41,7 +41,7 @@ Not in scope: merging — this branch ships to `main` only after the gateway cam
 
 ## Needs you
 
-- The pull request is opened with `--no-merge`. Its checks are red on purpose until `@norbix.ai/ts` publishes the schema-content release: then (1) `npm install --save-dev @norbix.ai/ts@<that version>` and bump the peer range in `package.json` on this branch, (2) re-run `npm test`, `npm run typecheck`, `npm run lint`, (3) merge with "Rebase and merge".
+- Pull request https://github.com/norbix-code/react-redux/pull/43 is opened with `--no-merge`. Its checks are red on purpose until `@norbix.ai/ts` publishes the schema-content release: then (1) `npm install --save-dev @norbix.ai/ts@<that version>` and bump the peer range in `package.json` on this branch, (2) re-run `npm test`, `npm run typecheck`, `npm run lint`, (3) merge with "Rebase and merge".
 - Nothing else.
 
 ## Open questions
