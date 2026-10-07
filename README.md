@@ -211,6 +211,7 @@ Every `hub.database` method (73) and every `api.database` method (22) of `@norbi
 | `useApplyDatabaseSchemaBundleMutation`        | `hub.database.applyDatabaseSchemaBundle`        | invalidates `DatabaseSchemas` + taxonomies + terms                 |
 | `useUpdateDatabaseSchemaEmbedMutation`        | `hub.database.updateDatabaseSchemaEmbed`        | invalidates `DatabaseSchemas`                                      |
 | `useGetDatabaseSchemaListSettingsQuery`       | `hub.database.getDatabaseSchemaListSettings`    | provides `DatabaseSchemas`                                         |
+| `useGetDatabaseSchemaIndexStatusQuery`        | `hub.database.getDatabaseSchemaIndexStatus`     | provides `DatabaseSchemas/<id>` — the last schema-index run (building / ready / refused / partial) |
 | `useUpdateDatabaseSchemaListSettingsMutation` | `hub.database.updateDatabaseSchemaListSettings` | invalidates `DatabaseSchemas`                                      |
 | `useGetCollectionImportsQuery`                | `hub.database.getCollectionImports`             | provides `DatabaseImports`                                         |
 | `useGetCollectionImportQuery`                 | `hub.database.getCollectionImport`              | provides `DatabaseImports`                                         |

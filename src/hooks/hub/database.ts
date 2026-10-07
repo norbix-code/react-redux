@@ -72,6 +72,7 @@ type GetDatabaseMergedTermTree = Norbix['hub']['database']['getDatabaseMergedTer
 type ApplyDatabaseSchemaBundle = Norbix['hub']['database']['applyDatabaseSchemaBundle'];
 type UpdateDatabaseSchemaEmbed = Norbix['hub']['database']['updateDatabaseSchemaEmbed'];
 type GetDatabaseSchemaListSettings = Norbix['hub']['database']['getDatabaseSchemaListSettings'];
+type GetDatabaseSchemaIndexStatus = Norbix['hub']['database']['getDatabaseSchemaIndexStatus'];
 type UpdateDatabaseSchemaListSettings =
   Norbix['hub']['database']['updateDatabaseSchemaListSettings'];
 type GetCollectionImports = Norbix['hub']['database']['getCollectionImports'];
@@ -509,6 +510,18 @@ export const hubDatabase = (b: Builder) => ({
   >({
     query: (args) => (norbix) => norbix.hub.database.getDatabaseSchemaListSettings(args),
     providesTags: ['DatabaseSchemas'],
+  }),
+  // The last schema-index run (campaign 24 mongo-indexes): building | ready |
+  // refused | partial, one entry per database. Cached per schema so a List
+  // tab polling one schema never refetches the others.
+  getDatabaseSchemaIndexStatus: b.query<
+    Result<GetDatabaseSchemaIndexStatus>,
+    Arg<GetDatabaseSchemaIndexStatus>
+  >({
+    query: (args) => (norbix) => norbix.hub.database.getDatabaseSchemaIndexStatus(args),
+    providesTags: (_res, _err, arg) => [
+      { type: 'DatabaseSchemas', id: (arg as { id?: string })?.id ?? 'ANY' },
+    ],
   }),
 
   updateDatabaseSchemaListSettings: b.mutation<

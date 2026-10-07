@@ -75,9 +75,9 @@ const RECORD_WRITES = [
 describe('hubDatabase', () => {
   const endpoints = hubDatabase(fakeBuilder()) as unknown as Record<string, Def>;
 
-  it('has one hook per hub.database method of @norbix.ai/ts, same name (73)', () => {
+  it('has one hook per hub.database method of @norbix.ai/ts, same name (74)', () => {
     const methods = sdkMethods('hub');
-    expect(methods).toHaveLength(73);
+    expect(methods).toHaveLength(74);
     expect(Object.keys(endpoints).sort()).toEqual(methods);
   });
 
@@ -174,6 +174,10 @@ describe('hubDatabase', () => {
   it('embed and list settings live on the schema cache', () => {
     expect(endpoints.getDatabaseSchemaListSettings.__kind).toBe('query');
     expect(endpoints.getDatabaseSchemaListSettings.providesTags).toEqual(['DatabaseSchemas']);
+    expect(endpoints.getDatabaseSchemaIndexStatus.__kind).toBe('query');
+    expect(tags(endpoints.getDatabaseSchemaIndexStatus, 'providesTags', { id: 'sch_1' })).toEqual([
+      { type: 'DatabaseSchemas', id: 'sch_1' },
+    ]);
     for (const key of ['updateDatabaseSchemaListSettings', 'updateDatabaseSchemaEmbed']) {
       expect(endpoints[key].__kind).toBe('mutation');
       expect(endpoints[key].invalidatesTags).toEqual(['DatabaseSchemas']);
@@ -258,7 +262,7 @@ describe('database hooks in the flat endpoint map', () => {
       await all[key].query({})(viaFlatMap.client);
     }
     expect(viaFlatMap.calls).toEqual(viaFactory.calls);
-    expect(viaFlatMap.calls.filter((c) => c.method.startsWith('hub.'))).toHaveLength(73);
+    expect(viaFlatMap.calls.filter((c) => c.method.startsWith('hub.'))).toHaveLength(74);
   });
 });
 
