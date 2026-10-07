@@ -31,6 +31,7 @@ Not in scope: merging — this branch ships to `main` only after the gateway cam
 
 - The hub `getFileById` request DTO (`CodeMashHub2.GetFileById`) carries `filesIntegrationId` and `id` as plain `@ApiMember`s with no path params, so the core SDK sends them as query string on `GET /v2/files/item/by-id`; the Api one substitutes both into the path. The wire tests pin both. Nothing to fix here.
 - `apiDatabase` hooks still pass `(arg as { collectionName?: string })` for the tag id — the arg type already has `collectionName`, the cast is a leftover from before the typed `Arg<>` helper. Left as is (not this task).
+- This repo's commitlint (`husky` commit-msg hook, `@commitlint/config-conventional`) refuses a `[N]` step prefix on the subject, so the commits here are plain conventional subjects with `Step N of docs/tasks/…` in the body. Same as every earlier task in this repo.
 - `npx prettier --check .` reports the same 20 pre-existing files as the last task (docs, examples, `tests/provider.test.tsx`). Not touched.
 
 ## Rejected / moved out
