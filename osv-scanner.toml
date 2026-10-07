@@ -63,3 +63,8 @@ reason = "dev-only: bundled inside the npm CLI that @semantic-release/npm runs a
 id = "GHSA-rfgv-xxqx-mfg5"  # undici 6.28.0 (npm bundle)
 ignoreUntil = 2026-11-03
 reason = "dev-only: bundled inside the npm CLI that @semantic-release/npm runs at release time; the latest npm 11 (11.21.0, the range semantic-release accepts) still bundles this version and overrides cannot change bundled packages. Not part of the published package."
+
+[[IgnoredVulns]]
+id = "GHSA-rj75-hqrm-r3gf"  # postcss-selector-parser 7.1.4 (npm bundle)
+ignoreUntil = 2026-11-03
+reason = "dev-only: bundled inside the npm CLI that @semantic-release/npm runs at release time; the latest npm 11 (11.21.0) still bundles 7.1.4 and overrides cannot change bundled packages. Not part of the published package."
