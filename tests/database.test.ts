@@ -390,3 +390,152 @@ describe('hub records through the real SDK (fake fetch)', () => {
     });
   });
 });
+
+/**
+ * Schema-content campaign: `expandReferences` on the three end-user record
+ * reads and `arrayFilters` on the record updates are request fields, not new
+ * hooks — so what matters is that the existing hooks carry them to the wire
+ * unchanged. Real `@norbix.ai/ts` client + this package's base query, fake
+ * fetch, never a real server.
+ */
+describe('api records through the real SDK (fake fetch): expandReferences, arrayFilters', () => {
+  function run(key: string, args: unknown, status: number, body: unknown) {
+    // Only globalThis.* here: the lint config declares no DOM globals.
+    type FetchFn = typeof globalThis.fetch;
+    const seen: Array<{ url: string; method: string; body: unknown }> = [];
+    const fetchImpl = vi.fn(async (...[input, init]: Parameters<FetchFn>) => {
+      seen.push({
+        url: String(input),
+        method: (init?.method ?? 'GET').toUpperCase(),
+        body: init?.body ? JSON.parse(String(init.body)) : undefined,
+      });
+      return new globalThis.Response(JSON.stringify(body), {
+        status,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }) as unknown as FetchFn;
+    const norbix = new Norbix({
+      bearerToken: 'test-token',
+      projectId: 'test-project',
+      apiVersion: 'v2',
+      hubVersion: 'v2',
+      baseUrl: { api: 'https://api.norbix.io', hub: 'https://hub.norbix.io' },
+      fetch: fetchImpl,
+    });
+    const endpoints = apiDatabase(fakeBuilder()) as unknown as Record<string, Def>;
+    const baseQuery = createNorbixBaseQuery(() => norbix);
+    const result = baseQuery(endpoints[key].query(args) as never, {} as never, {});
+    return { seen, result };
+  }
+
+  /** What reached the gateway, whether the SDK put it in the query string or the body. */
+  function sent(entry: { url: string; body: unknown }) {
+    const url = new globalThis.URL(entry.url);
+    return {
+      path: url.pathname,
+      fields: { ...Object.fromEntries(url.searchParams), ...((entry.body as object) ?? {}) },
+    };
+  }
+
+  const EXPANDED = {
+    result:
+      '[{"_id":"a1","author":{"id":"u1","display":"Ada"},"cover":{"id":"nbfl_42","display":"cover.png"}}]',
+    totalCount: 1,
+  };
+
+  it.each([
+    ['findCollection', '/v2/database/collections/articles'],
+    ['findOwn', '/v2/database/collections/articles/own'],
+  ])(
+    '%s sends expandReferences=true and hands back the { id, display } values',
+    async (key, path) => {
+      const { seen, result } = run(
+        key,
+        { collectionName: 'articles', pageSize: 10, expandReferences: true },
+        200,
+        EXPANDED,
+      );
+
+      const out = (await result) as { data?: typeof EXPANDED; error?: unknown };
+
+      expect(out.error).toBeUndefined();
+      expect(seen).toHaveLength(1);
+      const wire = sent(seen[0]);
+      expect(wire.path).toBe(path);
+      expect(String(wire.fields.expandReferences)).toBe('true');
+      const [first] = JSON.parse(out.data?.result ?? '[]') as Array<{
+        author: { id: string; display: string | null };
+      }>;
+      expect(first.author).toEqual({ id: 'u1', display: 'Ada' });
+    },
+  );
+
+  it('findOne sends expandReferences=true on the record route', async () => {
+    const { seen, result } = run(
+      'findOne',
+      { collectionName: 'articles', id: 'a1', expandReferences: true },
+      200,
+      { result: '{"_id":"a1","author":{"id":"u1","display":"Ada"}}' },
+    );
+
+    const out = (await result) as { error?: unknown };
+
+    expect(out.error).toBeUndefined();
+    const wire = sent(seen[0]);
+    expect(wire.path).toBe('/v2/database/collections/articles/a1');
+    expect(String(wire.fields.expandReferences)).toBe('true');
+  });
+
+  it('a plain read sends no expandReferences at all (default: stored ids)', async () => {
+    const { seen } = run('findCollection', { collectionName: 'articles' }, 200, {
+      result: '[]',
+      totalCount: 0,
+    });
+
+    await new Promise((r) => globalThis.setTimeout(r, 0));
+    expect(sent(seen[0]).fields).not.toHaveProperty('expandReferences');
+  });
+
+  it('a read refused for a missing source permission lands as the 056 error', async () => {
+    const { result } = run('findOwn', { collectionName: 'articles', expandReferences: true }, 403, {
+      responseStatus: {
+        errorCode: 'CM-ERRORS-DATABASE-056',
+        message: 'Expanding references needs read permission on users',
+      },
+    });
+
+    const out = (await result) as { data?: unknown; error?: unknown };
+
+    expect(out.data).toBeUndefined();
+    expect(out.error).toMatchObject({
+      status: 403,
+      code: 'CM-ERRORS-DATABASE-056',
+      message: 'Expanding references needs read permission on users',
+    });
+  });
+
+  it('updateOne carries arrayFilters next to the update (JSON strings, untouched)', async () => {
+    const { seen, result } = run(
+      'updateOne',
+      {
+        collectionName: 'orders',
+        id: 'o1',
+        update: '{"$set":{"items.$[it].qty":3}}',
+        arrayFilters: '[{"it.sku":"A1"}]',
+      },
+      200,
+      { result: { matchedCount: 1, modifiedCount: 1 } },
+    );
+
+    const out = (await result) as { error?: unknown };
+
+    expect(out.error).toBeUndefined();
+    expect(seen[0].method).toBe('PUT');
+    const wire = sent(seen[0]);
+    expect(wire.path).toBe('/v2/database/collections/orders/o1');
+    expect(wire.fields).toMatchObject({
+      update: '{"$set":{"items.$[it].qty":3}}',
+      arrayFilters: '[{"it.sku":"A1"}]',
+    });
+  });
+});
