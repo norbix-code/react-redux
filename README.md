@@ -249,6 +249,57 @@ await deleteMany({ collectionName: 'orders', filter: '{}', allRecords: true });
 
 Other gateway rules that now show up as errors from these hooks: an update body with `$` operators (`$inc`, `$set`, …) is refused with `CM-ERRORS-DATABASE-035` (send the plain fields to set); a broken insert or replace document answers `CM-ERRORS-DATABASE-036`; soft-deleted records are "not found" for update, replace and change-owner, and a bulk update skips them. A caller with only own-record rights may now use the bulk hooks; they touch only that caller's records.
 
+### Expanded references and files by id (core SDK, schema-content)
+
+A reference field (user, role, taxonomy term, record of another collection,
+file) stores an id. Ask the three end-user reads for `expandReferences: true`
+and every reference value comes back as `{ id, display }` — `display` is the
+target's display field as the schema names it, `null` when the target is gone.
+Nothing new to wire: the option is a field of the request the hooks already
+pass through.
+
+```tsx
+const { data } = useFindCollectionQuery({
+  collectionName: 'articles',
+  pageSize: 20,
+  expandReferences: true,
+});
+// data.result → '[{"_id":"a1","author":{"id":"u1","display":"Ada"},"cover":{"id":"nbfl_42","display":"cover.png"}}]'
+
+useFindOneQuery({ collectionName: 'articles', id: 'a1', expandReferences: true });
+useFindOwnQuery({ collectionName: 'articles', expandReferences: true });
+```
+
+An expanded read needs read permission on every source the schema links to
+(users, roles, taxonomy, collection, files). Without it the read is refused
+with `CM-ERRORS-DATABASE-056`, naming the source, and lands in `error` like
+any other refusal. The cache key stays the collection: a write to a
+_referenced_ collection does not refetch the expanded read — `refetch()` when
+a display value must be fresh.
+
+A file reference's `id` is a stable file id (`nbfl_…`), not a path. Two hooks
+read a file by that id, so a moved or renamed file is still found:
+
+| Hook                     | SDK method              | Route                                                  | Cache            |
+| ------------------------ | ----------------------- | ------------------------------------------------------ | ---------------- |
+| `useGetFileByIdQuery`    | `hub.files.getFileById` | `GET /{version}/files/item/by-id`                      | provides `Files` |
+| `useGetFileByIdApiQuery` | `api.files.getFileById` | `GET /{version}/files/{filesIntegrationId}/by-id/{id}` | provides `Files` |
+
+```tsx
+const { data } = useGetFileByIdApiQuery({ filesIntegrationId: 'nbin_1', id: 'nbfl_42' });
+// data.file (resource, path), data.isPublic, data.publicUrl
+```
+
+The Api hook carries the `Api` suffix for the same reason `useDeleteFileApiMutation`
+does: both surfaces share one flat endpoint map. Both answers include
+`isPublic` / `publicUrl`, and publishing, unpublishing or deleting a file
+invalidates `Files`, so they refetch exactly then.
+
+Nested documents and arrays are plain JSON in `document` / `update`. An update
+addresses a nested path (`{"$set":{"address.city":"Vilnius"}}`) or an array
+element by filter — `items.$[it].qty` with `arrayFilters: '[{"it.sku":"A1"}]'`
+(a JSON string) on `useUpdateOneMutation` / `useUpdateManyMutation`.
+
 ### Schemas per environment
 
 `useGetDatabaseSchemasQuery` returns only the schemas of the environment the request targets: the `env` argument, or else the client's environment (`norbix.setEnvironment(...)`, sent as the `norbix-env` header), or `PROD` when neither is set. Each row carries `env`. The schema list settings (`useGetDatabaseSchemaListSettingsQuery` / `useUpdateDatabaseSchemaListSettingsMutation`) are stored per environment too.
