@@ -1,4 +1,4 @@
-// AUTO-GENERATED — full coverage of `norbix.api.files` (10 endpoints).
+// AUTO-GENERATED — full coverage of `norbix.api.files` (11 endpoints).
 // Synced from the norbix core SDK surface. Re-run the hook sync to refresh.
 //
 // The gateway routes behind these hooks, so the endpoint-coverage matrix can
@@ -10,6 +10,7 @@
 //   DELETE /{version}/files/{filesIntegrationId}/bulk
 //   POST   /{version}/files/{filesIntegrationId}/commit
 //   GET    /{version}/files/{filesIntegrationId}/download
+//   GET    /{version}/files/{filesIntegrationId}/by-id/{id}
 //   GET    /{version}/files/{filesIntegrationId}/info
 //   GET    /{version}/files/{filesIntegrationId}/sign
 //   POST   /{version}/files/{filesIntegrationId}/upload-url
@@ -24,6 +25,7 @@ type CommitUpload = Norbix['api']['files']['commitUpload'];
 type DeleteFileApi = Norbix['api']['files']['deleteFileApi'];
 type DeleteManyFilesApi = Norbix['api']['files']['deleteManyFilesApi'];
 type DownloadFileApi = Norbix['api']['files']['downloadFileApi'];
+type GetFileByIdApi = Norbix['api']['files']['getFileById'];
 type GetFileInfo = Norbix['api']['files']['getFileInfo'];
 type GetSignedUrl = Norbix['api']['files']['getSignedUrl'];
 type ListFiles = Norbix['api']['files']['listFiles'];
@@ -32,7 +34,7 @@ type GetPublicFile = Norbix['api']['files']['getPublicFile'];
 type TestFilesIntegrationApi = Norbix['api']['files']['testFilesIntegration'];
 
 /**
- * `api.files` — 10 endpoints, 1:1 with the core SDK.
+ * `api.files` — 11 endpoints, 1:1 with the core SDK.
  */
 export const apiFiles = (b: Builder) => ({
   commitUpload: b.mutation<Result<CommitUpload>, Arg<CommitUpload>>({
@@ -52,6 +54,28 @@ export const apiFiles = (b: Builder) => ({
 
   downloadFileApi: b.query<Result<DownloadFileApi>, Arg<DownloadFileApi>>({
     query: (args) => (norbix) => norbix.api.files.downloadFileApi(args),
+    providesTags: ['Files'],
+  }),
+
+  /**
+   * Reads one file by its stable id — the value a record's file field stores,
+   * and the `id` an expanded reference (`expandReferences: true` on a find)
+   * returns. Answers the file's `resource`, `path`, `isPublic` and
+   * `publicUrl`; an id no storage of the integration holds is not found.
+   *
+   * Wraps `api.files.getFileById`
+   * (`GET /{version}/files/{filesIntegrationId}/by-id/{id}`). The Hub has a
+   * by-id read of the same SDK name (`hub.files.getFileById`, hook
+   * `useGetFileByIdQuery`); both live in one flat endpoint map, so this one
+   * carries the `Api` suffix like `deleteFileApi` and `downloadFileApi`.
+   * Hook: `useGetFileByIdApiQuery`.
+   *
+   * Cached under `Files`, like `getFileInfo`: a publish / unpublish or a
+   * delete invalidates `Files`, and `isPublic` / `publicUrl` are part of this
+   * answer, so the whole-tag refetch is the right one here.
+   */
+  getFileByIdApi: b.query<Result<GetFileByIdApi>, Arg<GetFileByIdApi>>({
+    query: (args) => (norbix) => norbix.api.files.getFileById(args),
     providesTags: ['Files'],
   }),
 

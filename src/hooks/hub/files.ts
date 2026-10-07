@@ -1,4 +1,4 @@
-// AUTO-GENERATED — full coverage of `norbix.hub.files` (22 endpoints).
+// AUTO-GENERATED — full coverage of `norbix.hub.files` (23 endpoints).
 // Synced from the norbix core SDK surface. Re-run the hook sync to refresh.
 //
 // The gateway routes behind these hooks, so the endpoint-coverage matrix can
@@ -9,6 +9,7 @@
 //   PUT    /{version}/files/disable
 //   GET    /{version}/files/folder
 //   GET    /{version}/files/item
+//   GET    /{version}/files/item/by-id
 //   POST   /{version}/files/item/public
 //   POST   /{version}/files/item/private
 //   POST   /{version}/files/folder/public
@@ -48,6 +49,7 @@ type GetFilesIntegrations = Norbix['hub']['files']['getFilesIntegrations'];
 type SaveFilesIntegration = Norbix['hub']['files']['saveFilesIntegration'];
 type SetFilesIntegrationAsDefault = Norbix['hub']['files']['setFilesIntegrationAsDefault'];
 type GetFile = Norbix['hub']['files']['getFile'];
+type GetFileById = Norbix['hub']['files']['getFileById'];
 type GetFolderFiles = Norbix['hub']['files']['getFolderFiles'];
 type TestFilesIntegration = Norbix['hub']['files']['testFilesIntegration'];
 type MakeFilePublic = Norbix['hub']['files']['makeFilePublic'];
@@ -56,7 +58,7 @@ type MakeFolderPublic = Norbix['hub']['files']['makeFolderPublic'];
 type MakeFolderPrivate = Norbix['hub']['files']['makeFolderPrivate'];
 
 /**
- * `hub.files` — 22 endpoints, 1:1 with the core SDK.
+ * `hub.files` — 23 endpoints, 1:1 with the core SDK.
  */
 export const hubFiles = (b: Builder) => ({
   disableFiles: b.mutation<Result<DisableFiles>, Arg<DisableFiles>>({
@@ -136,6 +138,23 @@ export const hubFiles = (b: Builder) => ({
 
   getFile: b.query<Result<GetFile>, Arg<GetFile>>({
     query: (args) => (norbix) => norbix.hub.files.getFile(args),
+    providesTags: ['Files'],
+  }),
+
+  /**
+   * Reads one file by its stable id (`nbfl_…` or its bare UUID) — the value a
+   * record's file field stores, and the `id` an expanded reference returns.
+   * Unlike `getFile`, which needs the path, this survives a move or rename.
+   *
+   * Wraps `hub.files.getFileById` (`GET /{version}/files/item/by-id`).
+   * Hook: `useGetFileByIdQuery`. The end-user read of the same name is
+   * `useGetFileByIdApiQuery` (`api.files.getFileById`).
+   *
+   * Cached under `Files` like `getFile`: publish, unpublish and delete
+   * invalidate it, and `isPublic` / `publicUrl` are part of this answer.
+   */
+  getFileById: b.query<Result<GetFileById>, Arg<GetFileById>>({
+    query: (args) => (norbix) => norbix.hub.files.getFileById(args),
     providesTags: ['Files'],
   }),
 
