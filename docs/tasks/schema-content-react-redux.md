@@ -14,6 +14,8 @@ Not in scope: merging — this branch ships to `main` only after the gateway cam
 4. test(files, database): hook-shape tests, fake-transport tests and real-SDK fake-fetch wire tests — done, `tests/files.test.ts`, `tests/database.test.ts`.
 5. docs(readme): "Expanded references and files by id" section — done, `README.md`.
 6. ship: `nbx-ship --no-merge` — done, pull request link in "Needs you".
+7. build(deps): `@norbix.ai/ts` `^4.14.0` (dev) / `>=4.14.0` (peer) — done, `package.json`, `package-lock.json` (sdk-ts #79 released as v4.14.0 on 2026-10-07; lockfile also moves `source-map-js` 1.2.1 → 1.2.2 and the bundled `npm` 11.19.1 → 11.21.0 for the OSV scan).
+8. merge: "Rebase and merge" once the Security scan is green — todo, see "Needs you".
 
 ## Changes
 
@@ -41,8 +43,7 @@ Not in scope: merging — this branch ships to `main` only after the gateway cam
 
 ## Needs you
 
-- Pull request https://github.com/norbix-code/react-redux/pull/43 is opened with `--no-merge`. Its checks are red on purpose until `@norbix.ai/ts` publishes the schema-content release: then (1) `npm install --save-dev @norbix.ai/ts@<that version>` and bump the peer range in `package.json` on this branch, (2) re-run `npm test`, `npm run typecheck`, `npm run lint`, (3) merge with "Rebase and merge".
-- Nothing else.
+- Pull request https://github.com/norbix-code/react-redux/pull/43: the `@norbix.ai/ts` bump to 4.14.0 is on the branch (plan step 7; lint, typecheck, 269 tests, build green locally). One check stays red and it is not the SDK: **Security scan → OSV** flags `postcss-selector-parser` 7.1.4 (GHSA-rj75-hqrm-r3gf, dev-only, bundled inside the `npm` CLI that `@semantic-release/npm` runs). No update fixes it — npm 11.21.0, the newest in the range semantic-release accepts, still bundles 7.1.4, and overrides cannot change bundled packages. The fix is a dated `[[IgnoredVulns]]` entry in `osv-scanner.toml` like the three `brace-expansion` ones (pull request 34). The agent did not add it (an ignore entry is your call). Add it (`id = "GHSA-rj75-hqrm-r3gf"`, `ignoreUntil = 2026-11-07`, dev-only reason), push, then `nbx-ship --wait-release --cleanup` from this worktree.
 
 ## Open questions
 
