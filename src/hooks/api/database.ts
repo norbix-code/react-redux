@@ -37,6 +37,21 @@ type GetDatabaseSchemas = Norbix['api']['database']['getDatabaseSchemas'];
  */
 export const apiDatabase = (b: Builder) => ({
   // ---- Collections — Read ----
+  /**
+   * `expandReferences: true` on this request (and on `findOne` / `findOwn`)
+   * makes every reference value come back as `{ id, display }` — `display`
+   * is the target's `displayField` per the schema, `null` when the target is
+   * gone — instead of the stored id. It needs read permission on every
+   * source the schema links to (users, roles, taxonomy, collection, files);
+   * otherwise the read is refused with `CM-ERRORS-DATABASE-056` naming the
+   * source, which lands in `error` like any other gateway refusal.
+   *
+   * The cache key is still the collection: an expanded read and a plain read
+   * of the same collection are two entries under one tag, and a write to a
+   * referenced collection does NOT refetch the expanded one — `refetch()`
+   * when a display value must be fresh. A file reference's `id` is what
+   * `useGetFileByIdApiQuery` reads.
+   */
   findCollection: b.query<Result<Find>, Arg<Find>>({
     query: (args) => (norbix) => norbix.api.database.find(args),
     providesTags: (_res, _err, arg) => [
@@ -47,6 +62,7 @@ export const apiDatabase = (b: Builder) => ({
     ],
   }),
 
+  // Same `expandReferences` option as `findCollection`.
   findOne: b.query<Result<FindOne>, Arg<FindOne>>({
     query: (args) => (norbix) => norbix.api.database.findOne(args),
     providesTags: (_res, _err, arg) => [
@@ -58,6 +74,7 @@ export const apiDatabase = (b: Builder) => ({
   }),
 
   // Only the records the caller is responsible for (owner-scoped find).
+  // Same `expandReferences` option as `findCollection`.
   findOwn: b.query<Result<FindOwn>, Arg<FindOwn>>({
     query: (args) => (norbix) => norbix.api.database.findOwn(args),
     providesTags: (_res, _err, arg) => [
@@ -117,6 +134,12 @@ export const apiDatabase = (b: Builder) => ({
     ],
   }),
 
+  /**
+   * `update` may address nested paths (`{"$set":{"address.city":"Vilnius"}}`)
+   * and array elements by position (`items.0.qty`) or by filter
+   * (`items.$[it].qty` + `arrayFilters: '[{"it.sku":"A1"}]'` — a JSON string,
+   * same as on `updateMany`).
+   */
   updateOne: b.mutation<Result<UpdateOne>, Arg<UpdateOne>>({
     query: (args) => (norbix) => norbix.api.database.updateOne(args),
     invalidatesTags: (_res, _err, arg) => [
@@ -127,6 +150,7 @@ export const apiDatabase = (b: Builder) => ({
     ],
   }),
 
+  // Takes the same `arrayFilters` JSON string as `updateOne`.
   updateMany: b.mutation<Result<UpdateMany>, Arg<UpdateMany>>({
     query: (args) => (norbix) => norbix.api.database.updateMany(args),
     invalidatesTags: (_res, _err, arg) => [
