@@ -40,7 +40,6 @@ const CODE: Record<string, ['query' | 'mutation', string]> = {
   deleteCodeIntegration: ['mutation', 'deleteCodeIntegration'],
   enableCodeIntegration: ['mutation', 'enableCodeIntegration'],
   disableCodeIntegration: ['mutation', 'disableCodeIntegration'],
-  setCodeIntegrationAsDefault: ['mutation', 'setCodeIntegrationAsDefault'],
   testCodeIntegration: ['mutation', 'testCodeIntegration'],
   getCodeFunctions: ['query', 'getCodeFunctions'],
   getCodeFunctionQualifiers: ['query', 'getCodeFunctionQualifiers'],
@@ -127,10 +126,7 @@ describe('hubCode', () => {
     ]);
   });
 
-  it('setCodeIntegrationAsDefault invalidates every CodeIntegrations entry; test invalidates nothing', () => {
-    expect(tagsFor(endpoints['setCodeIntegrationAsDefault']!.invalidatesTags, {})).toEqual([
-      'CodeIntegrations',
-    ]);
+  it('test invalidates nothing', () => {
     expect(endpoints['testCodeIntegration']!.invalidatesTags).toBeUndefined();
   });
 

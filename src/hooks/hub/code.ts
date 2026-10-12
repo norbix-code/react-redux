@@ -32,7 +32,6 @@ export const hubCode = (b: Builder) => {
   type DeleteIntegration = Fn<'deleteCodeIntegration'>;
   type EnableIntegration = Fn<'enableCodeIntegration'>;
   type DisableIntegration = Fn<'disableCodeIntegration'>;
-  type SetIntegrationAsDefault = Fn<'setCodeIntegrationAsDefault'>;
   type TestIntegration = Fn<'testCodeIntegration'>;
   type GetFunctions = Fn<'getCodeFunctions'>;
   type GetQualifiers = Fn<'getCodeFunctionQualifiers'>;
@@ -92,15 +91,6 @@ export const hubCode = (b: Builder) => {
     disableCodeIntegration: b.mutation<Result<DisableIntegration>, Arg<DisableIntegration>>({
       query: (args) => (norbix) => callHC(norbix).disableCodeIntegration(args),
       invalidatesTags: (_res, _err, arg) => integrationTags(arg),
-    }),
-
-    setCodeIntegrationAsDefault: b.mutation<
-      Result<SetIntegrationAsDefault>,
-      Arg<SetIntegrationAsDefault>
-    >({
-      query: (args) => (norbix) => callHC(norbix).setCodeIntegrationAsDefault(args),
-      // The default flag moves between integrations: the whole list changes.
-      invalidatesTags: ['CodeIntegrations'],
     }),
 
     testCodeIntegration: b.mutation<Result<TestIntegration>, Arg<TestIntegration>>({
