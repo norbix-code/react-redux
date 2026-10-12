@@ -212,7 +212,7 @@ describe('scheduler hooks through the real SDK (fake fetch)', () => {
     expect(seen[0]!.url).toBe(url);
     expect(seen[0]!.body).toBeUndefined();
     expect(seen[0]!.headers.get('Authorization')).toBe('Bearer test-token');
-    expect(seen[0]!.headers.get('X-CM-ProjectId')).toBe('test-project');
+    expect(seen[0]!.headers.get('norbix-project-id')).toBe('test-project');
   });
 
   it('getSchedulerTasks sends GET /v2/scheduler/tasks with the filters in the query string', async () => {

@@ -13,6 +13,7 @@ import { apiPublic } from './api/public.js';
 import { hubAccount } from './hub/account.js';
 import { hubAi } from './hub/ai.js';
 import { hubApikeys } from './hub/apikeys.js';
+import { hubCode } from './hub/code.js';
 import { hubDatabase } from './hub/database.js';
 import { hubEmail } from './hub/email.js';
 import { hubEnvironments } from './hub/environments.js';
@@ -143,6 +144,7 @@ export function buildEndpoints(builder: Builder) {
     ...hubAccount(builder),
     ...hubAi(builder),
     ...hubApikeys(builder),
+    ...hubCode(builder),
     ...hubMembership(builder),
     ...hubDatabase(builder),
     ...hubFiles(builder),

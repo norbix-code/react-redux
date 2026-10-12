@@ -324,7 +324,7 @@ describe('hub records through the real SDK (fake fetch)', () => {
     expect(seen[0].method).toBe('GET');
     expect(seen[0].url.split('?')[0]).toBe('https://hub.norbix.io/v2/database/collections/orders');
     expect(seen[0].headers.get('Authorization')).toBe('Bearer test-token');
-    expect(seen[0].headers.get('X-CM-ProjectId')).toBe('test-project');
+    expect(seen[0].headers.get('norbix-project-id')).toBe('test-project');
     expect(out.data).toEqual({ result: '[{"_id":"r1"}]', totalCount: 1 });
   });
 
