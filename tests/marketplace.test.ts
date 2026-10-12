@@ -134,6 +134,14 @@ const CASES: Array<
     { functionViewId: FUNCTION, payload: { text: 'Order shipped' } },
     { payload: { text: 'Order shipped' } },
   ],
+  [
+    'getMarketplaceFunctionRuns',
+    'query',
+    'GET',
+    '/code/marketplace/functions/runs',
+    { triggerId: 'trg_1p4R3gTobGZpD6fXvHT4rd', limit: 5 },
+    { triggerId: 'trg_1p4R3gTobGZpD6fXvHT4rd', limit: 5 },
+  ],
 ];
 const NAMES = CASES.map((c) => c[0]);
 
@@ -144,7 +152,7 @@ function tagsFor(tags: Tags | undefined, arg: unknown): unknown {
 const endpoints = hubCodeMarketplace(fakeBuilder()) as unknown as Record<string, Def>;
 
 describe('hubCodeMarketplace', () => {
-  it('wraps the 22 marketplace methods of the published core SDK', () => {
+  it('wraps the 23 marketplace methods of the published core SDK', () => {
     expect(Object.keys(endpoints).sort()).toEqual([...NAMES].sort());
   });
 
@@ -207,6 +215,12 @@ describe('hubCodeMarketplace', () => {
         { type: 'CodeMarketplace', id: INTEGRATION },
       ]);
     }
+  });
+
+  it('the last runs provide CodeMarketplace/RUNS', () => {
+    expect(tagsFor(endpoints['getMarketplaceFunctionRuns']!.providesTags, {})).toEqual([
+      { type: 'CodeMarketplace', id: 'RUNS' },
+    ]);
   });
 
   it('reveal and invoke invalidate nothing (reveal is a mutation so clear secrets are never cached)', () => {

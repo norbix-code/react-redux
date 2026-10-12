@@ -18,6 +18,7 @@ import type { Arg, Result } from '../types.js';
  *   - `CATALOG:<integrationId>`  — the vendor functions a connection offers
  *   - `FUNCTIONS:<integrationId>`— the functions added on a connection
  *   - `<functionViewId>`         — one function and its tokens
+ *   - `RUNS`                     — the last runs of a trigger or task (core SDK 4.21.0)
  *
  * Revealing secrets is a mutation on purpose: a query would keep the clear
  * values in the store's cache.
@@ -48,6 +49,7 @@ export const hubCodeMarketplace = (b: Builder) => {
   type DisableFunction = Fn<'disableMarketplaceFunction'>;
   type GetFunctionTokens = Fn<'getMarketplaceFunctionTokens'>;
   type InvokeFunction = Fn<'invokeMarketplaceFunction'>;
+  type GetRuns = Fn<'getMarketplaceFunctionRuns'>;
 
   const callHC = (norbix: Norbix) => norbix.hub.code as HC;
 
@@ -170,6 +172,12 @@ export const hubCodeMarketplace = (b: Builder) => {
     }),
     invokeMarketplaceFunction: b.mutation<Result<InvokeFunction>, Arg<InvokeFunction>>({
       query: (args) => (norbix) => callHC(norbix).invokeMarketplaceFunction(args),
+    }),
+
+    // ---- Last runs (core SDK 4.21.0) ----
+    getMarketplaceFunctionRuns: b.query<Result<GetRuns>, Arg<GetRuns>>({
+      query: (args) => (norbix) => callHC(norbix).getMarketplaceFunctionRuns(args),
+      providesTags: [{ type: T, id: 'RUNS' }],
     }),
   };
 };
