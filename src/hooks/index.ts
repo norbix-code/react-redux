@@ -19,6 +19,7 @@ import { hubEmail } from './hub/email.js';
 import { hubEnvironments } from './hub/environments.js';
 import { hubFiles } from './hub/files.js';
 import { hubLogs } from './hub/logs.js';
+import { hubCodeMarketplace } from './hub/marketplace.js';
 import { hubMembership } from './hub/membership.js';
 import { hubNotifications } from './hub/notifications.js';
 import { hubPayments } from './hub/payments.js';
@@ -145,6 +146,7 @@ export function buildEndpoints(builder: Builder) {
     ...hubAi(builder),
     ...hubApikeys(builder),
     ...hubCode(builder),
+    ...hubCodeMarketplace(builder),
     ...hubMembership(builder),
     ...hubDatabase(builder),
     ...hubFiles(builder),

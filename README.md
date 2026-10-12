@@ -515,11 +515,11 @@ may call — list, aliases / versions, a call by hand, a sample envelope for a
 local run, and the last runs of a trigger or task. The five function hooks
 need `@norbix.ai/ts` 4.19.0.
 
-| Area            | Hooks                                                                                                                                                                                                                                                                                  | Cache tag                                                                                             |
-| --------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
-| Module switch   | `useEnableCodeModuleMutation`, `useDisableCodeModuleMutation`                                                                                                                                                                                                                          | invalidates `Account`, `Projects`, `Code`                                                             |
+| Area            | Hooks                                                                                                                                                                                                                                        | Cache tag                                                                                             |
+| --------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| Module switch   | `useEnableCodeModuleMutation`, `useDisableCodeModuleMutation`                                                                                                                                                                                | invalidates `Account`, `Projects`, `Code`                                                             |
 | Integrations    | `useGetCodeIntegrationsQuery`, `useGetCodeIntegrationQuery`, `useSaveCodeIntegrationMutation`, `useDeleteCodeIntegrationMutation`, `useEnableCodeIntegrationMutation`, `useDisableCodeIntegrationMutation`, `useTestCodeIntegrationMutation` | provides / invalidates `CodeIntegrations/LIST` and `CodeIntegrations/<id>`; `test` touches nothing    |
-| Cloud functions | `useGetCodeFunctionsQuery`, `useGetCodeFunctionQualifiersQuery`, `useGetCodeFunctionEventSampleQuery`, `useGetCodeFunctionRunsQuery`, `useInvokeCodeFunctionMutation`                                                                                                                  | provides `CodeFunctions/LIST`, `CodeFunctions/SAMPLE`, `CodeFunctions/RUNS`; `invoke` touches nothing |
+| Cloud functions | `useGetCodeFunctionsQuery`, `useGetCodeFunctionQualifiersQuery`, `useGetCodeFunctionEventSampleQuery`, `useGetCodeFunctionRunsQuery`, `useInvokeCodeFunctionMutation`                                                                        | provides `CodeFunctions/LIST`, `CodeFunctions/SAMPLE`, `CodeFunctions/RUNS`; `invoke` touches nothing |
 
 ```tsx
 const integrationId = 'int_6rBACnEaxQ0x1jTiHtAuWV';
@@ -543,6 +543,29 @@ const { data: runs } = useGetCodeFunctionRunsQuery({
 The function side — parsing the envelope your function receives — is
 `parseFunctionEvent` in the core SDK (`docs/code-functions.md`), not a hook.
 Full method reference: the core SDK's `docs/hub/code.md`.
+
+## Code — marketplace
+
+The marketplace methods of `hub.code` have hooks too, 1:1 with
+`norbix.hub.code` (gateway contract `Code.Marketplace.md` §14): the catalog of
+listings, the installed connections (`int_…`) with their secrets, token
+mappings and validation test, the vendor function catalog, and the functions
+added on a connection (`func_…`). Every tag is of type `CodeMarketplace`.
+
+| Area        | Hooks                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            | Cache tag (`CodeMarketplace/…`)                                                              |
+| ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------- |
+| Catalog     | `useGetMarketplaceListingsQuery`, `useGetMarketplaceListingQuery`, `useGetMarketplaceListingFunctionTokensQuery`                                                                                                                                                                                                                                                                                                                                                                                 | provides `LISTINGS`                                                                          |
+| Connections | `useGetMarketplaceIntegrationsQuery`, `useGetMarketplaceIntegrationQuery`, `useSaveMarketplaceIntegrationMutation`, `useDeleteMarketplaceIntegrationMutation`, `useEnableMarketplaceIntegrationMutation`, `useDisableMarketplaceIntegrationMutation`, `useReplaceMarketplaceIntegrationSecretsMutation`, `useRevealMarketplaceIntegrationSecretsMutation`, `useSetMarketplaceIntegrationTokenMappingsMutation`, `useTestMarketplaceIntegrationMutation`, `useGetMarketplaceFunctionCatalogQuery` | `INTEGRATIONS`, `<integrationViewId>`, `CATALOG:<integrationViewId>`; reveal touches nothing |
+| Functions   | `useGetMarketplaceFunctionsQuery`, `useGetMarketplaceFunctionQuery`, `useSaveMarketplaceFunctionMutation`, `useDeleteMarketplaceFunctionMutation`, `useEnableMarketplaceFunctionMutation`, `useDisableMarketplaceFunctionMutation`, `useGetMarketplaceFunctionTokensQuery`, `useInvokeMarketplaceFunctionMutation`                                                                                                                                                                               | `FUNCTIONS:<integrationViewId>`, `<functionViewId>`; invoke touches nothing                  |
+
+Revealing secrets is a mutation on purpose: a query would keep the clear values
+in the store's cache.
+
+```tsx
+const { data: listings } = useGetMarketplaceListingsQuery({ search: 'slack' });
+const [invoke] = useInvokeMarketplaceFunctionMutation();
+await invoke({ functionViewId: 'func_4hT2b9QkLm3XcT1yRfGh7a', payload: { text: 'Order shipped' } });
+```
 
 ## Working with terms
 

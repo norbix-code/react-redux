@@ -8,7 +8,7 @@ import type { Arg, Result } from '../types.js';
  * Azure Functions, Google Cloud Functions credentials) and the cloud functions
  * they may call: list, aliases / versions, a call by hand, a sample envelope
  * and the last runs of a trigger or task. The marketplace half of `hub.code`
- * is not wrapped here.
+ * is in `./marketplace.ts`.
  *
  * Tag conventions:
  *   - `Code`                       — module state
