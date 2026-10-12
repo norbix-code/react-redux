@@ -167,7 +167,7 @@ describe('stop / disable-dependencies / render through the real SDK (fake fetch)
     expect(seen[0]!.method).toBe('POST');
     expect(seen[0]!.url).toBe('https://hub.norbix.io/v2/notifications/sms/campaigns/cmp_1/stop');
     expect(seen[0]!.headers.get('Authorization')).toBe('Bearer test-token');
-    expect(seen[0]!.headers.get('X-CM-ProjectId')).toBe('test-project');
+    expect(seen[0]!.headers.get('norbix-project-id')).toBe('test-project');
   });
 
   it('getSmsDisableDependencies sends GET /v2/notifications/sms/disable-dependencies and parses the answer', async () => {

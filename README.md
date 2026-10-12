@@ -187,40 +187,40 @@ A _curated_ set of hooks for the most common endpoints. Every hook is end-to-end
 
 Every `hub.database` method (73) and every `api.database` method (22) of `@norbix.ai/ts` has a hook; Hub hooks keep the SDK method name. The rows below are the ones added for `@norbix.ai/ts` >= 4.9.0.
 
-| Hook                                          | SDK method                                      | Cache                                                              |
-| --------------------------------------------- | ----------------------------------------------- | ------------------------------------------------------------------ |
-| `useFindRecordsQuery`                         | `hub.database.findRecords`                      | provides `DatabaseRecords/<collectionName>`                        |
-| `useFindOneRecordQuery`                       | `hub.database.findOneRecord`                    | provides `DatabaseRecords/<collectionName>`                        |
-| `useCountRecordsQuery`                        | `hub.database.countRecords`                     | provides `DatabaseRecords/<collectionName>`                        |
-| `useDistinctRecordValuesQuery`                | `hub.database.distinctRecordValues`             | provides `DatabaseRecords/<collectionName>`                        |
-| `useAggregateRecordsMutation`                 | `hub.database.aggregateRecords`                 | — (never cached)                                                   |
-| `useExecuteRecordsAggregateMutation`          | `hub.database.executeRecordsAggregate`          | — (never cached)                                                   |
-| `useGetCollectionIndexesQuery`                | `hub.database.getCollectionIndexes`             | provides `DatabaseCollections/<collectionName>`                    |
-| `useInsertRecordMutation`                     | `hub.database.insertRecord`                     | invalidates `DatabaseRecords/<collectionName>`                     |
-| `useInsertManyRecordsMutation`                | `hub.database.insertManyRecords`                | invalidates `DatabaseRecords/<collectionName>`                     |
-| `useUpdateOneRecordMutation`                  | `hub.database.updateOneRecord`                  | invalidates `DatabaseRecords/<collectionName>`                     |
-| `useUpdateManyRecordsMutation`                | `hub.database.updateManyRecords`                | invalidates `DatabaseRecords/<collectionName>`                     |
-| `useReplaceRecordMutation`                    | `hub.database.replaceRecord`                    | invalidates `DatabaseRecords/<collectionName>`                     |
-| `useDeleteRecordMutation`                     | `hub.database.deleteRecord`                     | invalidates `DatabaseRecords/<collectionName>`                     |
-| `useDeleteManyRecordsMutation`                | `hub.database.deleteManyRecords`                | invalidates `DatabaseRecords/<collectionName>`                     |
-| `useChangeRecordResponsibilityMutation`       | `hub.database.changeRecordResponsibility`       | invalidates `DatabaseRecords/<collectionName>`                     |
-| `useSeedCollectionRecordsMutation`            | `hub.database.seedCollectionRecords`            | invalidates `DatabaseRecords`                                      |
-| `useGetDatabaseTaxonomyTreeQuery`             | `hub.database.getDatabaseTaxonomyTree`          | provides `DatabaseTaxonomies` + `DatabaseTaxonomyTerms`            |
-| `useGetDatabaseTaxonomyTermTreeQuery`         | `hub.database.getDatabaseTaxonomyTermTree`      | provides `DatabaseTaxonomyTerms/<taxonomyName>`                    |
-| `useGetDatabaseMergedTermTreeQuery`           | `hub.database.getDatabaseMergedTermTree`        | provides `DatabaseTaxonomyTerms/<taxonomyName>`                    |
-| `useApplyDatabaseSchemaBundleMutation`        | `hub.database.applyDatabaseSchemaBundle`        | invalidates `DatabaseSchemas` + taxonomies + terms                 |
-| `useUpdateDatabaseSchemaEmbedMutation`        | `hub.database.updateDatabaseSchemaEmbed`        | invalidates `DatabaseSchemas`                                      |
-| `useGetDatabaseSchemaListSettingsQuery`       | `hub.database.getDatabaseSchemaListSettings`    | provides `DatabaseSchemas`                                         |
+| Hook                                          | SDK method                                      | Cache                                                                                              |
+| --------------------------------------------- | ----------------------------------------------- | -------------------------------------------------------------------------------------------------- |
+| `useFindRecordsQuery`                         | `hub.database.findRecords`                      | provides `DatabaseRecords/<collectionName>`                                                        |
+| `useFindOneRecordQuery`                       | `hub.database.findOneRecord`                    | provides `DatabaseRecords/<collectionName>`                                                        |
+| `useCountRecordsQuery`                        | `hub.database.countRecords`                     | provides `DatabaseRecords/<collectionName>`                                                        |
+| `useDistinctRecordValuesQuery`                | `hub.database.distinctRecordValues`             | provides `DatabaseRecords/<collectionName>`                                                        |
+| `useAggregateRecordsMutation`                 | `hub.database.aggregateRecords`                 | — (never cached)                                                                                   |
+| `useExecuteRecordsAggregateMutation`          | `hub.database.executeRecordsAggregate`          | — (never cached)                                                                                   |
+| `useGetCollectionIndexesQuery`                | `hub.database.getCollectionIndexes`             | provides `DatabaseCollections/<collectionName>`                                                    |
+| `useInsertRecordMutation`                     | `hub.database.insertRecord`                     | invalidates `DatabaseRecords/<collectionName>`                                                     |
+| `useInsertManyRecordsMutation`                | `hub.database.insertManyRecords`                | invalidates `DatabaseRecords/<collectionName>`                                                     |
+| `useUpdateOneRecordMutation`                  | `hub.database.updateOneRecord`                  | invalidates `DatabaseRecords/<collectionName>`                                                     |
+| `useUpdateManyRecordsMutation`                | `hub.database.updateManyRecords`                | invalidates `DatabaseRecords/<collectionName>`                                                     |
+| `useReplaceRecordMutation`                    | `hub.database.replaceRecord`                    | invalidates `DatabaseRecords/<collectionName>`                                                     |
+| `useDeleteRecordMutation`                     | `hub.database.deleteRecord`                     | invalidates `DatabaseRecords/<collectionName>`                                                     |
+| `useDeleteManyRecordsMutation`                | `hub.database.deleteManyRecords`                | invalidates `DatabaseRecords/<collectionName>`                                                     |
+| `useChangeRecordResponsibilityMutation`       | `hub.database.changeRecordResponsibility`       | invalidates `DatabaseRecords/<collectionName>`                                                     |
+| `useSeedCollectionRecordsMutation`            | `hub.database.seedCollectionRecords`            | invalidates `DatabaseRecords`                                                                      |
+| `useGetDatabaseTaxonomyTreeQuery`             | `hub.database.getDatabaseTaxonomyTree`          | provides `DatabaseTaxonomies` + `DatabaseTaxonomyTerms`                                            |
+| `useGetDatabaseTaxonomyTermTreeQuery`         | `hub.database.getDatabaseTaxonomyTermTree`      | provides `DatabaseTaxonomyTerms/<taxonomyName>`                                                    |
+| `useGetDatabaseMergedTermTreeQuery`           | `hub.database.getDatabaseMergedTermTree`        | provides `DatabaseTaxonomyTerms/<taxonomyName>`                                                    |
+| `useApplyDatabaseSchemaBundleMutation`        | `hub.database.applyDatabaseSchemaBundle`        | invalidates `DatabaseSchemas` + taxonomies + terms                                                 |
+| `useUpdateDatabaseSchemaEmbedMutation`        | `hub.database.updateDatabaseSchemaEmbed`        | invalidates `DatabaseSchemas`                                                                      |
+| `useGetDatabaseSchemaListSettingsQuery`       | `hub.database.getDatabaseSchemaListSettings`    | provides `DatabaseSchemas`                                                                         |
 | `useGetDatabaseSchemaIndexStatusQuery`        | `hub.database.getDatabaseSchemaIndexStatus`     | provides `DatabaseSchemas/<id>` — the last schema-index run (building / ready / refused / partial) |
-| `useUpdateDatabaseSchemaListSettingsMutation` | `hub.database.updateDatabaseSchemaListSettings` | invalidates `DatabaseSchemas`                                      |
-| `useGetCollectionImportsQuery`                | `hub.database.getCollectionImports`             | provides `DatabaseImports`                                         |
-| `useGetCollectionImportQuery`                 | `hub.database.getCollectionImport`              | provides `DatabaseImports`                                         |
-| `useCreateCollectionImportMutation`           | `hub.database.createCollectionImport`           | invalidates `DatabaseImports` + `DatabaseRecords/<collectionName>` |
-| `useDeleteCollectionImportMutation`           | `hub.database.deleteCollectionImport`           | invalidates `DatabaseImports`                                      |
-| `useAnalyzeImportFileMutation`                | `hub.database.analyzeImportFile`                | —                                                                  |
-| `useRequestImportUploadUrlMutation`           | `hub.database.requestImportUploadUrl`           | —                                                                  |
-| `useFindOwnQuery`                             | `api.database.findOwn`                          | provides `DatabaseCollections/<collectionName>`                    |
-| `useFindMergedTermTreeQuery`                  | `api.database.findMergedTermTree`               | provides `DatabaseTaxonomyTerms/<taxonomyName>`                    |
+| `useUpdateDatabaseSchemaListSettingsMutation` | `hub.database.updateDatabaseSchemaListSettings` | invalidates `DatabaseSchemas`                                                                      |
+| `useGetCollectionImportsQuery`                | `hub.database.getCollectionImports`             | provides `DatabaseImports`                                                                         |
+| `useGetCollectionImportQuery`                 | `hub.database.getCollectionImport`              | provides `DatabaseImports`                                                                         |
+| `useCreateCollectionImportMutation`           | `hub.database.createCollectionImport`           | invalidates `DatabaseImports` + `DatabaseRecords/<collectionName>`                                 |
+| `useDeleteCollectionImportMutation`           | `hub.database.deleteCollectionImport`           | invalidates `DatabaseImports`                                                                      |
+| `useAnalyzeImportFileMutation`                | `hub.database.analyzeImportFile`                | —                                                                                                  |
+| `useRequestImportUploadUrlMutation`           | `hub.database.requestImportUploadUrl`           | —                                                                                                  |
+| `useFindOwnQuery`                             | `api.database.findOwn`                          | provides `DatabaseCollections/<collectionName>`                                                    |
+| `useFindMergedTermTreeQuery`                  | `api.database.findMergedTermTree`               | provides `DatabaseTaxonomyTerms/<taxonomyName>`                                                    |
 
 ### Module switches send `PUT` (core SDK 4.10.0)
 
@@ -505,6 +505,44 @@ await save({
 The typed `task` body (plain `'EmailCampaign'` / `'AllUsers'` strings, no
 cast) comes from `@norbix.ai/ts` 4.6.0. Full method reference: the core SDK's
 `docs/hub/scheduler.md`.
+
+## Code — integrations and cloud functions
+
+Every `hub.code` endpoint outside the marketplace (15) has a hook, 1:1 with
+`norbix.hub.code`: the module switch, the Code integrations (AWS Lambda, Azure
+Functions, Google Cloud Functions credentials) and the cloud functions they
+may call — list, aliases / versions, a call by hand, a sample envelope for a
+local run, and the last runs of a trigger or task. The five function hooks
+need `@norbix.ai/ts` 4.19.0.
+
+| Area            | Hooks                                                                                                                                                                                                                                                                                  | Cache tag                                                                                             |
+| --------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| Module switch   | `useEnableCodeModuleMutation`, `useDisableCodeModuleMutation`                                                                                                                                                                                                                          | invalidates `Account`, `Projects`, `Code`                                                             |
+| Integrations    | `useGetCodeIntegrationsQuery`, `useGetCodeIntegrationQuery`, `useSaveCodeIntegrationMutation`, `useDeleteCodeIntegrationMutation`, `useEnableCodeIntegrationMutation`, `useDisableCodeIntegrationMutation`, `useSetCodeIntegrationAsDefaultMutation`, `useTestCodeIntegrationMutation` | provides / invalidates `CodeIntegrations/LIST` and `CodeIntegrations/<id>`; `test` touches nothing    |
+| Cloud functions | `useGetCodeFunctionsQuery`, `useGetCodeFunctionQualifiersQuery`, `useGetCodeFunctionEventSampleQuery`, `useGetCodeFunctionRunsQuery`, `useInvokeCodeFunctionMutation`                                                                                                                  | provides `CodeFunctions/LIST`, `CodeFunctions/SAMPLE`, `CodeFunctions/RUNS`; `invoke` touches nothing |
+
+```tsx
+const integrationId = 'int_6rBACnEaxQ0x1jTiHtAuWV';
+const { data } = useGetCodeFunctionsQuery({ integrationId, prefix: 'orders-' });
+const [invoke, { data: result }] = useInvokeCodeFunctionMutation();
+
+await invoke({
+  functionRef: { integrationId, functionId: 'orders-on-update', qualifier: 'prod' },
+  payload: { orderId: '6ac54a59212c29912eaddd81', dryRun: true },
+  invocationType: 'Sync',
+});
+// result: { statusCode, durationMs, output, requestId, logs }
+
+// The last runs of a trigger (or `{ taskId }` for a scheduled task), newest first.
+const { data: runs } = useGetCodeFunctionRunsQuery({
+  triggerId: 'trg_1p4R3gTobGZpD6fXvHT4rd',
+  limit: 20,
+});
+```
+
+The function side — parsing the envelope your function receives — is
+`parseFunctionEvent` in the core SDK (`docs/code-functions.md`), not a hook.
+Full method reference: the core SDK's `docs/hub/code.md`.
 
 ## Working with terms
 

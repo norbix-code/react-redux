@@ -252,7 +252,7 @@ describe('testFilesIntegrationApi through the real SDK (fake fetch)', () => {
     expect(seen[0].method).toBe('POST');
     expect(seen[0].url).toBe('https://api.norbix.io/v2/files/int_42/test');
     expect(seen[0].headers.get('Authorization')).toBe('Bearer test-token');
-    expect(seen[0].headers.get('X-CM-ProjectId')).toBe('test-project');
+    expect(seen[0].headers.get('norbix-project-id')).toBe('test-project');
     expect(out.data?.items.map((i) => `${i.operation}:${i.result}`)).toEqual([
       'UploadFile:OK',
       'GetFile:OK',
