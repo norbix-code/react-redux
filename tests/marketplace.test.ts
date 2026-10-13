@@ -34,6 +34,7 @@ type Def = {
 const INTEGRATION = 'int_6Qp1dW2kRm8NsT4vYc0Hb';
 const FUNCTION = 'func_4hT2b9QkLm3XcT1yRfGh7a';
 const LISTING = 'ml_slack_v1';
+const ROLE = 'acc_6Qp1dW2kRm8NsT4vYc0Hb_nr_3kLm9QwErTyU';
 const IDS = { integrationViewId: INTEGRATION };
 const FN_IDS = { integrationViewId: INTEGRATION, functionViewId: FUNCTION };
 const I = `/code/marketplace/integrations/${INTEGRATION}`;
@@ -99,6 +100,39 @@ const CASES: Array<
   ['testMarketplaceIntegration', 'mutation', 'POST', `${I}/test`, IDS, {}],
   ['getMarketplaceFunctionCatalog', 'query', 'GET', `${I}/catalog`, IDS, {}],
   ['getMarketplaceIntegrationTools', 'query', 'GET', `${I}/tools`, IDS, {}],
+  ['getMarketplaceIntegrationAccess', 'query', 'GET', `${I}/access`, IDS, {}],
+  [
+    'setMarketplaceIntegrationRoleAccess',
+    'mutation',
+    'PUT',
+    `${I}/access/roles`,
+    { ...IDS, roleId: ROLE, package: 'ReadOnly', manage: false },
+    { roleId: ROLE, package: 'ReadOnly', manage: false },
+  ],
+  [
+    'saveMarketplaceIntegrationCustomAccess',
+    'mutation',
+    'POST',
+    `${I}/access/roles/custom`,
+    {
+      ...IDS,
+      roleId: ROLE,
+      basePackage: 'ReadOnly',
+      tools: ['create_issue'],
+      functions: [FUNCTION],
+      manage: false,
+      newPolicyForThisRoleOnly: true,
+    },
+    {
+      roleId: ROLE,
+      basePackage: 'ReadOnly',
+      tools: ['create_issue'],
+      functions: [FUNCTION],
+      manage: false,
+      newPolicyForThisRoleOnly: true,
+    },
+  ],
+  ['startMarketplaceIntegrationSignIn', 'mutation', 'POST', `${I}/oauth/start`, IDS, {}],
   ['getMarketplaceFunctions', 'query', 'GET', `${I}/functions`, IDS, {}],
   ['getMarketplaceFunction', 'query', 'GET', `${I}/functions/${FUNCTION}`, FN_IDS, {}],
   [
@@ -153,7 +187,7 @@ function tagsFor(tags: Tags | undefined, arg: unknown): unknown {
 const endpoints = hubCodeMarketplace(fakeBuilder()) as unknown as Record<string, Def>;
 
 describe('hubCodeMarketplace', () => {
-  it('wraps the 24 marketplace methods of the published core SDK', () => {
+  it('wraps the 28 marketplace methods of the published core SDK', () => {
     expect(Object.keys(endpoints).sort()).toEqual([...NAMES].sort());
   });
 
@@ -204,6 +238,7 @@ describe('hubCodeMarketplace', () => {
       { type: 'CodeMarketplace', id: INTEGRATION },
       { type: 'CodeMarketplace', id: `FUNCTIONS:${INTEGRATION}` },
       { type: 'CodeMarketplace', id: `TOOLS:${INTEGRATION}` },
+      { type: 'CodeMarketplace', id: `ACCESS:${INTEGRATION}` },
     ]);
     expect(tagsFor(endpoints['saveMarketplaceIntegration']!.invalidatesTags, {})).toEqual([
       { type: 'CodeMarketplace', id: 'INTEGRATIONS' },
@@ -216,10 +251,12 @@ describe('hubCodeMarketplace', () => {
         { type: 'CodeMarketplace', id: INTEGRATION },
       ]);
     }
-    // Validation lists the MCP server's tools again and stores the catalog (gateway item mcp-step1).
+    // Validation lists the MCP server's tools again and stores the catalog (gateway item mcp-step1),
+    // and re-syncs the connection's access packages (gateway item access).
     expect(tagsFor(endpoints['testMarketplaceIntegration']!.invalidatesTags, IDS)).toEqual([
       { type: 'CodeMarketplace', id: INTEGRATION },
       { type: 'CodeMarketplace', id: `TOOLS:${INTEGRATION}` },
+      { type: 'CodeMarketplace', id: `ACCESS:${INTEGRATION}` },
     ]);
   });
 
@@ -227,6 +264,32 @@ describe('hubCodeMarketplace', () => {
     expect(tagsFor(endpoints['getMarketplaceIntegrationTools']!.providesTags, IDS)).toEqual([
       { type: 'CodeMarketplace', id: `TOOLS:${INTEGRATION}` },
     ]);
+  });
+
+  it('the access matrix provides ACCESS:<integration>; a role package and a custom policy invalidate it (core SDK 4.24.0)', () => {
+    expect(tagsFor(endpoints['getMarketplaceIntegrationAccess']!.providesTags, IDS)).toEqual([
+      { type: 'CodeMarketplace', id: `ACCESS:${INTEGRATION}` },
+    ]);
+    for (const key of [
+      'setMarketplaceIntegrationRoleAccess',
+      'saveMarketplaceIntegrationCustomAccess',
+    ]) {
+      expect(endpoints[key]!.__kind).toBe('mutation');
+      expect(tagsFor(endpoints[key]!.invalidatesTags, IDS)).toEqual([
+        { type: 'CodeMarketplace', id: `ACCESS:${INTEGRATION}` },
+      ]);
+    }
+    // Only the connection named in the call: another connection's matrix stays cached.
+    expect(
+      tagsFor(endpoints['setMarketplaceIntegrationRoleAccess']!.invalidatesTags, {
+        integrationViewId: 'int_other',
+      }),
+    ).toEqual([{ type: 'CodeMarketplace', id: 'ACCESS:int_other' }]);
+  });
+
+  it('starting the OAuth sign-in is a mutation that invalidates nothing (core SDK 4.24.0)', () => {
+    expect(endpoints['startMarketplaceIntegrationSignIn']!.__kind).toBe('mutation');
+    expect(endpoints['startMarketplaceIntegrationSignIn']!.invalidatesTags).toBeUndefined();
   });
 
   it('the last runs provide CodeMarketplace/RUNS', () => {
@@ -250,15 +313,18 @@ describe('hubCodeMarketplace', () => {
         { type: 'CodeMarketplace', id: FUNCTION },
       ]);
     }
-    for (const key of [
-      'saveMarketplaceFunction',
-      'deleteMarketplaceFunction',
-      'enableMarketplaceFunction',
-      'disableMarketplaceFunction',
-    ]) {
+    for (const key of ['enableMarketplaceFunction', 'disableMarketplaceFunction']) {
       expect(tagsFor(endpoints[key]!.invalidatesTags, FN_IDS)).toEqual([
         { type: 'CodeMarketplace', id: `FUNCTIONS:${INTEGRATION}` },
         { type: 'CodeMarketplace', id: FUNCTION },
+      ]);
+    }
+    // Adding or deleting a function changes the matrix's function list and packages (gateway item access).
+    for (const key of ['saveMarketplaceFunction', 'deleteMarketplaceFunction']) {
+      expect(tagsFor(endpoints[key]!.invalidatesTags, FN_IDS)).toEqual([
+        { type: 'CodeMarketplace', id: `FUNCTIONS:${INTEGRATION}` },
+        { type: 'CodeMarketplace', id: FUNCTION },
+        { type: 'CodeMarketplace', id: `ACCESS:${INTEGRATION}` },
       ]);
     }
   });
