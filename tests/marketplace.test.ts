@@ -98,6 +98,7 @@ const CASES: Array<
   ],
   ['testMarketplaceIntegration', 'mutation', 'POST', `${I}/test`, IDS, {}],
   ['getMarketplaceFunctionCatalog', 'query', 'GET', `${I}/catalog`, IDS, {}],
+  ['getMarketplaceIntegrationTools', 'query', 'GET', `${I}/tools`, IDS, {}],
   ['getMarketplaceFunctions', 'query', 'GET', `${I}/functions`, IDS, {}],
   ['getMarketplaceFunction', 'query', 'GET', `${I}/functions/${FUNCTION}`, FN_IDS, {}],
   [
@@ -152,7 +153,7 @@ function tagsFor(tags: Tags | undefined, arg: unknown): unknown {
 const endpoints = hubCodeMarketplace(fakeBuilder()) as unknown as Record<string, Def>;
 
 describe('hubCodeMarketplace', () => {
-  it('wraps the 23 marketplace methods of the published core SDK', () => {
+  it('wraps the 24 marketplace methods of the published core SDK', () => {
     expect(Object.keys(endpoints).sort()).toEqual([...NAMES].sort());
   });
 
@@ -202,6 +203,7 @@ describe('hubCodeMarketplace', () => {
       { type: 'CodeMarketplace', id: 'INTEGRATIONS' },
       { type: 'CodeMarketplace', id: INTEGRATION },
       { type: 'CodeMarketplace', id: `FUNCTIONS:${INTEGRATION}` },
+      { type: 'CodeMarketplace', id: `TOOLS:${INTEGRATION}` },
     ]);
     expect(tagsFor(endpoints['saveMarketplaceIntegration']!.invalidatesTags, {})).toEqual([
       { type: 'CodeMarketplace', id: 'INTEGRATIONS' },
@@ -209,12 +211,22 @@ describe('hubCodeMarketplace', () => {
     for (const key of [
       'replaceMarketplaceIntegrationSecrets',
       'setMarketplaceIntegrationTokenMappings',
-      'testMarketplaceIntegration',
     ]) {
       expect(tagsFor(endpoints[key]!.invalidatesTags, IDS)).toEqual([
         { type: 'CodeMarketplace', id: INTEGRATION },
       ]);
     }
+    // Validation lists the MCP server's tools again and stores the catalog (gateway item mcp-step1).
+    expect(tagsFor(endpoints['testMarketplaceIntegration']!.invalidatesTags, IDS)).toEqual([
+      { type: 'CodeMarketplace', id: INTEGRATION },
+      { type: 'CodeMarketplace', id: `TOOLS:${INTEGRATION}` },
+    ]);
+  });
+
+  it('the MCP tool catalog provides TOOLS:<integration> (core SDK 4.23.0)', () => {
+    expect(tagsFor(endpoints['getMarketplaceIntegrationTools']!.providesTags, IDS)).toEqual([
+      { type: 'CodeMarketplace', id: `TOOLS:${INTEGRATION}` },
+    ]);
   });
 
   it('the last runs provide CodeMarketplace/RUNS', () => {

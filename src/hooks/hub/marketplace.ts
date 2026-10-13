@@ -16,6 +16,8 @@ import type { Arg, Result } from '../types.js';
  *   - `<integrationViewId>`      — one connection (secrets, token mappings and the
  *                                  last validation steps live on it)
  *   - `CATALOG:<integrationId>`  — the vendor functions a connection offers
+ *   - `TOOLS:<integrationId>`    — the stored MCP tool catalog of an MCP connection;
+ *                                  validation (test) rewrites it (core SDK 4.23.0)
  *   - `FUNCTIONS:<integrationId>`— the functions added on a connection
  *   - `<functionViewId>`         — one function and its tokens
  *   - `RUNS`                     — the last runs of a trigger or task (core SDK 4.21.0)
@@ -41,6 +43,7 @@ export const hubCodeMarketplace = (b: Builder) => {
   type SetTokenMappings = Fn<'setMarketplaceIntegrationTokenMappings'>;
   type TestIntegration = Fn<'testMarketplaceIntegration'>;
   type GetCatalog = Fn<'getMarketplaceFunctionCatalog'>;
+  type GetTools = Fn<'getMarketplaceIntegrationTools'>;
   type GetFunctions = Fn<'getMarketplaceFunctions'>;
   type GetFunction = Fn<'getMarketplaceFunction'>;
   type SaveFunction = Fn<'saveMarketplaceFunction'>;
@@ -108,6 +111,7 @@ export const hubCodeMarketplace = (b: Builder) => {
       invalidatesTags: (_res, _err, arg) => [
         ...integration(arg),
         { type: T, id: `FUNCTIONS:${integrationId(arg)}` },
+        { type: T, id: `TOOLS:${integrationId(arg)}` },
       ],
     }),
     enableMarketplaceIntegration: b.mutation<Result<EnableIntegration>, Arg<EnableIntegration>>({
@@ -134,11 +138,18 @@ export const hubCodeMarketplace = (b: Builder) => {
     }),
     testMarketplaceIntegration: b.mutation<Result<TestIntegration>, Arg<TestIntegration>>({
       query: (args) => (norbix) => callHC(norbix).testMarketplaceIntegration(args),
-      invalidatesTags: (_res, _err, arg) => [{ type: T, id: integrationId(arg) }],
+      invalidatesTags: (_res, _err, arg) => [
+        { type: T, id: integrationId(arg) },
+        { type: T, id: `TOOLS:${integrationId(arg)}` },
+      ],
     }),
     getMarketplaceFunctionCatalog: b.query<Result<GetCatalog>, Arg<GetCatalog>>({
       query: (args) => (norbix) => callHC(norbix).getMarketplaceFunctionCatalog(args),
       providesTags: (_res, _err, arg) => [{ type: T, id: `CATALOG:${integrationId(arg)}` }],
+    }),
+    getMarketplaceIntegrationTools: b.query<Result<GetTools>, Arg<GetTools>>({
+      query: (args) => (norbix) => callHC(norbix).getMarketplaceIntegrationTools(args),
+      providesTags: (_res, _err, arg) => [{ type: T, id: `TOOLS:${integrationId(arg)}` }],
     }),
 
     // ---- Functions on a connection ----
