@@ -18,9 +18,17 @@ import type { Arg, Result } from '../types.js';
  *   - `CATALOG:<integrationId>`  — the vendor functions a connection offers
  *   - `TOOLS:<integrationId>`    — the stored MCP tool catalog of an MCP connection;
  *                                  validation (test) rewrites it (core SDK 4.23.0)
+ *   - `ACCESS:<integrationId>`   — the access matrix of a connection (which role holds
+ *                                  which package); a role package or a custom policy
+ *                                  write, validation, delete and function writes
+ *                                  rewrite it (core SDK 4.24.0)
  *   - `FUNCTIONS:<integrationId>`— the functions added on a connection
  *   - `<functionViewId>`         — one function and its tokens
  *   - `RUNS`                     — the last runs of a trigger or task (core SDK 4.21.0)
+ *
+ * Starting the OAuth sign-in (route 28) invalidates nothing: the connection
+ * changes only when the vendor sends the browser back to the gateway, so read
+ * the connection again after the person returns (`signedIn`).
  *
  * Revealing secrets is a mutation on purpose: a query would keep the clear
  * values in the store's cache.
@@ -44,6 +52,10 @@ export const hubCodeMarketplace = (b: Builder) => {
   type TestIntegration = Fn<'testMarketplaceIntegration'>;
   type GetCatalog = Fn<'getMarketplaceFunctionCatalog'>;
   type GetTools = Fn<'getMarketplaceIntegrationTools'>;
+  type GetAccess = Fn<'getMarketplaceIntegrationAccess'>;
+  type SetRoleAccess = Fn<'setMarketplaceIntegrationRoleAccess'>;
+  type SaveCustomAccess = Fn<'saveMarketplaceIntegrationCustomAccess'>;
+  type StartSignIn = Fn<'startMarketplaceIntegrationSignIn'>;
   type GetFunctions = Fn<'getMarketplaceFunctions'>;
   type GetFunction = Fn<'getMarketplaceFunction'>;
   type SaveFunction = Fn<'saveMarketplaceFunction'>;
@@ -70,6 +82,7 @@ export const hubCodeMarketplace = (b: Builder) => {
     { type: T, id: 'INTEGRATIONS' },
     { type: T, id: integrationId(arg) },
   ];
+  const access = (arg: unknown) => ({ type: T, id: `ACCESS:${integrationId(arg)}` });
   const functions = (arg: unknown) => [
     { type: T, id: `FUNCTIONS:${integrationId(arg)}` },
     { type: T, id: functionId(arg) },
@@ -112,6 +125,7 @@ export const hubCodeMarketplace = (b: Builder) => {
         ...integration(arg),
         { type: T, id: `FUNCTIONS:${integrationId(arg)}` },
         { type: T, id: `TOOLS:${integrationId(arg)}` },
+        access(arg),
       ],
     }),
     enableMarketplaceIntegration: b.mutation<Result<EnableIntegration>, Arg<EnableIntegration>>({
@@ -141,6 +155,7 @@ export const hubCodeMarketplace = (b: Builder) => {
       invalidatesTags: (_res, _err, arg) => [
         { type: T, id: integrationId(arg) },
         { type: T, id: `TOOLS:${integrationId(arg)}` },
+        access(arg),
       ],
     }),
     getMarketplaceFunctionCatalog: b.query<Result<GetCatalog>, Arg<GetCatalog>>({
@@ -150,6 +165,28 @@ export const hubCodeMarketplace = (b: Builder) => {
     getMarketplaceIntegrationTools: b.query<Result<GetTools>, Arg<GetTools>>({
       query: (args) => (norbix) => callHC(norbix).getMarketplaceIntegrationTools(args),
       providesTags: (_res, _err, arg) => [{ type: T, id: `TOOLS:${integrationId(arg)}` }],
+    }),
+
+    // ---- Access (core SDK 4.24.0) ----
+    getMarketplaceIntegrationAccess: b.query<Result<GetAccess>, Arg<GetAccess>>({
+      query: (args) => (norbix) => callHC(norbix).getMarketplaceIntegrationAccess(args),
+      providesTags: (_res, _err, arg) => [access(arg)],
+    }),
+    setMarketplaceIntegrationRoleAccess: b.mutation<Result<SetRoleAccess>, Arg<SetRoleAccess>>({
+      query: (args) => (norbix) => callHC(norbix).setMarketplaceIntegrationRoleAccess(args),
+      invalidatesTags: (_res, _err, arg) => [access(arg)],
+    }),
+    saveMarketplaceIntegrationCustomAccess: b.mutation<
+      Result<SaveCustomAccess>,
+      Arg<SaveCustomAccess>
+    >({
+      query: (args) => (norbix) => callHC(norbix).saveMarketplaceIntegrationCustomAccess(args),
+      invalidatesTags: (_res, _err, arg) => [access(arg)],
+    }),
+
+    // ---- OAuth sign-in (core SDK 4.24.0) ----
+    startMarketplaceIntegrationSignIn: b.mutation<Result<StartSignIn>, Arg<StartSignIn>>({
+      query: (args) => (norbix) => callHC(norbix).startMarketplaceIntegrationSignIn(args),
     }),
 
     // ---- Functions on a connection ----
@@ -163,11 +200,11 @@ export const hubCodeMarketplace = (b: Builder) => {
     }),
     saveMarketplaceFunction: b.mutation<Result<SaveFunction>, Arg<SaveFunction>>({
       query: (args) => (norbix) => callHC(norbix).saveMarketplaceFunction(args),
-      invalidatesTags: (_res, _err, arg) => functions(arg),
+      invalidatesTags: (_res, _err, arg) => [...functions(arg), access(arg)],
     }),
     deleteMarketplaceFunction: b.mutation<Result<DeleteFunction>, Arg<DeleteFunction>>({
       query: (args) => (norbix) => callHC(norbix).deleteMarketplaceFunction(args),
-      invalidatesTags: (_res, _err, arg) => functions(arg),
+      invalidatesTags: (_res, _err, arg) => [...functions(arg), access(arg)],
     }),
     enableMarketplaceFunction: b.mutation<Result<EnableFunction>, Arg<EnableFunction>>({
       query: (args) => (norbix) => callHC(norbix).enableMarketplaceFunction(args),
