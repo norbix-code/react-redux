@@ -133,6 +133,7 @@ const CASES: Array<
     },
   ],
   ['startMarketplaceIntegrationSignIn', 'mutation', 'POST', `${I}/oauth/start`, IDS, {}],
+  ['signOutMarketplaceIntegration', 'mutation', 'POST', `${I}/oauth/sign-out`, IDS, {}],
   ['getMarketplaceFunctions', 'query', 'GET', `${I}/functions`, IDS, {}],
   ['getMarketplaceFunction', 'query', 'GET', `${I}/functions/${FUNCTION}`, FN_IDS, {}],
   [
@@ -187,7 +188,7 @@ function tagsFor(tags: Tags | undefined, arg: unknown): unknown {
 const endpoints = hubCodeMarketplace(fakeBuilder()) as unknown as Record<string, Def>;
 
 describe('hubCodeMarketplace', () => {
-  it('wraps the 28 marketplace methods of the published core SDK', () => {
+  it('wraps the 29 marketplace methods of the published core SDK', () => {
     expect(Object.keys(endpoints).sort()).toEqual([...NAMES].sort());
   });
 
@@ -290,6 +291,22 @@ describe('hubCodeMarketplace', () => {
   it('starting the OAuth sign-in is a mutation that invalidates nothing (core SDK 4.24.0)', () => {
     expect(endpoints['startMarketplaceIntegrationSignIn']!.__kind).toBe('mutation');
     expect(endpoints['startMarketplaceIntegrationSignIn']!.invalidatesTags).toBeUndefined();
+  });
+
+  it('signing out invalidates the connection and its ACCESS tag, only for that connection (core SDK 4.25.0)', () => {
+    expect(endpoints['signOutMarketplaceIntegration']!.__kind).toBe('mutation');
+    expect(tagsFor(endpoints['signOutMarketplaceIntegration']!.invalidatesTags, IDS)).toEqual([
+      { type: 'CodeMarketplace', id: INTEGRATION },
+      { type: 'CodeMarketplace', id: `ACCESS:${INTEGRATION}` },
+    ]);
+    expect(
+      tagsFor(endpoints['signOutMarketplaceIntegration']!.invalidatesTags, {
+        integrationViewId: 'int_other',
+      }),
+    ).toEqual([
+      { type: 'CodeMarketplace', id: 'int_other' },
+      { type: 'CodeMarketplace', id: 'ACCESS:int_other' },
+    ]);
   });
 
   it('the last runs provide CodeMarketplace/RUNS', () => {
