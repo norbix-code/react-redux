@@ -311,4 +311,26 @@ describe('marketplace hooks through the real SDK (fake fetch)', () => {
       expect(body).toEqual(wire);
     }
   });
+
+  // Exactly one of functionId / triggerId / taskId (gateway item gw-runs, @norbix.ai/ts 4.22.0):
+  // a function's own runs from every source. The typed arg below only compiles on 4.22.0+.
+  it('getMarketplaceFunctionRuns takes functionId and sends it on the query, no body', async () => {
+    const args: NonNullable<Parameters<Norbix['hub']['code']['getMarketplaceFunctionRuns']>[0]> = {
+      functionId: 'func_1p4R3gTobGZpD6fXvHT4rd',
+      limit: 50,
+    };
+    const { seen, result } = run('getMarketplaceFunctionRuns', args);
+    expect(((await result) as { error?: unknown }).error).toBeUndefined();
+    expect(seen).toHaveLength(1);
+    expect(seen[0]!.method).toBe('GET');
+    const url = new URL(seen[0]!.url);
+    expect(`${url.origin}${url.pathname}`).toBe(`${HUB}/code/marketplace/functions/runs`);
+    expect(
+      Object.fromEntries([...url.searchParams.entries()].filter(([k]) => k !== 'env')),
+    ).toEqual({
+      functionId: 'func_1p4R3gTobGZpD6fXvHT4rd',
+      limit: '50',
+    });
+    expect(seen[0]!.body).toBeUndefined();
+  });
 });
