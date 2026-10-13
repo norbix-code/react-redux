@@ -567,6 +567,15 @@ const [invoke] = useInvokeMarketplaceFunctionMutation();
 await invoke({ functionViewId: 'func_4hT2b9QkLm3XcT1yRfGh7a', payload: { text: 'Order shipped' } });
 ```
 
+`useGetMarketplaceFunctionRunsQuery` takes exactly one of `functionId` (a function's own runs from every source — invoke, trigger, scheduler — newest first, up to 50), `triggerId` or `taskId`. A row carries `status` (`ok` / `failed` / `skipped`), `durationMs`, `source`, `correlationId` and `hasDetails`; when `hasDetails` is true, the run's input, steps and response are in the project log — read them with `norbix.hub.code.getMarketplaceFunctionRunDetails(row.correlationId)` from `@norbix.ai/ts` 4.22.0.
+
+```tsx
+const { data } = useGetMarketplaceFunctionRunsQuery({
+  functionId: 'func_4hT2b9QkLm3XcT1yRfGh7a',
+  limit: 20,
+});
+```
+
 ## Working with terms
 
 A **taxonomy** is a named tree of **terms** (labels). A term can have one parent (a clean hierarchy) or several parents (the same item under many categories). There is one read hook per scenario — pick the one that matches what you want:
