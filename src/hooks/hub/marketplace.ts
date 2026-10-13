@@ -56,6 +56,7 @@ export const hubCodeMarketplace = (b: Builder) => {
   type SetRoleAccess = Fn<'setMarketplaceIntegrationRoleAccess'>;
   type SaveCustomAccess = Fn<'saveMarketplaceIntegrationCustomAccess'>;
   type StartSignIn = Fn<'startMarketplaceIntegrationSignIn'>;
+  type SignOut = Fn<'signOutMarketplaceIntegration'>;
   type GetFunctions = Fn<'getMarketplaceFunctions'>;
   type GetFunction = Fn<'getMarketplaceFunction'>;
   type SaveFunction = Fn<'saveMarketplaceFunction'>;
@@ -187,6 +188,12 @@ export const hubCodeMarketplace = (b: Builder) => {
     // ---- OAuth sign-in (core SDK 4.24.0) ----
     startMarketplaceIntegrationSignIn: b.mutation<Result<StartSignIn>, Arg<StartSignIn>>({
       query: (args) => (norbix) => callHC(norbix).startMarketplaceIntegrationSignIn(args),
+    }),
+    // Sign-out (route 30, core SDK 4.25.0) changes the connection at once (`signedIn` false)
+    // and its access (the connection's MCP tools are no longer reachable).
+    signOutMarketplaceIntegration: b.mutation<Result<SignOut>, Arg<SignOut>>({
+      query: (args) => (norbix) => callHC(norbix).signOutMarketplaceIntegration(args),
+      invalidatesTags: (_res, _err, arg) => [{ type: T, id: integrationId(arg) }, access(arg)],
     }),
 
     // ---- Functions on a connection ----
