@@ -10,6 +10,7 @@ import { apiDatabase } from './api/database.js';
 import { apiFiles } from './api/files.js';
 import { apiMembership } from './api/membership.js';
 import { apiPublic } from './api/public.js';
+import { apiPush } from './api/push.js';
 import { hubAccount } from './hub/account.js';
 import { hubAi } from './hub/ai.js';
 import { hubApikeys } from './hub/apikeys.js';
@@ -88,6 +89,8 @@ export type AllTags =
   | 'PushTemplates'
   | 'PushCampaigns'
   | 'PushIntegrations'
+  | 'PushDevices'
+  | 'PushMessages'
   // ---- Sms ----
   | 'Sms'
   | 'SmsTemplates'
@@ -141,6 +144,7 @@ export function buildEndpoints(builder: Builder) {
     ...apiApikeys(builder),
     ...apiFiles(builder),
     ...apiPublic(builder),
+    ...apiPush(builder),
     // Hub surface (control plane)
     ...hubAccount(builder),
     ...hubAi(builder),

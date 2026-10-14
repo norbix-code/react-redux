@@ -986,6 +986,45 @@ return (
 
 For RTK Query to follow tenant changes, recreate the API slice or pass a tenant-aware `getClient` resolver to `createNorbixApi`.
 
+### Language (`Accept-Language`)
+
+The language is a client setting: the hooks send whatever the wrapped core client sends. Set it with the provider prop (or `norbix.setLanguage(...)`); `Accept-Language` is the only language input (the old `cultureCode` field and `CultureCode` / `norbix-language` headers are gone).
+
+```tsx
+<NorbixProvider client={norbix} language="lt-LT, en;q=0.8">
+  <App />
+</NorbixProvider>;
+
+// switching later: change the prop (or call norbix.setLanguage('en')), then drop
+// results read in the old language
+dispatch(norbixApi.util.resetApiState());
+```
+
+Read every translation instead of one language with `allLanguages: true` on record and term reads, e.g. `useFindCollectionQuery({ collectionName: 'articles', allLanguages: true })`.
+
+### Push for end users — `norbix.notifications.push` (core SDK with `notifications.push`)
+
+| Hook                                                              | SDK call              | Tags                       |
+| ----------------------------------------------------------------- | --------------------- | -------------------------- |
+| `useRegisterPushDeviceMutation({ provider, token, platform, … })` | `registerDevice`      | invalidates `PushDevices`  |
+| `useListPushDevicesQuery()`                                       | `listDevices`         | provides `PushDevices`     |
+| `useRemovePushDeviceMutation(id)`                                 | `removeDevice`        | invalidates `PushDevices`  |
+| `useRemovePushDeviceByTokenMutation(token)`                       | `removeDeviceByToken` | invalidates `PushDevices`  |
+| `useListPushMessagesQuery({ unreadOnly, pageSize })`              | `listMessages`        | provides `PushMessages`    |
+| `useMarkPushMessageReadMutation(id)`                              | `markMessageRead`     | invalidates `PushMessages` |
+| `useMarkAllPushMessagesReadMutation()`                            | `markAllMessagesRead` | invalidates `PushMessages` |
+
+```tsx
+const [register] = norbixApi.useRegisterPushDeviceMutation();
+await register({
+  provider: 'expo',
+  token: expoPushToken,
+  platform: 'ios',
+  installationId,
+}).unwrap();
+const { data } = norbixApi.useListPushMessagesQuery({ unreadOnly: true });
+```
+
 ### Multi-region projects
 
 A Norbix project spans one **primary region** plus any number of **additional regions**. Two concerns, two homes: _which region your requests target_ is configured on the wrapped `norbix` client (this package inherits it — every hook just calls the client you passed to `createNorbixApi`), while _which regions a project spans_ is managed through the two hooks below.

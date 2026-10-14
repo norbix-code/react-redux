@@ -89,6 +89,8 @@ export function createNorbixApi(
       'PushTemplates',
       'PushCampaigns',
       'PushIntegrations',
+      'PushDevices',
+      'PushMessages',
       // Sms
       'Sms',
       'SmsTemplates',
