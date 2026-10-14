@@ -14,6 +14,14 @@ const NorbixContext = createContext<Norbix | null>(null);
 export interface NorbixProviderProps {
   /** The Norbix SDK client instance. Construct it once at app startup. */
   client: Norbix;
+  /**
+   * Language to ask for (`lt`, `lt-LT, en;q=0.8`), set on the client with
+   * `client.setLanguage(...)` so every hook's request carries it as
+   * `Accept-Language`. Omit it to leave the client's own setting alone.
+   * Cached results do not know the language they were read in: after a
+   * change, refetch with `dispatch(norbixApi.util.resetApiState())`.
+   */
+  language?: string;
   children?: ReactNode;
 }
 
@@ -43,9 +51,14 @@ export interface NorbixProviderProps {
  * }
  * ```
  */
-export function NorbixProvider({ client, children }: NorbixProviderProps) {
+export function NorbixProvider({ client, language, children }: NorbixProviderProps) {
   // Stable identity: re-render only when the client identity actually changes.
   const value = useMemo(() => client, [client]);
+  // Set during render (not in an effect) so the first queries of the
+  // children already go out with the language.
+  if (language !== undefined && client.getLanguage() !== language) {
+    client.setLanguage(language || undefined);
+  }
   return <NorbixContext.Provider value={value}>{children}</NorbixContext.Provider>;
 }
 
