@@ -1,4 +1,4 @@
-// AUTO-GENERATED — full coverage of `norbix.hub.payments` (16 endpoints).
+// AUTO-GENERATED — full coverage of `norbix.hub.payments` (17 endpoints).
 // Synced from the norbix core SDK surface. Re-run the hook sync to refresh.
 import type { Norbix } from '@norbix.ai/ts';
 
@@ -21,9 +21,10 @@ type GetPaymentsIntegration = Norbix['hub']['payments']['getPaymentsIntegration'
 type GetPaymentsIntegrations = Norbix['hub']['payments']['getPaymentsIntegrations'];
 type SavePaymentsIntegration = Norbix['hub']['payments']['savePaymentsIntegration'];
 type TestPaymentsIntegration = Norbix['hub']['payments']['testPaymentsIntegration'];
+type GetPaymentsWebhookLog = Norbix['hub']['payments']['getPaymentsWebhookLog'];
 
 /**
- * `hub.payments` — 16 endpoints, 1:1 with the core SDK.
+ * `hub.payments` — 17 endpoints, 1:1 with the core SDK.
  */
 export const hubPayments = (b: Builder) => ({
   disablePayments: b.mutation<Result<DisablePayments>, Arg<DisablePayments>>({
@@ -104,5 +105,14 @@ export const hubPayments = (b: Builder) => ({
   testPaymentsIntegration: b.mutation<Result<TestPaymentsIntegration>, Arg<TestPaymentsIntegration>>({
     query: (args) => (norbix) => norbix.hub.payments.testPaymentsIntegration(args),
     invalidatesTags: ['PaymentIntegrations'],
+  }),
+
+  // The received payment webhooks of the project (newest first). Tagged
+  // 'PaymentIntegrations' so it refetches when an integration changes; it is a
+  // log the gateway writes as callbacks arrive, so callers poll it
+  // (pollingInterval).
+  getPaymentsWebhookLog: b.query<Result<GetPaymentsWebhookLog>, Arg<GetPaymentsWebhookLog>>({
+    query: (args) => (norbix) => norbix.hub.payments.getPaymentsWebhookLog(args),
+    providesTags: ['PaymentIntegrations'],
   }),
 });

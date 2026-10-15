@@ -232,6 +232,7 @@ The module enable / disable hooks were always mutations, so nothing changes in y
 | `useEnableFilesMutation`, `useDisableFilesMutation`           | `PUT /{version}/files/enable\|disable`               | invalidates `Files`      |
 | `useEnableLoggingMutation`, `useDisableLoggingMutation`       | `PUT /{version}/logs/enable\|disable`                | invalidates `Logs`       |
 | `useEnablePaymentsMutation`, `useDisablePaymentsMutation`     | `PUT /{version}/payments/enable\|disable`            | invalidates `Payments`   |
+| `useGetPaymentsWebhookLogQuery`                               | `GET /{version}/payments/webhooks/log`               | provides `PaymentIntegrations` |
 | `useEnableMembershipMutation`, `useDisableMembershipMutation` | `PUT /{version}/membership/enable\|disable`          | invalidates `Membership` |
 | `useEnableEmailMutation`, `useDisableEmailMutation`           | `PUT /{version}/notifications/email/enable\|disable` | invalidates `Emails`     |
 | `useEnableSmsMutation`, `useDisableSmsMutation`               | `PUT /{version}/notifications/sms/enable\|disable`   | invalidates `Sms`        |
