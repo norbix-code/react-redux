@@ -150,6 +150,10 @@ A _curated_ set of hooks for the most common endpoints. Every hook is end-to-end
 | `useRegenerateApiKeysMutation`       | `api.apikeys.regenerateApiKeys`  | invalidates `ApiKey/LIST`                                    |
 | `useGetPublicFileQuery`              | `api.files.getPublicFile`        | provides `Files/PUBLIC:<publicId>`                           |
 | `useTestFilesIntegrationApiMutation` | `api.files.testFilesIntegration` | invalidates `Files` + `FilesIntegrations`                    |
+| `useCreatePaymentOrderMutation`      | `api.payments.createPaymentOrder` | invalidates `PaymentOrders/LIST`                            |
+| `useGetPaymentOrderQuery`            | `api.payments.getPaymentOrder`   | provides `PaymentOrders/<id>`                                |
+| `useGetPaymentOrdersQuery`           | `api.payments.getPaymentOrders`  | provides `PaymentOrders/LIST`                                |
+| `useStartPaymentCheckoutMutation`    | `api.payments.startPaymentCheckout` | invalidates `PaymentOrders/LIST` + `PaymentOrders/<id>`   |
 
 ### Hub surface — `norbix.hub.*`
 

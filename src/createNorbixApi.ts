@@ -103,6 +103,7 @@ export function createNorbixApi(
       'PaymentPlans',
       'PaymentDiscounts',
       'PaymentCustomers',
+      'PaymentOrders',
       // AI
       'Ai',
       'AiChat',
