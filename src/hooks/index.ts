@@ -9,6 +9,7 @@ import { apiAuth } from './api/auth.js';
 import { apiDatabase } from './api/database.js';
 import { apiFiles } from './api/files.js';
 import { apiMembership } from './api/membership.js';
+import { apiPayments } from './api/payments.js';
 import { apiPublic } from './api/public.js';
 import { apiPush } from './api/push.js';
 import { hubAccount } from './hub/account.js';
@@ -103,6 +104,7 @@ export type AllTags =
   | 'PaymentPlans'
   | 'PaymentDiscounts'
   | 'PaymentCustomers'
+  | 'PaymentOrders'
   // ---- AI ----
   | 'Ai'
   | 'AiChat'
@@ -143,6 +145,7 @@ export function buildEndpoints(builder: Builder) {
     ...apiDatabase(builder),
     ...apiApikeys(builder),
     ...apiFiles(builder),
+    ...apiPayments(builder),
     ...apiPublic(builder),
     ...apiPush(builder),
     // Hub surface (control plane)
