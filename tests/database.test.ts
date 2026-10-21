@@ -75,9 +75,9 @@ const RECORD_WRITES = [
 describe('hubDatabase', () => {
   const endpoints = hubDatabase(fakeBuilder()) as unknown as Record<string, Def>;
 
-  it('has one hook per hub.database method of @norbix.ai/ts, same name (74)', () => {
+  it('has one hook per hub.database method of @norbix.ai/ts, same name (75)', () => {
     const methods = sdkMethods('hub');
-    expect(methods).toHaveLength(74);
+    expect(methods).toHaveLength(75);
     expect(Object.keys(endpoints).sort()).toEqual(methods);
   });
 
@@ -262,7 +262,7 @@ describe('database hooks in the flat endpoint map', () => {
       await all[key].query({})(viaFlatMap.client);
     }
     expect(viaFlatMap.calls).toEqual(viaFactory.calls);
-    expect(viaFlatMap.calls.filter((c) => c.method.startsWith('hub.'))).toHaveLength(74);
+    expect(viaFlatMap.calls.filter((c) => c.method.startsWith('hub.'))).toHaveLength(75);
   });
 });
 
