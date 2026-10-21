@@ -1,4 +1,4 @@
-// AUTO-GENERATED — full coverage of `norbix.hub.database` (73 endpoints).
+// AUTO-GENERATED — full coverage of `norbix.hub.database` (74 endpoints).
 // Synced from the norbix core SDK surface. Re-run the hook sync to refresh.
 import type { Norbix } from '@norbix.ai/ts';
 
@@ -34,6 +34,7 @@ type RenameDatabaseSchema = Norbix['hub']['database']['renameDatabaseSchema'];
 type SaveDatabaseSchema = Norbix['hub']['database']['saveDatabaseSchema'];
 type UpdateDatabaseSchemaDraft = Norbix['hub']['database']['updateDatabaseSchemaDraft'];
 type UpdateDatabaseSchemaSettings = Norbix['hub']['database']['updateDatabaseSchemaSettings'];
+type EndUserOwnRecordsReport = Norbix['hub']['database']['endUserOwnRecordsReport'];
 type DeleteDatabaseIntegration = Norbix['hub']['database']['deleteDatabaseIntegration'];
 type DisableDatabaseIntegration = Norbix['hub']['database']['disableDatabaseIntegration'];
 type EnableDatabaseIntegration = Norbix['hub']['database']['enableDatabaseIntegration'];
@@ -562,5 +563,15 @@ export const hubDatabase = (b: Builder) => ({
   // Returns a one-time signed upload URL; saves nothing.
   requestImportUploadUrl: b.mutation<Result<RequestImportUploadUrl>, Arg<RequestImportUploadUrl>>({
     query: (args) => (norbix) => norbix.hub.database.requestImportUploadUrl(args),
+  }),
+
+  // Lists every schema's endUserOwnRecords switch; with dryRun: false it turns
+  // the switch on for the schemas named in `enable`, so it is a mutation.
+  endUserOwnRecordsReport: b.mutation<
+    Result<EndUserOwnRecordsReport>,
+    Arg<EndUserOwnRecordsReport>
+  >({
+    query: (args) => (norbix) => norbix.hub.database.endUserOwnRecordsReport(args),
+    invalidatesTags: ['DatabaseSchemas'],
   }),
 });
