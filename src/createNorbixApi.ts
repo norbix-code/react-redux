@@ -115,6 +115,7 @@ export function createNorbixApi(
       'Scheduler',
       'Triggers',
       'Logs',
+      'LogsSettings',
       'LogsIntegrations',
     ] satisfies AllTags[],
     endpoints: (builder) => buildEndpoints(builder),

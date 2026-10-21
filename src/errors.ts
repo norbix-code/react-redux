@@ -37,6 +37,11 @@ export interface SerializedNorbixError {
   errors: SerializedNorbixErrorItem[];
   /** Originating URL when known, useful for debugging. */
   url?: string;
+  /**
+   * Seconds to wait before sending again, from the answer's `Retry-After`
+   * header (e.g. a 429 from `writeLogs`). Only when the gateway sent one.
+   */
+  retryAfterSeconds?: number;
 }
 
 /**
@@ -57,6 +62,7 @@ export function serializeNorbixError(err: unknown): SerializedNorbixError {
       fieldErrors?: SerializedNorbixErrorItem[];
       errors?: SerializedNorbixErrorItem[];
       url?: string;
+      retryAfterSeconds?: number;
     };
     const status =
       typeof e.status === 'number' ? e.status : typeof e.httpStatus === 'number' ? e.httpStatus : 0;
@@ -75,6 +81,9 @@ export function serializeNorbixError(err: unknown): SerializedNorbixError {
       fieldErrors: list,
       errors: list,
       url: e.url,
+      ...(typeof e.retryAfterSeconds === 'number'
+        ? { retryAfterSeconds: e.retryAfterSeconds }
+        : {}),
     };
   }
   const message = typeof err === 'string' ? err : 'Unknown Norbix error';

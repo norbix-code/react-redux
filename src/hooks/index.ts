@@ -8,6 +8,7 @@ import { apiApikeys } from './api/apikeys.js';
 import { apiAuth } from './api/auth.js';
 import { apiDatabase } from './api/database.js';
 import { apiFiles } from './api/files.js';
+import { apiLogs } from './api/logs.js';
 import { apiMembership } from './api/membership.js';
 import { apiPayments } from './api/payments.js';
 import { apiPublic } from './api/public.js';
@@ -116,6 +117,7 @@ export type AllTags =
   | 'Scheduler'
   | 'Triggers'
   | 'Logs'
+  | 'LogsSettings'
   | 'LogsIntegrations';
 
 /** Builder type the per-module endpoint factories accept. */
@@ -145,6 +147,7 @@ export function buildEndpoints(builder: Builder) {
     ...apiDatabase(builder),
     ...apiApikeys(builder),
     ...apiFiles(builder),
+    ...apiLogs(builder),
     ...apiPayments(builder),
     ...apiPublic(builder),
     ...apiPush(builder),
