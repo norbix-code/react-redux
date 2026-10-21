@@ -244,6 +244,29 @@ The module enable / disable hooks were always mutations, so nothing changes in y
 
 The gateway still answers the old `GET` on these paths for now (it logs a deprecation warning) and will drop it after gateway 0.2, so upgrade the core SDK before then. The scheduler switch moved to `PUT` earlier (core SDK 4.6.0). The code module (`hub.code`) has no hooks in this package yet; call `useNorbix().hub.code.enableCode(...)` directly.
 
+### Logs (core SDK 4.31.0)
+
+Every `hub.logs` method has a hook, and `api.logs.writeLogs` writes your app's own lines.
+
+| Hook                                | SDK method                        | Cache                          |
+| ----------------------------------- | --------------------------------- | ------------------------------ |
+| `useGetLogsQuery`                   | `hub.logs.getLogs`                | provides `Logs`                |
+| `useGetLogQuery`                    | `hub.logs.getLog` (`{ id }`)      | provides `Logs`                |
+| `useGetLogsByCorrelationIdQuery`    | `hub.logs.getLogsByCorrelationId` | provides `Logs`                |
+| `useCleanLogsMutation`              | `hub.logs.cleanLogs`              | invalidates `Logs`             |
+| `useGetLogSettingsQuery`            | `hub.logs.getLogSettings`         | provides `LogsSettings`        |
+| `useSaveLogSettingsMutation`        | `hub.logs.saveLogSettings`        | invalidates `LogsSettings`     |
+| `useTestLoggingIntegrationMutation` | `hub.logs.testLoggingIntegration` | invalidates `LogsIntegrations` |
+| `useWriteLogsMutation`              | `api.logs.writeLogs`              | invalidates `Logs`             |
+
+`useSaveLogSettingsMutation` changes only the settings you send; a field left out keeps its value. After
+`useSaveLoggingIntegrationMutation`, call `useTestLoggingIntegrationMutation` with the integration id —
+nothing is delivered to a logging integration until its last test passed. `useWriteLogsMutation` takes
+`{ entries }` (1–100 lines: `title` required, `level`, `message`, `eventCode`, `correlationId`,
+`timestamp`, `meta`); on a 429 `CM-ERRORS-LOGGING-003` its `error.retryAfterSeconds` says how many seconds
+to wait before sending again. `useEndUserOwnRecordsReportMutation` (`hub.database.endUserOwnRecordsReport`,
+new in the same core SDK) lists every schema's end-user-own-records switch, or turns it on with `dryRun: false`.
+
 ### Bulk record writes (core SDK 4.11.0)
 
 `useUpdateManyRecordsMutation` / `useDeleteManyRecordsMutation` (Hub) and `useUpdateManyMutation` / `useDeleteManyMutation` (Api) take a new optional `allRecords` argument. An empty filter (`{}`, or no filter on update) matches the whole collection and the gateway refuses it with `CM-ERRORS-DATABASE-037` unless you pass `allRecords: true`:
@@ -1161,7 +1184,7 @@ norbixApi.injectEndpoints({
       prefix: 'Logging',
       tag: 'LogsIntegrations',
       namespace: (n) => n.hub.logs,
-      include: { test: false },
+      include: { test: true },
     }),
   }),
   overrideExisting: false,
@@ -1179,7 +1202,7 @@ This produces all hooks automatically — `useGetEmailIntegrationsQuery`, `useSa
 | Payments   | `Payments`                               | `n.hub.payments`      | `PaymentIntegrations`    | has `test` + `confirmHumanDelivery` |
 | Code       | `Code`                                   | `n.hub.code`          | `CodeIntegrations`       | has `test`                          |
 | Membership | `Membership`                             | `n.hub.membership`    | `MembershipIntegrations` | no `test`                           |
-| Logs       | `Logging` _(uses `Logging`, not `Logs`)_ | `n.hub.logs`          | `LogsIntegrations`       | no `test`                           |
+| Logs       | `Logging` _(uses `Logging`, not `Logs`)_ | `n.hub.logs`          | `LogsIntegrations`       | has `test` (deliveries start after a passed test) |
 | Database   | `Database`                               | `n.hub.database`      | `DatabaseIntegrations`   | already wired in package            |
 
 **Trade-off.** The helper is terse but loses static request/response typing — generated hooks return `any` data, because endpoint keys are computed at runtime. If you need full types on a specific integration surface (autocompletion in your IDE), define those endpoints manually instead, following the canonical shape used by `hub.database` integrations in `src/hooks/hub/database.ts`.
