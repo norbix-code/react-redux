@@ -1,5 +1,6 @@
-// AUTO-GENERATED — full coverage of `norbix.hub.logs` (10 endpoints).
-// Synced from the norbix core SDK surface. Re-run the hook sync to refresh.
+// Full coverage of `norbix.hub.logs` (15 endpoints), 1:1 with the core SDK.
+// Written by hand: this repo has no hook sync script (the header used to say
+// "re-run the hook sync"; there is none — add a row here for a new SDK method).
 import type { Norbix } from '@norbix.ai/ts';
 
 import type { Builder } from '../index.js';
@@ -15,9 +16,21 @@ type GetLoggingIntegrations = Norbix['hub']['logs']['getLoggingIntegrations'];
 type SaveLoggingIntegration = Norbix['hub']['logs']['saveLoggingIntegration'];
 type TestLoggingIntegration = Norbix['hub']['logs']['testLoggingIntegration'];
 type GetLogsByCorrelationId = Norbix['hub']['logs']['getLogsByCorrelationId'];
+type GetLogs = Norbix['hub']['logs']['getLogs'];
+type GetLog = Norbix['hub']['logs']['getLog'];
+type CleanLogs = Norbix['hub']['logs']['cleanLogs'];
+type GetLogSettings = Norbix['hub']['logs']['getLogSettings'];
+type SaveLogSettings = Norbix['hub']['logs']['saveLogSettings'];
 
 /**
- * `hub.logs` — 10 endpoints, 1:1 with the core SDK.
+ * `hub.logs` — 15 endpoints, 1:1 with the core SDK.
+ *
+ * Tags:
+ *   - `Logs`             — log entries and the module switch.
+ *   - `LogsSettings`     — the project's log settings.
+ *   - `LogsIntegrations` — logging integrations. Nothing is delivered to an
+ *     integration until its last test passed: call `testLoggingIntegration`
+ *     after every `saveLoggingIntegration`.
  */
 export const hubLogs = (b: Builder) => ({
   disableLogging: b.mutation<Result<DisableLogging>, Arg<DisableLogging>>({
@@ -30,17 +43,26 @@ export const hubLogs = (b: Builder) => ({
     invalidatesTags: ['Logs'],
   }),
 
-  deleteLoggingIntegration: b.mutation<Result<DeleteLoggingIntegration>, Arg<DeleteLoggingIntegration>>({
+  deleteLoggingIntegration: b.mutation<
+    Result<DeleteLoggingIntegration>,
+    Arg<DeleteLoggingIntegration>
+  >({
     query: (args) => (norbix) => norbix.hub.logs.deleteLoggingIntegration(args),
     invalidatesTags: ['LogsIntegrations'],
   }),
 
-  disableLoggingIntegration: b.mutation<Result<DisableLoggingIntegration>, Arg<DisableLoggingIntegration>>({
+  disableLoggingIntegration: b.mutation<
+    Result<DisableLoggingIntegration>,
+    Arg<DisableLoggingIntegration>
+  >({
     query: (args) => (norbix) => norbix.hub.logs.disableLoggingIntegration(args),
     invalidatesTags: ['LogsIntegrations'],
   }),
 
-  enableLoggingIntegration: b.mutation<Result<EnableLoggingIntegration>, Arg<EnableLoggingIntegration>>({
+  enableLoggingIntegration: b.mutation<
+    Result<EnableLoggingIntegration>,
+    Arg<EnableLoggingIntegration>
+  >({
     query: (args) => (norbix) => norbix.hub.logs.enableLoggingIntegration(args),
     invalidatesTags: ['LogsIntegrations'],
   }),
@@ -68,5 +90,33 @@ export const hubLogs = (b: Builder) => ({
   getLogsByCorrelationId: b.query<Result<GetLogsByCorrelationId>, Arg<GetLogsByCorrelationId>>({
     query: (args) => (norbix) => norbix.hub.logs.getLogsByCorrelationId(args),
     providesTags: ['Logs'],
+  }),
+
+  getLogs: b.query<Result<GetLogs>, Arg<GetLogs>>({
+    query: (args) => (norbix) => norbix.hub.logs.getLogs(args),
+    providesTags: ['Logs'],
+  }),
+
+  /** Arg: `{ id }` — the id of a `getLogs` row. */
+  getLog: b.query<Result<GetLog>, Arg<GetLog>>({
+    query: (args) => (norbix) => norbix.hub.logs.getLog(args),
+    providesTags: ['Logs'],
+  }),
+
+  /** Deletes every entry stored in the project's Norbix Logging. */
+  cleanLogs: b.mutation<Result<CleanLogs>, Arg<CleanLogs>>({
+    query: (args) => (norbix) => norbix.hub.logs.cleanLogs(args),
+    invalidatesTags: ['Logs'],
+  }),
+
+  getLogSettings: b.query<Result<GetLogSettings>, Arg<GetLogSettings>>({
+    query: (args) => (norbix) => norbix.hub.logs.getLogSettings(args),
+    providesTags: ['LogsSettings'],
+  }),
+
+  /** Only the settings you send change; a field left out keeps its value. */
+  saveLogSettings: b.mutation<Result<SaveLogSettings>, Arg<SaveLogSettings>>({
+    query: (args) => (norbix) => norbix.hub.logs.saveLogSettings(args),
+    invalidatesTags: ['LogsSettings'],
   }),
 });
