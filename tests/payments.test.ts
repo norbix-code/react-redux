@@ -67,6 +67,28 @@ describe('hubPayments', () => {
     expect(endpoints.getPaymentsWebhookLog.providesTags).toEqual(['PaymentIntegrations']);
     expect(calls).toEqual([{ method: 'hub.getPaymentsWebhookLog', args }]);
   });
+
+  /**
+   * Montonio `isSandbox` is optional since core SDK 4.32.0: empty = true on the
+   * gateway (sandbox). The hook must hand the caller's integration over as is,
+   * never fill the switch in.
+   */
+  it('savePaymentsIntegration leaves an unset Montonio isSandbox out', async () => {
+    const { calls, client } = fakeNorbix();
+    const args = {
+      integration: {
+        provider: 'Montonio',
+        integrationName: 'montonio',
+        accessKey: 'ak',
+        secretKey: 'sk',
+      },
+    };
+
+    await endpoints.savePaymentsIntegration.query(args)(client);
+
+    expect(calls).toEqual([{ method: 'hub.savePaymentsIntegration', args }]);
+    expect('isSandbox' in (calls[0]!.args as typeof args).integration).toBe(false);
+  });
 });
 
 /**
