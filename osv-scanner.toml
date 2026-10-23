@@ -68,3 +68,8 @@ reason = "dev-only: bundled inside the npm CLI that @semantic-release/npm runs a
 id = "GHSA-rj75-hqrm-r3gf"  # postcss-selector-parser 7.1.4 (npm bundle)
 ignoreUntil = 2026-11-03
 reason = "dev-only: bundled inside the npm CLI that @semantic-release/npm runs at release time; the latest npm 11 (11.21.0) still bundles 7.1.4 and overrides cannot change bundled packages. Not part of the published package."
+
+[[IgnoredVulns]]
+id = "GHSA-rxp7-6hxx-x8q5"
+ignoreUntil = 2027-01-04T00:00:00Z
+reason = "ip-address 10.5.0 is bundled inside the npm package (node_modules/npm, inBundle) that the release tooling (semantic-release) installs; npm overrides cannot reach bundled files and the latest npm still bundles this version. Dev-only, never shipped in @norbix.ai/react-redux. Same decision as sdk-ts 96936c5."
