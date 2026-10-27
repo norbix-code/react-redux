@@ -73,3 +73,13 @@ reason = "dev-only: bundled inside the npm CLI that @semantic-release/npm runs a
 id = "GHSA-rxp7-6hxx-x8q5"
 ignoreUntil = 2027-01-04T00:00:00Z
 reason = "ip-address 10.5.0 is bundled inside the npm package (node_modules/npm, inBundle) that the release tooling (semantic-release) installs; npm overrides cannot reach bundled files and the latest npm still bundles this version. Dev-only, never shipped in @norbix.ai/react-redux. Same decision as sdk-ts 96936c5."
+
+[[IgnoredVulns]]
+id = "GHSA-4qv8-2p9j-2685"  # undici 6.28.0 (npm bundle)
+ignoreUntil = 2027-01-27T00:00:00Z
+reason = "dev-only: undici 6.28.0 is bundled inside the npm CLI that @semantic-release/npm runs at release time (node_modules/npm, inBundle); overrides cannot reach bundled files and the latest npm still bundles a version below the fix (6.29.1). The two other undici copies are overridden to fixed versions. Same decision as sdk-ts. Not part of the published package."
+
+[[IgnoredVulns]]
+id = "GHSA-xjj6-f33q-929c"  # undici 6.28.0 (npm bundle)
+ignoreUntil = 2027-01-27T00:00:00Z
+reason = "dev-only: undici 6.28.0 is bundled inside the npm CLI that @semantic-release/npm runs at release time (node_modules/npm, inBundle); overrides cannot reach bundled files and the latest npm still bundles a version below the fix (6.29.1). The two other undici copies are overridden to fixed versions. Same decision as sdk-ts. Not part of the published package."
