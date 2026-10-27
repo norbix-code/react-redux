@@ -607,6 +607,48 @@ const { data } = useGetMarketplaceFunctionRunsQuery({
 });
 ```
 
+## Workflows (beta)
+
+Beta: workflows are in beta; bugs may occur. Every workflow route has a hook,
+1:1 with `norbix.hub.code` (26) and `norbix.api.code` (4) from
+`@norbix.ai/ts` 4.39.0 (gateway contract `Code.Workflows.md` §7). Every tag is
+of type `CodeWorkflows`.
+
+| Area                  | Hooks                                                                                                                                                                                                                                                                                                                                                                       | Cache tag (`CodeWorkflows/…`)                                                                        |
+| --------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
+| Definitions           | `useGetCodeWorkflowsQuery`, `useSaveCodeWorkflowMutation`, `useGetCodeWorkflowQuery`, `useDeleteCodeWorkflowMutation`, `usePublishCodeWorkflowMutation`, `useGetCodeWorkflowDraftQuery`, `useDiscardCodeWorkflowDraftMutation`, `useGetCodeWorkflowVersionsQuery`, `useGetCodeWorkflowVersionDiffQuery`, `useValidateCodeWorkflowMutation`, `useGetCodeWorkflowSchemaQuery` | `LIST`, `<id>`, `SCHEMA`; writes invalidate `LIST` and the workflow; validate touches nothing        |
+| Switches              | `useEnableCodeWorkflowsMutation`, `useDisableCodeWorkflowsMutation` (the beta switch), `useEnableCodeWorkflowMutation`, `useDisableCodeWorkflowMutation` (one workflow)                                                                                                                                                                                                     | the beta switch invalidates `Account`, `Projects`, `Code` and `LIST`; one workflow `LIST` and `<id>` |
+| Runs                  | `useInvokeCodeWorkflowMutation`, `useGetCodeWorkflowRunsQuery`, `useGetCodeWorkflowWaitingRunsQuery`, `useGetCodeWorkflowRunQuery`, `useGetCodeWorkflowRunLogsQuery`, `useResumeCodeWorkflowRunMutation`, `useResumeCodeWorkflowRunByKeyMutation`, `useRetryCodeWorkflowRunStepMutation`, `useCancelCodeWorkflowRunMutation`                                                | `RUNS`, `RUN:<runId>`; invoke, resume, retry and cancel invalidate `RUNS` and the run                |
+| Resume links          | `useOpenCodeWorkflowResumeLinkQuery`, `useUseCodeWorkflowResumeLinkMutation`                                                                                                                                                                                                                                                                                                | `LINK:<token>`; using a link invalidates `RUNS`, the run and the link                                |
+| Your app (`api.code`) | `useGetCodeWorkflowWaitingRunsApiQuery`, `useResumeCodeWorkflowRunApiMutation`, `useOpenCodeWorkflowResumeLinkApiQuery`, `useUseCodeWorkflowResumeLinkApiMutation`                                                                                                                                                                                                          | same tags as the Hub hooks                                                                           |
+
+The API hooks carry the `Api` suffix because the Hub has methods of the same
+names and both live in one endpoint map. The double `useUse…` comes from the
+SDK method `useCodeWorkflowResumeLink`. The resume links need no session — the
+token in the link is the key — so they work from a client without a bearer
+token.
+
+```tsx
+const [invoke, { data }] = useInvokeCodeWorkflowMutation();
+await invoke({
+  id: "wf_6Qp1dW2kRm8NsT4vYc0Hb",
+  payload: { orderId: "ord_1" },
+  waitSeconds: 10,
+});
+
+// The runs waiting on the signed-in user, then approve one.
+const { data: waiting } = useGetCodeWorkflowWaitingRunsApiQuery({
+  assignee: "me",
+});
+const [resume] = useResumeCodeWorkflowRunApiMutation();
+await resume({ runId: "wfr_4hT2b9QkLm3XcT1yRfGh7a", decision: "approved" });
+```
+
+`norbix.hub.code.workflows.waitForRun(runId, { timeoutMs, pollMs })` is a
+plain SDK helper — it polls `getCodeWorkflowRun` until the run finishes or
+parks on a wait — not a route, so there is no hook for it: call it from
+`useNorbix()`.
+
 ## Working with terms
 
 A **taxonomy** is a named tree of **terms** (labels). A term can have one parent (a clean hierarchy) or several parents (the same item under many categories). There is one read hook per scenario — pick the one that matches what you want:

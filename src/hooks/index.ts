@@ -6,6 +6,7 @@ import type { SerializedNorbixError } from '../errors.js';
 import { apiAi } from './api/ai.js';
 import { apiApikeys } from './api/apikeys.js';
 import { apiAuth } from './api/auth.js';
+import { apiCode } from './api/code.js';
 import { apiDatabase } from './api/database.js';
 import { apiFiles } from './api/files.js';
 import { apiLogs } from './api/logs.js';
@@ -30,6 +31,7 @@ import { hubRegions } from './hub/regions.js';
 import { hubResources } from './hub/resources.js';
 import { hubScheduler } from './hub/scheduler.js';
 import { hubWebhooks } from './hub/webhooks.js';
+import { hubCodeWorkflows } from './hub/workflows.js';
 
 /**
  * The complete set of cache tags every endpoint factory may use. Adding a
@@ -78,6 +80,7 @@ export type AllTags =
   | 'CodeIntegrations'
   | 'CodeFunctions'
   | 'CodeMarketplace'
+  | 'CodeWorkflows'
   // ---- Email ----
   | 'Emails'
   | 'EmailTemplates'
@@ -143,6 +146,7 @@ export function buildEndpoints(builder: Builder) {
     // API surface (runtime, project-scoped)
     ...apiAi(builder),
     ...apiAuth(builder),
+    ...apiCode(builder),
     ...apiMembership(builder),
     ...apiDatabase(builder),
     ...apiApikeys(builder),
@@ -157,6 +161,7 @@ export function buildEndpoints(builder: Builder) {
     ...hubApikeys(builder),
     ...hubCode(builder),
     ...hubCodeMarketplace(builder),
+    ...hubCodeWorkflows(builder),
     ...hubMembership(builder),
     ...hubDatabase(builder),
     ...hubFiles(builder),
