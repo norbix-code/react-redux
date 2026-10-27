@@ -86,7 +86,7 @@
     "eslint-plugin-import-x": "^4.17.1",
     "eslint-plugin-prettier": "^5.5.6",
     "eslint-plugin-react-hooks": "^7.1.1",
-    "happy-dom": "^20.14.5",
+    "happy-dom": "^21.0.4",
     "husky": "^9.1.6",
     "prettier": "^3.9.7",
     "react": "^19.3.0",
@@ -102,6 +102,10 @@
     "provenance": true
   },
   "overrides": {
-    "esbuild": "^0.28.1"
+    "@actions/http-client": {
+      "undici": "^6.29.1"
+    },
+    "esbuild": "^0.28.1",
+    "undici@^7.0.0": "^7.30.1"
   }
 }
