@@ -76,6 +76,7 @@ export function createNorbixApi(
       'CodeIntegrations',
       'CodeFunctions',
       'CodeMarketplace',
+      'CodeWorkflows',
       // Email
       'Emails',
       'EmailTemplates',
