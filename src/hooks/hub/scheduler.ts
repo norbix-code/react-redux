@@ -1,4 +1,5 @@
 import type { Norbix } from '@norbix.ai/ts';
+import type { SaveSchedulerTaskInput } from '@norbix.ai/ts/hub';
 
 import type { Builder } from '../index.js';
 import type { Arg, Result } from '../types.js';
@@ -67,7 +68,8 @@ export const hubScheduler = (b: Builder) => {
       ],
     }),
 
-    saveSchedulerTask: b.mutation<Result<SaveTask>, Arg<SaveTask>>({
+    // The typed input is named from '@norbix.ai/ts/hub' so the emitted .d.ts can refer to it (TS2883).
+    saveSchedulerTask: b.mutation<Result<SaveTask>, SaveSchedulerTaskInput | undefined>({
       query: (args) => (norbix) => callHS(norbix).saveSchedulerTask(args),
       invalidatesTags: (_res, _err, arg) => [
         { type: 'Scheduler', id: 'LIST' },
