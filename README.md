@@ -123,37 +123,37 @@ A _curated_ set of hooks for the most common endpoints. Every hook is end-to-end
 
 ### API surface — `norbix.api.*`
 
-| Hook                                 | Wraps                            | Cache tags                                                   |
-| ------------------------------------ | -------------------------------- | ------------------------------------------------------------ |
-| `useLoginMutation`                   | `client.login(...)`              | invalidates `User/LIST`, `AccountProfile/CURRENT`            |
-| `useLogoutMutation`                  | `client.logout()`                | invalidates `User`, `AccountProfile`, `Collection`, `Schema` |
-| `useAuthenticateMutation`            | `api.auth.authenticate`          | —                                                            |
-| `useGetUsersQuery`                   | `api.membership.getUsers`        | provides `User/LIST`                                         |
-| `useGetUserQuery`                    | `api.membership.getUser`         | provides `User/<id>`                                         |
-| `useInviteUserMutation`              | `api.membership.inviteUser`      | invalidates `User/LIST`                                      |
-| `useUpdateUserMutation`              | `api.membership.updateUser`      | invalidates `User/<id>` + `User/LIST`                        |
-| `useBlockUserMutation`               | `api.membership.blockUser`       | invalidates `User/LIST`                                      |
-| `useUnblockUserMutation`             | `api.membership.unblockUser`     | invalidates `User/LIST`                                      |
-| `useDeleteUserMutation`              | `api.membership.deleteUser`      | invalidates `User/LIST`                                      |
-| `useFindCollectionQuery`             | `api.database.find`              | provides `Collection/<name>`                                 |
-| `useFindOneQuery`                    | `api.database.findOne`           | provides `Collection/<name>`                                 |
-| `useCountCollectionQuery`            | `api.database.count`             | provides `Collection/<name>`                                 |
-| `useInsertOneMutation`               | `api.database.insertOne`         | invalidates `Collection/<name>`                              |
-| `useUpdateOneMutation`               | `api.database.updateOne`         | invalidates `Collection/<name>`                              |
-| `useReplaceOneMutation`              | `api.database.replaceOne`        | invalidates `Collection/<name>`                              |
-| `useDeleteOneMutation`               | `api.database.deleteOne`         | invalidates `Collection/<name>`                              |
-| `useFindTermsQuery`                  | `api.database.findTerms`         | provides `DatabaseTaxonomyTerms/<taxonomyName>`              |
-| `useFindTermsChildrenQuery`          | `api.database.findTermsChildren` | provides `DatabaseTaxonomyTerms/<taxonomyName>`              |
-| `useFindTermTreeQuery`               | `api.database.findTermTree`      | provides `DatabaseTaxonomyTerms/<taxonomyName>`              |
-| `useFindTaxonomyTreeQuery`           | `api.database.findTaxonomyTree`  | provides `DatabaseTaxonomyTerms/ANY`                         |
-| `useGetApiKeysQuery`                 | `api.apikeys.getApiKeys`         | provides `ApiKey/LIST`                                       |
-| `useRegenerateApiKeysMutation`       | `api.apikeys.regenerateApiKeys`  | invalidates `ApiKey/LIST`                                    |
-| `useGetPublicFileQuery`              | `api.files.getPublicFile`        | provides `Files/PUBLIC:<publicId>`                           |
-| `useTestFilesIntegrationApiMutation` | `api.files.testFilesIntegration` | invalidates `Files` + `FilesIntegrations`                    |
-| `useCreatePaymentOrderMutation`      | `api.payments.createPaymentOrder` | invalidates `PaymentOrders/LIST`                            |
-| `useGetPaymentOrderQuery`            | `api.payments.getPaymentOrder`   | provides `PaymentOrders/<id>`                                |
-| `useGetPaymentOrdersQuery`           | `api.payments.getPaymentOrders`  | provides `PaymentOrders/LIST`                                |
-| `useStartPaymentCheckoutMutation`    | `api.payments.startPaymentCheckout` | invalidates `PaymentOrders/LIST` + `PaymentOrders/<id>`   |
+| Hook                                 | Wraps                               | Cache tags                                                   |
+| ------------------------------------ | ----------------------------------- | ------------------------------------------------------------ |
+| `useLoginMutation`                   | `client.login(...)`                 | invalidates `User/LIST`, `AccountProfile/CURRENT`            |
+| `useLogoutMutation`                  | `client.logout()`                   | invalidates `User`, `AccountProfile`, `Collection`, `Schema` |
+| `useAuthenticateMutation`            | `api.auth.authenticate`             | —                                                            |
+| `useGetUsersQuery`                   | `api.membership.getUsers`           | provides `User/LIST`                                         |
+| `useGetUserQuery`                    | `api.membership.getUser`            | provides `User/<id>`                                         |
+| `useInviteUserMutation`              | `api.membership.inviteUser`         | invalidates `User/LIST`                                      |
+| `useUpdateUserMutation`              | `api.membership.updateUser`         | invalidates `User/<id>` + `User/LIST`                        |
+| `useBlockUserMutation`               | `api.membership.blockUser`          | invalidates `User/LIST`                                      |
+| `useUnblockUserMutation`             | `api.membership.unblockUser`        | invalidates `User/LIST`                                      |
+| `useDeleteUserMutation`              | `api.membership.deleteUser`         | invalidates `User/LIST`                                      |
+| `useFindCollectionQuery`             | `api.database.find`                 | provides `Collection/<name>`                                 |
+| `useFindOneQuery`                    | `api.database.findOne`              | provides `Collection/<name>`                                 |
+| `useCountCollectionQuery`            | `api.database.count`                | provides `Collection/<name>`                                 |
+| `useInsertOneMutation`               | `api.database.insertOne`            | invalidates `Collection/<name>`                              |
+| `useUpdateOneMutation`               | `api.database.updateOne`            | invalidates `Collection/<name>`                              |
+| `useReplaceOneMutation`              | `api.database.replaceOne`           | invalidates `Collection/<name>`                              |
+| `useDeleteOneMutation`               | `api.database.deleteOne`            | invalidates `Collection/<name>`                              |
+| `useFindTermsQuery`                  | `api.database.findTerms`            | provides `DatabaseTaxonomyTerms/<taxonomyName>`              |
+| `useFindTermsChildrenQuery`          | `api.database.findTermsChildren`    | provides `DatabaseTaxonomyTerms/<taxonomyName>`              |
+| `useFindTermTreeQuery`               | `api.database.findTermTree`         | provides `DatabaseTaxonomyTerms/<taxonomyName>`              |
+| `useFindTaxonomyTreeQuery`           | `api.database.findTaxonomyTree`     | provides `DatabaseTaxonomyTerms/ANY`                         |
+| `useGetApiKeysQuery`                 | `api.apikeys.getApiKeys`            | provides `ApiKey/LIST`                                       |
+| `useRegenerateApiKeysMutation`       | `api.apikeys.regenerateApiKeys`     | invalidates `ApiKey/LIST`                                    |
+| `useGetPublicFileQuery`              | `api.files.getPublicFile`           | provides `Files/PUBLIC:<publicId>`                           |
+| `useTestFilesIntegrationApiMutation` | `api.files.testFilesIntegration`    | invalidates `Files` + `FilesIntegrations`                    |
+| `useCreatePaymentOrderMutation`      | `api.payments.createPaymentOrder`   | invalidates `PaymentOrders/LIST`                             |
+| `useGetPaymentOrderQuery`            | `api.payments.getPaymentOrder`      | provides `PaymentOrders/<id>`                                |
+| `useGetPaymentOrdersQuery`           | `api.payments.getPaymentOrders`     | provides `PaymentOrders/LIST`                                |
+| `useStartPaymentCheckoutMutation`    | `api.payments.startPaymentCheckout` | invalidates `PaymentOrders/LIST` + `PaymentOrders/<id>`      |
 
 ### Hub surface — `norbix.hub.*`
 
@@ -226,21 +226,29 @@ Every `hub.database` method (73) and every `api.database` method (22) of `@norbi
 | `useFindOwnQuery`                             | `api.database.findOwn`                          | provides `DatabaseCollections/<collectionName>`                                                    |
 | `useFindMergedTermTreeQuery`                  | `api.database.findMergedTermTree`               | provides `DatabaseTaxonomyTerms/<taxonomyName>`                                                    |
 
+### Keyless cloud connections
+
+| Hook                                 | Core SDK method                               | Cache |
+| ------------------------------------ | --------------------------------------------- | ----- |
+| `useGetKeylessIntegrationSetupQuery` | `hub.integrations.getKeylessIntegrationSetup` | —     |
+
+`GET /{version}/integrations/keyless/setup` with `module` (files, email or code), `cloud` (azure, aws or google) and an optional `integrationId`. The answer carries the integration id to save with, the issuer, subject and audience, `available` (with `unavailableReason` when false) and the cloud setup script. Then save the integration with `authMode: 'Keyless'` and the role ARN (AWS) or tenant + client id (Azure); a key mode (`authMode: 'AccessKey'`) needs `acceptKeyRisk: true`, or the gateway refuses it (`CM-ERRORS-INTEGRATIONS-034`). Needs the `@norbix.ai/ts` release that adds `hub.integrations`.
+
 ### Module switches send `PUT` (core SDK 4.10.0)
 
 The module enable / disable hooks were always mutations, so nothing changes in your code. From `@norbix.ai/ts` 4.10.0 they send `PUT` instead of `GET` on the wire, matching the gateway:
 
-| Hooks                                                         | Route                                                | Cache                    |
-| ------------------------------------------------------------- | ---------------------------------------------------- | ------------------------ |
-| `useEnableDatabaseMutation`, `useDisableDatabaseMutation`     | `PUT /{version}/database/enable\|disable`            | invalidates `Database`   |
-| `useEnableFilesMutation`, `useDisableFilesMutation`           | `PUT /{version}/files/enable\|disable`               | invalidates `Files`      |
-| `useEnableLoggingMutation`, `useDisableLoggingMutation`       | `PUT /{version}/logs/enable\|disable`                | invalidates `Logs`       |
-| `useEnablePaymentsMutation`, `useDisablePaymentsMutation`     | `PUT /{version}/payments/enable\|disable`            | invalidates `Payments`   |
+| Hooks                                                         | Route                                                | Cache                          |
+| ------------------------------------------------------------- | ---------------------------------------------------- | ------------------------------ |
+| `useEnableDatabaseMutation`, `useDisableDatabaseMutation`     | `PUT /{version}/database/enable\|disable`            | invalidates `Database`         |
+| `useEnableFilesMutation`, `useDisableFilesMutation`           | `PUT /{version}/files/enable\|disable`               | invalidates `Files`            |
+| `useEnableLoggingMutation`, `useDisableLoggingMutation`       | `PUT /{version}/logs/enable\|disable`                | invalidates `Logs`             |
+| `useEnablePaymentsMutation`, `useDisablePaymentsMutation`     | `PUT /{version}/payments/enable\|disable`            | invalidates `Payments`         |
 | `useGetPaymentsWebhookLogQuery`                               | `GET /{version}/payments/webhooks/log`               | provides `PaymentIntegrations` |
-| `useEnableMembershipMutation`, `useDisableMembershipMutation` | `PUT /{version}/membership/enable\|disable`          | invalidates `Membership` |
-| `useEnableEmailMutation`, `useDisableEmailMutation`           | `PUT /{version}/notifications/email/enable\|disable` | invalidates `Emails`     |
-| `useEnableSmsMutation`, `useDisableSmsMutation`               | `PUT /{version}/notifications/sms/enable\|disable`   | invalidates `Sms`        |
-| `useEnablePushMutation`, `useDisablePushMutation`             | `PUT /{version}/notifications/push/enable\|disable`  | invalidates `Push`       |
+| `useEnableMembershipMutation`, `useDisableMembershipMutation` | `PUT /{version}/membership/enable\|disable`          | invalidates `Membership`       |
+| `useEnableEmailMutation`, `useDisableEmailMutation`           | `PUT /{version}/notifications/email/enable\|disable` | invalidates `Emails`           |
+| `useEnableSmsMutation`, `useDisableSmsMutation`               | `PUT /{version}/notifications/sms/enable\|disable`   | invalidates `Sms`              |
+| `useEnablePushMutation`, `useDisablePushMutation`             | `PUT /{version}/notifications/push/enable\|disable`  | invalidates `Push`             |
 
 The gateway still answers the old `GET` on these paths for now (it logs a deprecation warning) and will drop it after gateway 0.2, so upgrade the core SDK before then. The scheduler switch moved to `PUT` earlier (core SDK 4.6.0). The code module (`hub.code`) has no hooks in this package yet; call `useNorbix().hub.code.enableCode(...)` directly.
 
@@ -631,17 +639,17 @@ token.
 ```tsx
 const [invoke, { data }] = useInvokeCodeWorkflowMutation();
 await invoke({
-  id: "wf_6Qp1dW2kRm8NsT4vYc0Hb",
-  payload: { orderId: "ord_1" },
+  id: 'wf_6Qp1dW2kRm8NsT4vYc0Hb',
+  payload: { orderId: 'ord_1' },
   waitSeconds: 10,
 });
 
 // The runs waiting on the signed-in user, then approve one.
 const { data: waiting } = useGetCodeWorkflowWaitingRunsApiQuery({
-  assignee: "me",
+  assignee: 'me',
 });
 const [resume] = useResumeCodeWorkflowRunApiMutation();
-await resume({ runId: "wfr_4hT2b9QkLm3XcT1yRfGh7a", decision: "approved" });
+await resume({ runId: 'wfr_4hT2b9QkLm3XcT1yRfGh7a', decision: 'approved' });
 ```
 
 `norbix.hub.code.workflows.waitForRun(runId, { timeoutMs, pollMs })` is a
@@ -1235,17 +1243,17 @@ norbixApi.injectEndpoints({
 
 This produces all hooks automatically — `useGetEmailIntegrationsQuery`, `useSaveEmailIntegrationMutation`, `useTestEmailIntegrationMutation`, `useConfirmEmailIntegrationHumanDeliveryMutation`, and the same for push/sms/files/payments/etc.
 
-| Module     | Prefix                                   | Namespace             | Tag                      | Notes                               |
-| ---------- | ---------------------------------------- | --------------------- | ------------------------ | ----------------------------------- |
-| Email      | `Email`                                  | `n.hub.notifications` | `EmailIntegrations`      | has `test` + `confirmHumanDelivery` |
-| Push       | `Push`                                   | `n.hub.notifications` | `PushIntegrations`       | has `test` + `confirmHumanDelivery` |
-| Sms        | `Sms`                                    | `n.hub.notifications` | `SmsIntegrations`        | has `test` + `confirmHumanDelivery` |
-| Files      | `Files`                                  | `n.hub.files`         | `FilesIntegrations`      | has `test`                          |
-| Payments   | `Payments`                               | `n.hub.payments`      | `PaymentIntegrations`    | has `test` + `confirmHumanDelivery` |
-| Code       | `Code`                                   | `n.hub.code`          | `CodeIntegrations`       | has `test`                          |
-| Membership | `Membership`                             | `n.hub.membership`    | `MembershipIntegrations` | no `test`                           |
+| Module     | Prefix                                   | Namespace             | Tag                      | Notes                                             |
+| ---------- | ---------------------------------------- | --------------------- | ------------------------ | ------------------------------------------------- |
+| Email      | `Email`                                  | `n.hub.notifications` | `EmailIntegrations`      | has `test` + `confirmHumanDelivery`               |
+| Push       | `Push`                                   | `n.hub.notifications` | `PushIntegrations`       | has `test` + `confirmHumanDelivery`               |
+| Sms        | `Sms`                                    | `n.hub.notifications` | `SmsIntegrations`        | has `test` + `confirmHumanDelivery`               |
+| Files      | `Files`                                  | `n.hub.files`         | `FilesIntegrations`      | has `test`                                        |
+| Payments   | `Payments`                               | `n.hub.payments`      | `PaymentIntegrations`    | has `test` + `confirmHumanDelivery`               |
+| Code       | `Code`                                   | `n.hub.code`          | `CodeIntegrations`       | has `test`                                        |
+| Membership | `Membership`                             | `n.hub.membership`    | `MembershipIntegrations` | no `test`                                         |
 | Logs       | `Logging` _(uses `Logging`, not `Logs`)_ | `n.hub.logs`          | `LogsIntegrations`       | has `test` (deliveries start after a passed test) |
-| Database   | `Database`                               | `n.hub.database`      | `DatabaseIntegrations`   | already wired in package            |
+| Database   | `Database`                               | `n.hub.database`      | `DatabaseIntegrations`   | already wired in package                          |
 
 **Trade-off.** The helper is terse but loses static request/response typing — generated hooks return `any` data, because endpoint keys are computed at runtime. If you need full types on a specific integration surface (autocompletion in your IDE), define those endpoints manually instead, following the canonical shape used by `hub.database` integrations in `src/hooks/hub/database.ts`.
 
