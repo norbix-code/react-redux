@@ -232,7 +232,7 @@ Every `hub.database` method (73) and every `api.database` method (22) of `@norbi
 | ------------------------------------ | --------------------------------------------- | ----- |
 | `useGetKeylessIntegrationSetupQuery` | `hub.integrations.getKeylessIntegrationSetup` | —     |
 
-`GET /{version}/integrations/keyless/setup` with `module` (files, email or code), `cloud` (azure, aws or google) and an optional `integrationId`. The answer carries the integration id to save with, the issuer, subject and audience, `available` (with `unavailableReason` when false) and the cloud setup script. Then save the integration with `authMode: 'Keyless'` and the role ARN (AWS) or tenant + client id (Azure); a key mode (`authMode: 'AccessKey'`) needs `acceptKeyRisk: true`, or the gateway refuses it (`CM-ERRORS-INTEGRATIONS-034`). Needs the `@norbix.ai/ts` release that adds `hub.integrations`.
+`GET /{version}/integrations/keyless/setup` with `module` (files, email or code), `cloud` (azure, aws or google) and an optional `integrationId`. The answer carries the integration id to save with, the issuer, subject and audience, `available` (with `unavailableReason` when false) the cloud setup script and `templates` — templates: ready CloudFormation / Bicep / Terraform files for this integration (`{ kind, fileName, content }[]`; typed from the `@norbix.ai/ts` release that adds the field). Then save the integration with `authMode: 'Keyless'` and the role ARN (AWS) or tenant + client id (Azure); a key mode (`authMode: 'AccessKey'`) needs `acceptKeyRisk: true`, or the gateway refuses it (`CM-ERRORS-INTEGRATIONS-034`). Needs the `@norbix.ai/ts` release that adds `hub.integrations`.
 
 ### Module switches send `PUT` (core SDK 4.10.0)
 

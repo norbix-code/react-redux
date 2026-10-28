@@ -14,7 +14,8 @@ type GetKeylessIntegrationSetup = Norbix['hub']['integrations']['getKeylessInteg
  * returns what a developer pastes into the cloud account before saving a
  * keyless files / email / code integration: the integration id to save with,
  * the issuer, subject and audience, whether keyless is available (with the
- * reason when not) and the setup script. It reads nothing cached elsewhere
+ * reason when not), the setup script and `templates` — templates: ready
+ * CloudFormation / Bicep / Terraform files for this integration. It reads nothing cached elsewhere
  * and changes nothing, so it carries no cache tags.
  */
 export const hubIntegrations = (b: Builder) => ({
