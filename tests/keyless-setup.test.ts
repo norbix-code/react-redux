@@ -23,6 +23,13 @@ type Def = {
   invalidatesTags?: unknown;
 };
 
+const ANSWER = {
+  available: true,
+  templates: [
+    { kind: 'terraform', fileName: 'norbix-files-aws.tf', content: 'resource "aws_iam_role" ...' },
+  ],
+};
+
 function fakeNorbix() {
   const calls: Array<{ method: string; args: unknown }> = [];
   const integrations = new Proxy(
@@ -30,7 +37,7 @@ function fakeNorbix() {
     {
       get: (_t, name: string) => (args: unknown) => {
         calls.push({ method: `hub.integrations.${name}`, args });
-        return Promise.resolve({ available: true });
+        return Promise.resolve(ANSWER);
       },
     },
   );
@@ -49,7 +56,8 @@ describe('hubIntegrations', () => {
     expect(endpoints.getKeylessIntegrationSetup.__kind).toBe('query');
     expect(endpoints.getKeylessIntegrationSetup.providesTags).toBeUndefined();
     expect(calls).toEqual([{ method: 'hub.integrations.getKeylessIntegrationSetup', args }]);
-    expect(result).toEqual({ available: true });
+    expect(result).toEqual(ANSWER);
+    expect((result as typeof ANSWER).templates[0]?.kind).toBe('terraform');
   });
 
   it('is part of the full endpoint set', () => {
