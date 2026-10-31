@@ -98,3 +98,13 @@ reason = "undici 6.28.0 is bundled inside the npm package (node_modules/npm, inB
 id = "GHSA-qrxm-fqhp-jwvm"
 ignoreUntil = 2027-01-28T00:00:00Z
 reason = "undici 6.28.0 is bundled inside the npm package (node_modules/npm, inBundle, via node-gyp) that the release tooling (semantic-release) installs; npm overrides cannot reach bundled files (fix: 6.29.1). The two other undici copies are already on fixed versions (6.29.1, 7.30.1). Dev-only, never shipped in @norbix.ai/react-redux. Owner decision 2026-10-28 (same as sdk-ts)."
+
+[[IgnoredVulns]]
+id = "GHSA-3g3m-2fjr-6pw4"
+ignoreUntil = 2027-01-31T00:00:00Z
+reason = "glob 13.0.6 is bundled inside the npm package (a dependency of the release tool), development only and not in the published package. npm 12.2.1 still bundles glob ^13, so no update is available. Owner approved 2026-10-31."
+
+[[IgnoredVulns]]
+id = "GHSA-g3hv-75wg-m249"
+ignoreUntil = 2027-01-31T00:00:00Z
+reason = "minimatch 10.2.5 is bundled inside the npm package, and 10.2.6 is a top-level development dependency of the build tools. Neither is in the published package. npm 12.2.1 still bundles minimatch ^10, so no update is available. Owner approved 2026-10-31."
