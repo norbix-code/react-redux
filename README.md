@@ -127,6 +127,8 @@ A _curated_ set of hooks for the most common endpoints. Every hook is end-to-end
 | ------------------------------------ | ----------------------------------- | ------------------------------------------------------------ |
 | `useLoginMutation`                   | `client.login(...)`                 | invalidates `User/LIST`, `AccountProfile/CURRENT`            |
 | `useLogoutMutation`                  | `client.logout()`                   | invalidates `User`, `AccountProfile`, `Collection`, `Schema` |
+| `useSignInMutation`                  | `api.auth.browserSignIn`            | `browserSession` clients; no session id reaches the store |
+| `useSignOutMutation`                 | `api.auth.signOut`                  | ends the server session; `useLogoutMutation` does not |
 | `useAuthenticateMutation`            | `api.auth.authenticate`             | —                                                            |
 | `useGetUsersQuery`                   | `api.membership.getUsers`           | provides `User/LIST`                                         |
 | `useGetUserQuery`                    | `api.membership.getUser`            | provides `User/<id>`                                         |
@@ -149,7 +151,6 @@ A _curated_ set of hooks for the most common endpoints. Every hook is end-to-end
 | `useGetApiKeysQuery`                 | `api.apikeys.getApiKeys`            | provides `ApiKey/LIST`                                       |
 | `useRegenerateApiKeysMutation`       | `api.apikeys.regenerateApiKeys`     | invalidates `ApiKey/LIST`                                    |
 | `useGetPublicFileQuery`              | `api.files.getPublicFile`           | provides `Files/PUBLIC:<publicId>`                           |
-| `useTestFilesIntegrationApiMutation` | `api.files.testFilesIntegration`    | invalidates `Files` + `FilesIntegrations`                    |
 | `useCreatePaymentOrderMutation`      | `api.payments.createPaymentOrder`   | invalidates `PaymentOrders/LIST`                             |
 | `useGetPaymentOrderQuery`            | `api.payments.getPaymentOrder`      | provides `PaymentOrders/<id>`                                |
 | `useGetPaymentOrdersQuery`           | `api.payments.getPaymentOrders`     | provides `PaymentOrders/LIST`                                |
@@ -427,28 +428,11 @@ making a file private again invalidates `Files`, a different tag, so call
 
 ## Testing a files integration
 
-Two hooks run the same live probe against a files integration — upload a
-small file, read it, list the folder, delete the file — and answer one item
-per step (`UploadFile`, `GetFile`, `GetAllFiles`, `DeleteFile`) with `result`
-`OK`, `FAILED` or `NOT_TESTED`:
-
-| Hook                                 | Wraps                            | Route                                             | Use it from                                                        |
-| ------------------------------------ | -------------------------------- | ------------------------------------------------- | ------------------------------------------------------------------ |
-| `useTestFilesIntegrationApiMutation` | `api.files.testFilesIntegration` | `POST /{version}/files/{filesIntegrationId}/test` | your app, with an API key or a user session (needs `files:create`) |
-| `useTestFilesIntegrationMutation`    | `hub.files.testFilesIntegration` | `POST /{version}/files/integrations/test`         | a dashboard, signed in to the Hub                                  |
-
-```tsx
-const [testIntegration, { data, isLoading }] = useTestFilesIntegrationApiMutation();
-
-await testIntegration({ filesIntegrationId: 'nbin_1' });
-const failed = data?.items?.filter((i) => i.result !== 'OK');
-```
-
-The API one carries the `Api` suffix because both live in one endpoint map
-(like `useDeleteFileApiMutation`). It invalidates `Files` — the probe writes to
-the storage, and a failed delete step leaves its file behind — and
-`FilesIntegrations`, because the gateway records the last test result on the
-integration.
+`useTestFilesIntegrationMutation` wraps `hub.files.testFilesIntegration`
+(`POST /{version}/files/integrations/test`). It runs a live probe against a
+files integration — upload a small file, read it, list the folder, delete the
+file — and answers one item per step (`UploadFile`, `GetFile`, `GetAllFiles`,
+`DeleteFile`) with `result` `OK`, `FAILED` or `NOT_TESTED`.
 
 ## SMS
 
@@ -1022,6 +1006,20 @@ Now each taxonomy node's `terms` holds that taxonomy's full term tree (same shap
 const projectId = useSelector(selectCurrentProjectId);
 const { data } = useGetProjectQuery({ id: projectId }, { skip: !projectId });
 ```
+
+### Cookie sessions in the browser
+
+For a client with `auth: { type: 'browserSession' }`. Use these instead of `useLoginMutation` and `useLogoutMutation`: `login()` refuses a session client with `NORBIX_AUTH_CONFIG`, and `logout()` only clears local state.
+
+```tsx
+const [signIn] = useSignInMutation();
+const [signOut] = useSignOutMutation();
+
+const { userId } = await signIn({ userName, password }).unwrap(); // the browser keeps the cookie
+await signOut().unwrap(); // ends the session on the server
+```
+
+`useSignInMutation` needs no session id in the answer, so your own backend can keep it in an `HttpOnly` cookie and return public user data only. No session id or JWT reaches the Redux store, and no JWT is issued.
 
 ### Reset the entire cache after login or tenant switch
 

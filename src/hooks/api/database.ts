@@ -25,6 +25,12 @@ type FindTaxonomyTree = Norbix['api']['database']['findTaxonomyTree'];
 type FindMergedTermTree = Norbix['api']['database']['findMergedTermTree'];
 type GetDatabaseSchema = Norbix['api']['database']['getDatabaseSchema'];
 type GetDatabaseSchemas = Norbix['api']['database']['getDatabaseSchemas'];
+type GetCollectionImports = Norbix['api']['database']['getCollectionImports'];
+type GetCollectionImport = Norbix['api']['database']['getCollectionImport'];
+type CreateCollectionImport = Norbix['api']['database']['createCollectionImport'];
+type DeleteCollectionImport = Norbix['api']['database']['deleteCollectionImport'];
+type AnalyzeImportFile = Norbix['api']['database']['analyzeImportFile'];
+type RequestImportUploadUrl = Norbix['api']['database']['requestImportUploadUrl'];
 
 /**
  * `api.database` — runtime collection CRUD + taxonomies + read-only schemas.
@@ -237,5 +243,52 @@ export const apiDatabase = (b: Builder) => ({
   getApiDatabaseSchemas: b.query<Result<GetDatabaseSchemas>, Arg<GetDatabaseSchemas>>({
     query: (args) => (norbix) => norbix.api.database.getDatabaseSchemas(args),
     providesTags: [{ type: 'DatabaseSchemas', id: 'LIST' }],
+  }),
+
+  // ---- Imports. The `Api` suffix: hub.database has the same names, one endpoint map. ----
+  getCollectionImportsApi: b.query<Result<GetCollectionImports>, Arg<GetCollectionImports>>({
+    query: (args) => (norbix) => norbix.api.database.getCollectionImports(args),
+    providesTags: ['DatabaseImports'],
+  }),
+
+  getCollectionImportApi: b.query<Result<GetCollectionImport>, Arg<GetCollectionImport>>({
+    query: (args) => (norbix) => norbix.api.database.getCollectionImport(args),
+    providesTags: ['DatabaseImports'],
+  }),
+
+  // An import writes records into the target collection.
+  createCollectionImportApi: b.mutation<
+    Result<CreateCollectionImport>,
+    Arg<CreateCollectionImport>
+  >({
+    query: (args) => (norbix) => norbix.api.database.createCollectionImport(args),
+    invalidatesTags: (_res, _err, arg) => [
+      { type: 'DatabaseImports' },
+      {
+        type: 'DatabaseRecords',
+        id: (arg as { collectionName?: string })?.collectionName ?? 'ANY',
+      },
+    ],
+  }),
+
+  deleteCollectionImportApi: b.mutation<
+    Result<DeleteCollectionImport>,
+    Arg<DeleteCollectionImport>
+  >({
+    query: (args) => (norbix) => norbix.api.database.deleteCollectionImport(args),
+    invalidatesTags: ['DatabaseImports'],
+  }),
+
+  // Reads the uploaded file and suggests a column mapping; saves nothing.
+  analyzeImportFileApi: b.mutation<Result<AnalyzeImportFile>, Arg<AnalyzeImportFile>>({
+    query: (args) => (norbix) => norbix.api.database.analyzeImportFile(args),
+  }),
+
+  // Returns a one-time signed upload URL; saves nothing.
+  requestImportUploadUrlApi: b.mutation<
+    Result<RequestImportUploadUrl>,
+    Arg<RequestImportUploadUrl>
+  >({
+    query: (args) => (norbix) => norbix.api.database.requestImportUploadUrl(args),
   }),
 });
