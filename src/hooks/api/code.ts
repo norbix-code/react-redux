@@ -41,7 +41,7 @@ const linkTag = (arg: unknown) => ({
  *
  * Every hook carries the `Api` suffix: the Hub has methods of the same names
  * (`hub.code`) and both live in one endpoint map (like
- * `useTestFilesIntegrationApiMutation`).
+ * `useDeleteFileApiMutation`).
  *
  * The resume links need no session: the token in the link is the key. The
  * core SDK sends them with an optional scope — the bearer and project id when

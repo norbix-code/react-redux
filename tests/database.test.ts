@@ -200,13 +200,13 @@ describe('hubDatabase', () => {
 describe('apiDatabase', () => {
   const endpoints = apiDatabase(fakeBuilder()) as unknown as Record<string, Def>;
 
-  it('reaches every api.database method of @norbix.ai/ts exactly once (22)', async () => {
+  it('reaches every api.database method of @norbix.ai/ts exactly once (28)', async () => {
     const { calls, client } = fakeNorbix();
     for (const key of Object.keys(endpoints)) {
       await endpoints[key].query({ probe: key })(client);
     }
     const methods = sdkMethods('api');
-    expect(methods).toHaveLength(22);
+    expect(methods).toHaveLength(28);
     expect(calls.map((c) => c.method).sort()).toEqual(methods.map((m) => `api.${m}`));
   });
 

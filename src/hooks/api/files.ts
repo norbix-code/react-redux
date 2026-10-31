@@ -29,7 +29,6 @@ type GetSignedUrl = Norbix['api']['files']['getSignedUrl'];
 type ListFiles = Norbix['api']['files']['listFiles'];
 type RequestUploadUrl = Norbix['api']['files']['requestUploadUrl'];
 type GetPublicFile = Norbix['api']['files']['getPublicFile'];
-type TestFilesIntegrationApi = Norbix['api']['files']['testFilesIntegration'];
 
 /**
  * `api.files` — 10 endpoints, 1:1 with the core SDK.
@@ -93,39 +92,5 @@ export const apiFiles = (b: Builder) => ({
     providesTags: (_res, _err, arg) => [
       { type: 'Files' as const, id: `PUBLIC:${arg?.publicId ?? 'unknown'}` },
     ],
-  }),
-
-  /**
-   * Runs a live probe against a files integration with the caller's own API
-   * key or session: uploads a small file, reads it, lists the folder and
-   * deletes the file again. Answers one item per step (`UploadFile`,
-   * `GetFile`, `GetAllFiles`, `DeleteFile`) with `result` `OK`, `FAILED` or
-   * `NOT_TESTED`, plus the step's `errors`. Needs the `files:create`
-   * permission, because the probe writes to the storage.
-   *
-   * Wraps `api.files.testFilesIntegration`
-   * (`POST /{version}/files/{filesIntegrationId}/test`). This is NOT the
-   * dashboard endpoint `hub.files.testFilesIntegration`
-   * (`POST /{version}/files/integrations/test`), whose hook is
-   * `useTestFilesIntegrationMutation`. Both live in one flat endpoint map,
-   * so this one carries the `Api` suffix — the same way `deleteFileApi` and
-   * `downloadFileApi` do — otherwise the Hub one, spread later, would
-   * silently replace it. Hook: `useTestFilesIntegrationApiMutation`.
-   *
-   * A mutation, like every other write in this file, so its answer is never
-   * served from cache. It invalidates:
-   * - `Files`, like its write neighbours: the probe uploads and deletes a
-   *   real file in the storage `listFiles` reads, and if the delete step
-   *   fails the probe file stays behind;
-   * - `FilesIntegrations`: the gateway records the outcome on the
-   *   integration (last test time, success, errors), which
-   *   `getFilesIntegration(s)` return.
-   */
-  testFilesIntegrationApi: b.mutation<
-    Result<TestFilesIntegrationApi>,
-    Arg<TestFilesIntegrationApi>
-  >({
-    query: (args) => (norbix) => norbix.api.files.testFilesIntegration(args),
-    invalidatesTags: ['Files', 'FilesIntegrations'],
   }),
 });
