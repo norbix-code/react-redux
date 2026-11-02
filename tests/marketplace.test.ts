@@ -70,6 +70,14 @@ const CASES: Array<
   ['getMarketplaceIntegrations', 'query', 'GET', '/code/marketplace/integrations', {}, {}],
   ['getMarketplaceIntegration', 'query', 'GET', I, IDS, {}],
   [
+    'installMarketplaceWorkflow',
+    'mutation',
+    'POST',
+    '/code/marketplace/listings/ml_workflow_order_thanks_v1/install-workflow',
+    { listingViewId: 'ml_workflow_order_thanks_v1', references: { orders: 'orders' } },
+    { references: { orders: 'orders' } },
+  ],
+  [
     'saveMarketplaceIntegration',
     'mutation',
     'POST',
@@ -264,6 +272,12 @@ describe('hubCodeMarketplace', () => {
   it('the MCP tool catalog provides TOOLS:<integration> (core SDK 4.23.0)', () => {
     expect(tagsFor(endpoints['getMarketplaceIntegrationTools']!.providesTags, IDS)).toEqual([
       { type: 'CodeMarketplace', id: `TOOLS:${INTEGRATION}` },
+    ]);
+  });
+
+  it('installing a workflow listing invalidates the workflow list (core 4.50.0)', () => {
+    expect(tagsFor(endpoints['installMarketplaceWorkflow']!.invalidatesTags, {})).toEqual([
+      { type: 'CodeWorkflows', id: 'LIST' },
     ]);
   });
 
