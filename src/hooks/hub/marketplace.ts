@@ -26,6 +26,9 @@ import type { Arg, Result } from '../types.js';
  *   - `<functionViewId>`         — one function and its tokens
  *   - `RUNS`                     — the last runs of a trigger or task (core SDK 4.21.0)
  *
+ * Installing a workflow listing (core SDK 4.50.0) saves a new workflow's draft, so
+ * it invalidates the workflow list (`CodeWorkflows` / `LIST`). Beta: nothing runs.
+ *
  * Starting the OAuth sign-in (route 28) invalidates nothing: the connection
  * changes only when the vendor sends the browser back to the gateway, so read
  * the connection again after the person returns (`signedIn`).
@@ -40,6 +43,7 @@ export const hubCodeMarketplace = (b: Builder) => {
   type GetListings = Fn<'getMarketplaceListings'>;
   type GetListing = Fn<'getMarketplaceListing'>;
   type GetListingFunctionTokens = Fn<'getMarketplaceListingFunctionTokens'>;
+  type InstallWorkflow = Fn<'installMarketplaceWorkflow'>;
   type GetIntegrations = Fn<'getMarketplaceIntegrations'>;
   type GetIntegration = Fn<'getMarketplaceIntegration'>;
   type SaveIntegration = Fn<'saveMarketplaceIntegration'>;
@@ -115,6 +119,10 @@ export const hubCodeMarketplace = (b: Builder) => {
     getMarketplaceIntegration: b.query<Result<GetIntegration>, Arg<GetIntegration>>({
       query: (args) => (norbix) => callHC(norbix).getMarketplaceIntegration(args),
       providesTags: (_res, _err, arg) => [{ type: T, id: integrationId(arg) }],
+    }),
+    installMarketplaceWorkflow: b.mutation<Result<InstallWorkflow>, Arg<InstallWorkflow>>({
+      query: (args) => (norbix) => callHC(norbix).installMarketplaceWorkflow(args),
+      invalidatesTags: [{ type: 'CodeWorkflows', id: 'LIST' }],
     }),
     saveMarketplaceIntegration: b.mutation<Result<SaveIntegration>, Arg<SaveIntegration>>({
       query: (args) => (norbix) => callHC(norbix).saveMarketplaceIntegration(args),
