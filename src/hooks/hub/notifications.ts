@@ -1,4 +1,4 @@
-// AUTO-GENERATED — full coverage of `norbix.hub.notifications` (127 endpoints).
+// AUTO-GENERATED — full coverage of `norbix.hub.notifications` (129 endpoints).
 // Synced from the norbix core SDK surface. Re-run the hook sync to refresh.
 import type { Norbix } from '@norbix.ai/ts';
 
@@ -31,6 +31,7 @@ type GetEmailSignature = Norbix['hub']['notifications']['getEmailSignature'];
 type GetEmailSignatures = Norbix['hub']['notifications']['getEmailSignatures'];
 type SaveEmailSignature = Norbix['hub']['notifications']['saveEmailSignature'];
 type GetEmailSettings = Norbix['hub']['notifications']['getEmailSettings'];
+type UpdateEmailClickTracking = Norbix['hub']['notifications']['updateEmailClickTracking'];
 type ConfirmEmailIntegrationHumanDelivery =
   Norbix['hub']['notifications']['confirmEmailIntegrationHumanDelivery'];
 type DeleteEmailIntegration = Norbix['hub']['notifications']['deleteEmailIntegration'];
@@ -49,6 +50,7 @@ type DeleteEmailFooter = Norbix['hub']['notifications']['deleteEmailFooter'];
 type GetEmailFooter = Norbix['hub']['notifications']['getEmailFooter'];
 type GetEmailFooters = Norbix['hub']['notifications']['getEmailFooters'];
 type SaveEmailFooter = Norbix['hub']['notifications']['saveEmailFooter'];
+type RecordEmailClicks = Norbix['hub']['notifications']['recordEmailClicks'];
 type CreateEmailCampaign = Norbix['hub']['notifications']['createEmailCampaign'];
 type DeleteEmailCampaign = Norbix['hub']['notifications']['deleteEmailCampaign'];
 type GetEmailCampaign = Norbix['hub']['notifications']['getEmailCampaign'];
@@ -145,7 +147,7 @@ type PromoteContactIdentity = Norbix['hub']['membership']['promoteContactIdentit
 type RemoveContactIdentity = Norbix['hub']['membership']['removeContactIdentity'];
 
 /**
- * `hub.notifications` — 127 endpoints, 1:1 with the core SDK.
+ * `hub.notifications` — 129 endpoints, 1:1 with the core SDK.
  */
 export const hubNotifications = (b: Builder) => ({
   getUserNotificationPreferences: b.query<
@@ -268,6 +270,16 @@ export const hubNotifications = (b: Builder) => ({
     providesTags: ['EmailSettings'],
   }),
 
+  // Email click ids (core SDK 4.56.0+). The switch lives on the project
+  // (`ProjectDto.emailClickTracking`), not in the email settings answer.
+  updateEmailClickTracking: b.mutation<
+    Result<UpdateEmailClickTracking>,
+    Arg<UpdateEmailClickTracking>
+  >({
+    query: (args) => (norbix) => norbix.hub.notifications.updateEmailClickTracking(args),
+    invalidatesTags: ['Projects'],
+  }),
+
   confirmEmailIntegrationHumanDelivery: b.mutation<
     Result<ConfirmEmailIntegrationHumanDelivery>,
     Arg<ConfirmEmailIntegrationHumanDelivery>
@@ -358,6 +370,12 @@ export const hubNotifications = (b: Builder) => ({
     invalidatesTags: ['EmailFooters'],
   }),
 
+  // A recorded click changes the status history of a campaign's notification rows.
+  recordEmailClicks: b.mutation<Result<RecordEmailClicks>, Arg<RecordEmailClicks>>({
+    query: (args) => (norbix) => norbix.hub.notifications.recordEmailClicks(args),
+    invalidatesTags: ['EmailCampaigns'],
+  }),
+
   createEmailCampaign: b.mutation<Result<CreateEmailCampaign>, Arg<CreateEmailCampaign>>({
     query: (args) => (norbix) => norbix.hub.notifications.createEmailCampaign(args),
     invalidatesTags: ['EmailCampaigns'],
@@ -414,7 +432,6 @@ export const hubNotifications = (b: Builder) => ({
     query: (args) => (norbix) => norbix.hub.notifications.previewEmailNotification(args),
     providesTags: ['Emails'],
   }),
-
 
   getEmailCampaignMessages: b.query<
     Result<GetEmailCampaignMessages>,
@@ -592,7 +609,6 @@ export const hubNotifications = (b: Builder) => ({
     providesTags: ['Sms'],
   }),
 
-
   getSmsCampaignMessages: b.query<Result<GetSmsCampaignMessages>, Arg<GetSmsCampaignMessages>>({
     query: (args) => (norbix) => norbix.hub.notifications.getSmsCampaignMessages(args),
     providesTags: ['SmsCampaigns'],
@@ -607,7 +623,10 @@ export const hubNotifications = (b: Builder) => ({
 
   // What disabling the SMS module would affect (running campaigns,
   // integrations) — read it before disableSms to warn the user.
-  getSmsDisableDependencies: b.query<Result<GetSmsDisableDependencies>, Arg<GetSmsDisableDependencies>>({
+  getSmsDisableDependencies: b.query<
+    Result<GetSmsDisableDependencies>,
+    Arg<GetSmsDisableDependencies>
+  >({
     query: (args) => (norbix) => norbix.hub.notifications.getSmsDisableDependencies(args),
     providesTags: ['Sms'],
   }),
@@ -791,7 +810,6 @@ export const hubNotifications = (b: Builder) => ({
     query: (args) => (norbix) => norbix.hub.notifications.previewPushNotification(args),
     providesTags: ['Push'],
   }),
-
 
   getPushCampaignMessages: b.query<Result<GetPushCampaignMessages>, Arg<GetPushCampaignMessages>>({
     query: (args) => (norbix) => norbix.hub.notifications.getPushCampaignMessages(args),
