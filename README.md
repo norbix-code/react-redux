@@ -494,6 +494,43 @@ re-reads after a phone change. It now pages with flat `startingAfter`,
 `endingBefore` and `pageSize` (default 20), and `projectId` without
 `includeAccountOwner` lists only that project's collaborators.
 
+### Bundles and Flex clusters — `norbix.hub.account`
+
+Managed Service is sold as three bundles: `Starter`, `Growth` and `Scale`. Each
+has a limit of enabled projects and a monthly and an annual price. The account's
+Norbix-managed Atlas clusters ("Flex clusters") can be listed and upgraded to `M10`.
+
+| Hook                                    | SDK method                               | Wire                                                  | Cache                                       |
+| --------------------------------------- | ---------------------------------------- | ----------------------------------------------------- | ------------------------------------------- |
+| `useGetManagedServiceBundlesQuery`      | `hub.account.getManagedServiceBundles`   | `GET /account/stripe/bundles`                         | provides `Billing`                          |
+| `useChangeManagedServiceBundleMutation` | `hub.account.changeManagedServiceBundle` | `POST /account/stripe/change-bundle`                  | invalidates `Billing` + `Account`           |
+| `useGetFlexClustersQuery`               | `hub.account.getFlexClusters`            | `GET /account/flex-clusters`                          | provides `Account` + `DatabaseIntegrations` |
+| `useUpgradeFlexClusterMutation`         | `hub.account.upgradeFlexCluster`         | `POST /account/flex-clusters/{flexClusterId}/upgrade` | invalidates `DatabaseIntegrations`          |
+
+```tsx
+const { data: bundles } = useGetManagedServiceBundlesQuery();
+const [changeBundle] = useChangeManagedServiceBundleMutation();
+
+// bundles.bundles[i]: { bundle, projectCap, monthly: { amount, currency }, annual }
+// amount is in minor units (cents), currency is lower case ('usd').
+await changeBundle({ bundle: 'Growth', billingPeriod: 'Annual' }).unwrap();
+
+const { data: flex } = useGetFlexClustersQuery();
+const [upgrade] = useUpgradeFlexClusterMutation();
+
+// flex.clusters[i]: { id, displayName, tierCode, status, databases, usage, nearLimits }
+// flex.canCreateNew is false with cannotCreateReason 'TrialOneCluster' or 'ClusterLimitReached'.
+await upgrade({ flexClusterId: flex.clusters[0].id, tierCode: 'M10' }).unwrap();
+```
+
+- `changeBundle` is refused with the error code `CM-ERRORS-ACCOUNT-023` when the
+  account has more enabled projects than the new bundle allows. Account status
+  carries the bundle, so `useGetAccountStatusQuery` re-reads after a change.
+- The cluster list re-reads after a database integration is saved or deleted,
+  and after an upgrade is queued.
+- These four hooks need a `@norbix.ai/ts` release that has the four methods.
+  With an older core SDK they return an error and send no request.
+
 ## Scheduler
 
 Every scheduler Hub endpoint (8) has a hook, 1:1 with `norbix.hub.scheduler`.

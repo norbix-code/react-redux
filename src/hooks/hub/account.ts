@@ -1,5 +1,14 @@
 // AUTO-GENERATED — full coverage of the `norbix.hub.account` Project surface (48 endpoints).
 // Synced from the norbix core SDK surface. Re-run the hook sync to refresh.
+//
+// Written by hand below the synced part: bundles and Flex clusters (4 endpoints).
+// The gateway routes behind them, so the endpoint-coverage matrix can see them.
+// This file never builds a URL itself — the core SDK does:
+//
+//   GET    /{version}/account/stripe/bundles
+//   POST   /{version}/account/stripe/change-bundle
+//   GET    /{version}/account/flex-clusters
+//   POST   /{version}/account/flex-clusters/{flexClusterId}/upgrade
 import type { Norbix } from '@norbix.ai/ts';
 
 import type { Builder } from '../index.js';
@@ -61,8 +70,106 @@ type DeleteAiServiceUser = Norbix['hub']['account']['deleteAiServiceUser'];
 type RotateAiServiceUserKey = Norbix['hub']['account']['rotateAiServiceUserKey'];
 type RevokeAiServiceUserKey = Norbix['hub']['account']['revokeAiServiceUserKey'];
 
+// Bundles and Flex clusters. `@norbix.ai/ts` 4.50.0 (the version this package
+// builds against) has no types for these four calls, so their shapes are
+// written here by hand from the gateway contract. They are exported from this
+// file only so the build can name them; the package entry does not export them.
+// When the core SDK release that has the methods is the minimum version,
+// replace this block with `Norbix['hub']['account'][...]` like the lines above.
+
+/** The three Managed Service bundles. */
+export type ManagedServiceBundle = 'Starter' | 'Growth' | 'Scale';
+
+export type SubscriptionBillingPeriod = 'Monthly' | 'Annual';
+
+/** `amount` is in minor units (cents); `currency` is lower case (`usd`). */
+export interface BundlePriceDto {
+  amount: number;
+  currency: string;
+}
+
+export interface ManagedServiceBundleDto {
+  bundle: ManagedServiceBundle;
+  /** How many enabled projects the bundle allows. */
+  projectCap: number;
+  monthly: BundlePriceDto;
+  annual: BundlePriceDto;
+}
+
+export interface FlexClusterDatabaseDto {
+  projectId: string;
+  projectName: string;
+  env: string;
+  integrationId: string;
+  integrationName: string;
+  databaseName?: string;
+}
+
+export interface FlexClusterUsageDto {
+  databaseCount: number;
+  storageBytes?: number;
+  connections?: number;
+  operationsPerSecond?: number;
+}
+
+export interface FlexClusterDto {
+  id: string;
+  displayName: string;
+  atlasClusterName: string;
+  norbixRegionCode: string;
+  tierCode: 'FLEX' | 'M10';
+  status: 'Empty' | 'Provisioning' | 'Active' | 'Failed';
+  databases: FlexClusterDatabaseDto[];
+  usage: FlexClusterUsageDto;
+  nearLimits: string[];
+}
+
+/** The same envelope every gateway answer has. */
+export type ResponseStatus = Result<GetAccountStatus>['responseStatus'];
+
+export interface EmptyResponse {
+  responseStatus: ResponseStatus;
+}
+
+export interface GetManagedServiceBundlesResponse extends EmptyResponse {
+  bundles: ManagedServiceBundleDto[];
+}
+
+export interface GetFlexClustersResponse extends EmptyResponse {
+  clusters: FlexClusterDto[];
+  canCreateNew: boolean;
+  cannotCreateReason?: 'TrialOneCluster' | 'ClusterLimitReached';
+}
+
+type GetManagedServiceBundles = (
+  request?: Record<string, never>,
+) => Promise<GetManagedServiceBundlesResponse>;
+type ChangeManagedServiceBundle = (request: {
+  bundle: ManagedServiceBundle;
+  billingPeriod: SubscriptionBillingPeriod;
+}) => Promise<EmptyResponse>;
+type GetFlexClusters = (request?: Record<string, never>) => Promise<GetFlexClustersResponse>;
+type UpgradeFlexCluster = (request: {
+  flexClusterId: string;
+  tierCode: 'M10';
+}) => Promise<EmptyResponse>;
+
+/** `norbix.hub.account` with the four calls the installed type does not list yet. */
+const bundlesAndFlex = (norbix: Norbix) =>
+  norbix.hub.account as Norbix['hub']['account'] & {
+    getManagedServiceBundles: GetManagedServiceBundles;
+    changeManagedServiceBundle: ChangeManagedServiceBundle;
+    getFlexClusters: GetFlexClusters;
+    upgradeFlexCluster: UpgradeFlexCluster;
+  };
+
 /**
- * `hub.account` — 48 endpoints, 1:1 with the core SDK.
+ * `hub.account` — 52 endpoints, 1:1 with the core SDK.
+ *
+ * The last four (bundles and Flex clusters) need a `@norbix.ai/ts` release
+ * that has `getManagedServiceBundles`, `changeManagedServiceBundle`,
+ * `getFlexClusters` and `upgradeFlexCluster`. On an older core SDK they
+ * answer with an error instead of sending a request.
  *
  * Not wrapped: `mcp` (`/account/mcp`) — a JSON-RPC stream for MCP clients,
  * not a request/response call a cached hook can model. Use `useNorbix()`.
@@ -401,5 +508,47 @@ export const hubAccount = (b: Builder) => ({
   revokeAiServiceUserKey: b.mutation<Result<RevokeAiServiceUserKey>, Arg<RevokeAiServiceUserKey>>({
     query: (args) => (norbix) => norbix.hub.account.revokeAiServiceUserKey(args),
     invalidatesTags: ['Projects'],
+  }),
+
+  /**
+   * Lists the three Managed Service bundles (`Starter`, `Growth`, `Scale`),
+   * each with its project limit and its monthly and annual price.
+   */
+  getManagedServiceBundles: b.query<
+    Result<GetManagedServiceBundles>,
+    Arg<GetManagedServiceBundles>
+  >({
+    query: (args) => (norbix) => bundlesAndFlex(norbix).getManagedServiceBundles(args),
+    providesTags: ['Billing'],
+  }),
+
+  /**
+   * Moves the account to another bundle or billing period. The gateway
+   * refuses it with `CM-ERRORS-ACCOUNT-023` when the account has more enabled
+   * projects than the new bundle allows. Account status carries the bundle,
+   * so it is read again.
+   */
+  changeManagedServiceBundle: b.mutation<
+    Result<ChangeManagedServiceBundle>,
+    Arg<ChangeManagedServiceBundle>
+  >({
+    query: (args) => (norbix) => bundlesAndFlex(norbix).changeManagedServiceBundle(args),
+    invalidatesTags: ['Billing', 'Account'],
+  }),
+
+  /**
+   * Lists the account's Norbix-managed Atlas clusters with their databases
+   * and usage, and says whether a new cluster can be created. It is read
+   * again after a database integration changes.
+   */
+  getFlexClusters: b.query<Result<GetFlexClusters>, Arg<GetFlexClusters>>({
+    query: (args) => (norbix) => bundlesAndFlex(norbix).getFlexClusters(args),
+    providesTags: ['Account', 'DatabaseIntegrations'],
+  }),
+
+  /** Queues the upgrade of one cluster to `M10`: `flexClusterId` and `tierCode: 'M10'`. */
+  upgradeFlexCluster: b.mutation<Result<UpgradeFlexCluster>, Arg<UpgradeFlexCluster>>({
+    query: (args) => (norbix) => bundlesAndFlex(norbix).upgradeFlexCluster(args),
+    invalidatesTags: ['DatabaseIntegrations'],
   }),
 });
