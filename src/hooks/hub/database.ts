@@ -41,8 +41,6 @@ type EnableDatabaseIntegration = Norbix['hub']['database']['enableDatabaseIntegr
 type GetDatabaseIntegration = Norbix['hub']['database']['getDatabaseIntegration'];
 type GetDatabaseIntegrations = Norbix['hub']['database']['getDatabaseIntegrations'];
 type GetAllowedFlexTiers = Norbix['hub']['database']['getAllowedFlexTiers'];
-type RevealManagedFlexConnectionString =
-  Norbix['hub']['database']['revealManagedFlexConnectionString'];
 type SaveDatabaseIntegration = Norbix['hub']['database']['saveDatabaseIntegration'];
 type SetDatabaseIntegrationAsDefault = Norbix['hub']['database']['setDatabaseIntegrationAsDefault'];
 type TestDatabaseIntegration = Norbix['hub']['database']['testDatabaseIntegration'];
@@ -99,7 +97,7 @@ const termsTag = (arg: unknown) => [
 ];
 
 /**
- * `hub.database` — 73 endpoints, 1:1 with the core SDK (@norbix.ai/ts 4.9.0).
+ * `hub.database` — 74 endpoints, 1:1 with the core SDK.
  */
 export const hubDatabase = (b: Builder) => ({
   disableDatabase: b.mutation<Result<DisableDatabase>, Arg<DisableDatabase>>({
@@ -311,14 +309,6 @@ export const hubDatabase = (b: Builder) => ({
   getAllowedFlexTiers: b.query<Result<GetAllowedFlexTiers>, Arg<GetAllowedFlexTiers>>({
     query: (args) => (norbix) => norbix.hub.database.getAllowedFlexTiers(args),
     providesTags: ['DatabaseIntegrations'],
-  }),
-
-  revealManagedFlexConnectionString: b.mutation<
-    Result<RevealManagedFlexConnectionString>,
-    Arg<RevealManagedFlexConnectionString>
-  >({
-    query: (args) => (norbix) => norbix.hub.database.revealManagedFlexConnectionString(args),
-    invalidatesTags: ['DatabaseIntegrations'],
   }),
 
   saveDatabaseIntegration: b.mutation<

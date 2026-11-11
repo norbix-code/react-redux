@@ -123,38 +123,38 @@ A _curated_ set of hooks for the most common endpoints. Every hook is end-to-end
 
 ### API surface — `norbix.api.*`
 
-| Hook                                 | Wraps                               | Cache tags                                                   |
-| ------------------------------------ | ----------------------------------- | ------------------------------------------------------------ |
-| `useLoginMutation`                   | `client.login(...)`                 | invalidates `User/LIST`, `AccountProfile/CURRENT`            |
-| `useLogoutMutation`                  | `client.logout()`                   | invalidates `User`, `AccountProfile`, `Collection`, `Schema` |
-| `useSignInMutation`                  | `api.auth.browserSignIn`            | `browserSession` clients; no session id reaches the store |
-| `useSignOutMutation`                 | `api.auth.signOut`                  | ends the server session; `useLogoutMutation` does not |
-| `useAuthenticateMutation`            | `api.auth.authenticate`             | —                                                            |
-| `useGetUsersQuery`                   | `api.membership.getUsers`           | provides `User/LIST`                                         |
-| `useGetUserQuery`                    | `api.membership.getUser`            | provides `User/<id>`                                         |
-| `useInviteUserMutation`              | `api.membership.inviteUser`         | invalidates `User/LIST`                                      |
-| `useUpdateUserMutation`              | `api.membership.updateUser`         | invalidates `User/<id>` + `User/LIST`                        |
-| `useBlockUserMutation`               | `api.membership.blockUser`          | invalidates `User/LIST`                                      |
-| `useUnblockUserMutation`             | `api.membership.unblockUser`        | invalidates `User/LIST`                                      |
-| `useDeleteUserMutation`              | `api.membership.deleteUser`         | invalidates `User/LIST`                                      |
-| `useFindCollectionQuery`             | `api.database.find`                 | provides `Collection/<name>`                                 |
-| `useFindOneQuery`                    | `api.database.findOne`              | provides `Collection/<name>`                                 |
-| `useCountCollectionQuery`            | `api.database.count`                | provides `Collection/<name>`                                 |
-| `useInsertOneMutation`               | `api.database.insertOne`            | invalidates `Collection/<name>`                              |
-| `useUpdateOneMutation`               | `api.database.updateOne`            | invalidates `Collection/<name>`                              |
-| `useReplaceOneMutation`              | `api.database.replaceOne`           | invalidates `Collection/<name>`                              |
-| `useDeleteOneMutation`               | `api.database.deleteOne`            | invalidates `Collection/<name>`                              |
-| `useFindTermsQuery`                  | `api.database.findTerms`            | provides `DatabaseTaxonomyTerms/<taxonomyName>`              |
-| `useFindTermsChildrenQuery`          | `api.database.findTermsChildren`    | provides `DatabaseTaxonomyTerms/<taxonomyName>`              |
-| `useFindTermTreeQuery`               | `api.database.findTermTree`         | provides `DatabaseTaxonomyTerms/<taxonomyName>`              |
-| `useFindTaxonomyTreeQuery`           | `api.database.findTaxonomyTree`     | provides `DatabaseTaxonomyTerms/ANY`                         |
-| `useGetApiKeysQuery`                 | `api.apikeys.getApiKeys`            | provides `ApiKey/LIST`                                       |
-| `useRegenerateApiKeysMutation`       | `api.apikeys.regenerateApiKeys`     | invalidates `ApiKey/LIST`                                    |
-| `useGetPublicFileQuery`              | `api.files.getPublicFile`           | provides `Files/PUBLIC:<publicId>`                           |
-| `useCreatePaymentOrderMutation`      | `api.payments.createPaymentOrder`   | invalidates `PaymentOrders/LIST`                             |
-| `useGetPaymentOrderQuery`            | `api.payments.getPaymentOrder`      | provides `PaymentOrders/<id>`                                |
-| `useGetPaymentOrdersQuery`           | `api.payments.getPaymentOrders`     | provides `PaymentOrders/LIST`                                |
-| `useStartPaymentCheckoutMutation`    | `api.payments.startPaymentCheckout` | invalidates `PaymentOrders/LIST` + `PaymentOrders/<id>`      |
+| Hook                              | Wraps                               | Cache tags                                                   |
+| --------------------------------- | ----------------------------------- | ------------------------------------------------------------ |
+| `useLoginMutation`                | `client.login(...)`                 | invalidates `User/LIST`, `AccountProfile/CURRENT`            |
+| `useLogoutMutation`               | `client.logout()`                   | invalidates `User`, `AccountProfile`, `Collection`, `Schema` |
+| `useSignInMutation`               | `api.auth.browserSignIn`            | `browserSession` clients; no session id reaches the store    |
+| `useSignOutMutation`              | `api.auth.signOut`                  | ends the server session; `useLogoutMutation` does not        |
+| `useAuthenticateMutation`         | `api.auth.authenticate`             | —                                                            |
+| `useGetUsersQuery`                | `api.membership.getUsers`           | provides `User/LIST`                                         |
+| `useGetUserQuery`                 | `api.membership.getUser`            | provides `User/<id>`                                         |
+| `useInviteUserMutation`           | `api.membership.inviteUser`         | invalidates `User/LIST`                                      |
+| `useUpdateUserMutation`           | `api.membership.updateUser`         | invalidates `User/<id>` + `User/LIST`                        |
+| `useBlockUserMutation`            | `api.membership.blockUser`          | invalidates `User/LIST`                                      |
+| `useUnblockUserMutation`          | `api.membership.unblockUser`        | invalidates `User/LIST`                                      |
+| `useDeleteUserMutation`           | `api.membership.deleteUser`         | invalidates `User/LIST`                                      |
+| `useFindCollectionQuery`          | `api.database.find`                 | provides `Collection/<name>`                                 |
+| `useFindOneQuery`                 | `api.database.findOne`              | provides `Collection/<name>`                                 |
+| `useCountCollectionQuery`         | `api.database.count`                | provides `Collection/<name>`                                 |
+| `useInsertOneMutation`            | `api.database.insertOne`            | invalidates `Collection/<name>`                              |
+| `useUpdateOneMutation`            | `api.database.updateOne`            | invalidates `Collection/<name>`                              |
+| `useReplaceOneMutation`           | `api.database.replaceOne`           | invalidates `Collection/<name>`                              |
+| `useDeleteOneMutation`            | `api.database.deleteOne`            | invalidates `Collection/<name>`                              |
+| `useFindTermsQuery`               | `api.database.findTerms`            | provides `DatabaseTaxonomyTerms/<taxonomyName>`              |
+| `useFindTermsChildrenQuery`       | `api.database.findTermsChildren`    | provides `DatabaseTaxonomyTerms/<taxonomyName>`              |
+| `useFindTermTreeQuery`            | `api.database.findTermTree`         | provides `DatabaseTaxonomyTerms/<taxonomyName>`              |
+| `useFindTaxonomyTreeQuery`        | `api.database.findTaxonomyTree`     | provides `DatabaseTaxonomyTerms/ANY`                         |
+| `useGetApiKeysQuery`              | `api.apikeys.getApiKeys`            | provides `ApiKey/LIST`                                       |
+| `useRegenerateApiKeysMutation`    | `api.apikeys.regenerateApiKeys`     | invalidates `ApiKey/LIST`                                    |
+| `useGetPublicFileQuery`           | `api.files.getPublicFile`           | provides `Files/PUBLIC:<publicId>`                           |
+| `useCreatePaymentOrderMutation`   | `api.payments.createPaymentOrder`   | invalidates `PaymentOrders/LIST`                             |
+| `useGetPaymentOrderQuery`         | `api.payments.getPaymentOrder`      | provides `PaymentOrders/<id>`                                |
+| `useGetPaymentOrdersQuery`        | `api.payments.getPaymentOrders`     | provides `PaymentOrders/LIST`                                |
+| `useStartPaymentCheckoutMutation` | `api.payments.startPaymentCheckout` | invalidates `PaymentOrders/LIST` + `PaymentOrders/<id>`      |
 
 ### Hub surface — `norbix.hub.*`
 
@@ -190,7 +190,7 @@ A _curated_ set of hooks for the most common endpoints. Every hook is end-to-end
 
 ### Database — records, trees, bundle, imports — `norbix.hub.database` / `norbix.api.database`
 
-Every `hub.database` method (73) and every `api.database` method (22) of `@norbix.ai/ts` has a hook; Hub hooks keep the SDK method name. The rows below are the ones added for `@norbix.ai/ts` >= 4.9.0.
+Every `hub.database` method (74) and every `api.database` method (22) of `@norbix.ai/ts` has a hook; Hub hooks keep the SDK method name. `useRevealManagedFlexConnectionStringMutation` is removed: the gateway route is gone and `@norbix.ai/ts` 4.52.0 dropped the method. The rows below are the ones added for `@norbix.ai/ts` >= 4.9.0.
 
 | Hook                                          | SDK method                                      | Cache                                                                                              |
 | --------------------------------------------- | ----------------------------------------------- | -------------------------------------------------------------------------------------------------- |
@@ -508,19 +508,25 @@ Norbix-managed Atlas clusters ("Flex clusters") can be listed and upgraded to `M
 | `useUpgradeFlexClusterMutation`         | `hub.account.upgradeFlexCluster`         | `POST /account/flex-clusters/{flexClusterId}/upgrade` | invalidates `DatabaseIntegrations`          |
 
 ```tsx
+import { CodeMashHub2 } from '@norbix.ai/ts/types/hub';
+
 const { data: bundles } = useGetManagedServiceBundlesQuery();
 const [changeBundle] = useChangeManagedServiceBundleMutation();
 
-// bundles.bundles[i]: { bundle, projectCap, monthly: { amount, currency }, annual }
+// bundles?.bundles?.[i]: { bundle, projectCap, monthly: { amount, currency }, annual }
 // amount is in minor units (cents), currency is lower case ('usd').
-await changeBundle({ bundle: 'Growth', billingPeriod: 'Annual' }).unwrap();
+await changeBundle({
+  bundle: CodeMashHub2.ManagedServiceBundle.Growth,
+  billingPeriod: CodeMashHub2.SubscriptionBillingPeriod.Annual,
+}).unwrap();
 
 const { data: flex } = useGetFlexClustersQuery();
 const [upgrade] = useUpgradeFlexClusterMutation();
 
-// flex.clusters[i]: { id, displayName, tierCode, status, databases, usage, nearLimits }
+// flex?.clusters?.[i]: { id, displayName, tierCode, status, databases, usage, nearLimits }
 // flex.canCreateNew is false with cannotCreateReason 'TrialOneCluster' or 'ClusterLimitReached'.
-await upgrade({ flexClusterId: flex.clusters[0].id, tierCode: 'M10' }).unwrap();
+const cluster = flex?.clusters?.[0];
+if (cluster) await upgrade({ flexClusterId: cluster.id, tierCode: 'M10' }).unwrap();
 ```
 
 - `changeBundle` is refused with the error code `CM-ERRORS-ACCOUNT-023` when the
@@ -528,8 +534,13 @@ await upgrade({ flexClusterId: flex.clusters[0].id, tierCode: 'M10' }).unwrap();
   carries the bundle, so `useGetAccountStatusQuery` re-reads after a change.
 - The cluster list re-reads after a database integration is saved or deleted,
   and after an upgrade is queued.
-- These four hooks need a `@norbix.ai/ts` release that has the four methods.
-  With an older core SDK they return an error and send no request.
+- `flexClusterId` goes in the path, `tierCode` in the body. `tierCode` and
+  `status` are plain strings: `FLEX` or `M10`; `Empty`, `Provisioning`,
+  `Active` or `Failed`.
+- These four hooks need `@norbix.ai/ts` 4.53.0 or newer (the peer dependency
+  floor of this package).
+- `useCreateStripeCheckoutSessionMutation` no longer takes `projectCap`. For
+  Managed Service send `bundle` and `billingPeriod`.
 
 ## Scheduler
 
@@ -611,7 +622,7 @@ added on a connection (`func_…`). Every tag is of type `CodeMarketplace`.
 
 | Area        | Hooks                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           | Cache tag (`CodeMarketplace/…`)                                                                                                                           |
 | ----------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Catalog     | `useGetMarketplaceListingsQuery`, `useGetMarketplaceListingQuery`, `useGetMarketplaceListingFunctionTokensQuery`, `useInstallMarketplaceWorkflowMutation` (beta: a workflow listing as a draft, nothing runs; core SDK 4.50.0+)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                | provides `LISTINGS`                       |
+| Catalog     | `useGetMarketplaceListingsQuery`, `useGetMarketplaceListingQuery`, `useGetMarketplaceListingFunctionTokensQuery`, `useInstallMarketplaceWorkflowMutation` (beta: a workflow listing as a draft, nothing runs; core SDK 4.50.0+)                                                                                                                                                                                                                                                                                                                                                                                 | provides `LISTINGS`                                                                                                                                       |
 | Connections | `useGetMarketplaceIntegrationsQuery`, `useGetMarketplaceIntegrationQuery`, `useSaveMarketplaceIntegrationMutation`, `useDeleteMarketplaceIntegrationMutation`, `useEnableMarketplaceIntegrationMutation`, `useDisableMarketplaceIntegrationMutation`, `useReplaceMarketplaceIntegrationSecretsMutation`, `useRevealMarketplaceIntegrationSecretsMutation`, `useSetMarketplaceIntegrationTokenMappingsMutation`, `useTestMarketplaceIntegrationMutation`, `useGetMarketplaceFunctionCatalogQuery`, `useGetMarketplaceIntegrationToolsQuery` (the stored MCP tool catalog of an MCP connection, core SDK 4.23.0+) | `INTEGRATIONS`, `<integrationViewId>`, `CATALOG:<integrationViewId>`, `TOOLS:<integrationViewId>` (test and delete invalidate it); reveal touches nothing |
 | Access      | `useGetMarketplaceIntegrationAccessQuery` (the access matrix of a connection: roles, packages, tools, functions), `useSetMarketplaceIntegrationRoleAccessMutation` (a role's package + Manage), `useSaveMarketplaceIntegrationCustomAccessMutation` (a custom policy for one role) — core SDK 4.24.0+                                                                                                                                                                                                                                                                                                           | `ACCESS:<integrationViewId>`; the two writes invalidate only that connection's matrix, and so do test, delete, function save and function delete          |
 | Sign-in     | `useStartMarketplaceIntegrationSignInMutation` (OAuth sign-in of an MCP connection: open `authorizeUrl`; core SDK 4.24.0+)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      | invalidates nothing — read the connection again (`signedIn`) after the person returns                                                                     |
