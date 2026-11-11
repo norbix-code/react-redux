@@ -1,4 +1,5 @@
-import { describe, expect, it } from 'vitest';
+import { Norbix } from '@norbix.ai/ts';
+import { describe, expect, it, vi } from 'vitest';
 
 import { createNorbixBaseQuery } from '../src/baseQuery.js';
 import { createNorbixApi } from '../src/createNorbixApi.js';
@@ -13,10 +14,10 @@ import { hubAccount } from '../src/hooks/hub/account.js';
  *   POST /account/flex-clusters/{flexClusterId}/upgrade  upgradeFlexCluster
  *
  * The hooks are a 1:1 wrapper, so the contract is: the right SDK method with
- * my arguments, query vs mutation, and the cache tags. The verb and the path
- * belong to the core SDK. The `@norbix.ai/ts` this package builds against
- * does not have the four methods yet, so there is no test through the real
- * client here; add one (see `account-me.test.ts`) when the dependency is raised.
+ * my arguments, query vs mutation, and the cache tags. The last describe
+ * drives the real `@norbix.ai/ts` client (4.53.0 or newer) with a fake fetch —
+ * never a real server — and checks the verb, the full path and where each
+ * parameter goes.
  */
 function fakeBuilder() {
   return {
@@ -48,11 +49,11 @@ const HOOKS: Record<string, { kind: 'query' | 'mutation'; args: unknown; tags: s
 };
 const NAMES = Object.keys(HOOKS);
 
-function fakeNorbix(answer: unknown = { ok: true }) {
+function fakeNorbix() {
   const calls: Array<{ method: string; args: unknown }> = [];
   const record = (method: string) => (args: unknown) => {
     calls.push({ method, args });
-    return Promise.resolve(answer);
+    return Promise.resolve({ ok: true });
   };
   const account = Object.fromEntries(NAMES.map((n) => [n, record(n)]));
   return { calls, client: { hub: { account } } };
@@ -112,44 +113,100 @@ describe('bundles and Flex clusters on the API slice', () => {
   });
 });
 
-describe('bundles and Flex clusters through the base query', () => {
-  it('returns the SDK answer as data', async () => {
-    const answer = {
-      bundles: [
-        {
-          bundle: 'Starter',
-          projectCap: 3,
-          monthly: { amount: 4900, currency: 'usd' },
-          annual: { amount: 49000, currency: 'usd' },
-        },
-      ],
-    };
-    const { client } = fakeNorbix(answer);
-    const baseQuery = createNorbixBaseQuery(() => client as never);
+describe('bundles and Flex clusters through the real SDK (fake fetch)', () => {
+  function run(key: string, args: unknown, payload: unknown = { responseStatus: {} }) {
+    // Only globalThis.* here: the lint config declares no DOM globals.
+    type FetchFn = typeof globalThis.fetch;
+    const seen: Array<{
+      url: string;
+      method: string;
+      body: string | undefined;
+      headers: InstanceType<typeof globalThis.Headers>;
+    }> = [];
+    const fetchImpl = vi.fn(async (...[input, init]: Parameters<FetchFn>) => {
+      seen.push({
+        url: String(input),
+        method: (init?.method ?? 'GET').toUpperCase(),
+        body: typeof init?.body === 'string' ? init.body : undefined,
+        headers: new globalThis.Headers(init?.headers ?? {}),
+      });
+      return new globalThis.Response(JSON.stringify(payload), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }) as unknown as FetchFn;
+    const norbix = new Norbix({
+      bearerToken: 'test-token',
+      projectId: 'test-project',
+      apiVersion: 'v2',
+      hubVersion: 'v2',
+      baseUrl: { api: 'https://api.norbix.io', hub: 'https://hub.norbix.io' },
+      fetch: fetchImpl,
+    });
+    const baseQuery = createNorbixBaseQuery(() => norbix);
+    const result = baseQuery(endpoints[key]!.query(args) as never, {} as never, {});
+    return { seen, result };
+  }
 
-    const out = await baseQuery(
-      endpoints['getManagedServiceBundles']!.query(undefined) as never,
-      {} as never,
-      {},
-    );
+  const HUB = 'https://hub.norbix.io/v2';
 
-    expect(out).toEqual({ data: answer });
+  it('getManagedServiceBundles sends GET /v2/account/stripe/bundles with no body and returns the bundles', async () => {
+    const bundles = [
+      {
+        bundle: 'Starter',
+        projectCap: 3,
+        monthly: { amount: 4900, currency: 'usd' },
+        annual: { amount: 49000, currency: 'usd' },
+      },
+    ];
+    const { seen, result } = run('getManagedServiceBundles', undefined, { bundles });
+    const out = (await result) as { data?: { bundles?: unknown }; error?: unknown };
+    expect(out.error).toBeUndefined();
+    expect(out.data?.bundles).toEqual(bundles);
+    expect(seen).toHaveLength(1);
+    expect(seen[0]!.method).toBe('GET');
+    expect(seen[0]!.url).toBe(`${HUB}/account/stripe/bundles`);
+    expect(seen[0]!.body).toBeUndefined();
+    expect(seen[0]!.headers.get('Authorization')).toBe('Bearer test-token');
   });
 
-  it.each(NAMES)(
-    '%s answers with an error, not a throw, on a core SDK without the method',
-    async (key) => {
-      const olderSdk = { hub: { account: {} } };
-      const baseQuery = createNorbixBaseQuery(() => olderSdk as never);
+  it('changeManagedServiceBundle sends POST /v2/account/stripe/change-bundle with bundle and billingPeriod in the JSON body', async () => {
+    const { seen, result } = run('changeManagedServiceBundle', {
+      bundle: 'Growth',
+      billingPeriod: 'Annual',
+    });
+    expect(((await result) as { error?: unknown }).error).toBeUndefined();
+    expect(seen).toHaveLength(1);
+    expect(seen[0]!.method).toBe('POST');
+    expect(seen[0]!.url).toBe(`${HUB}/account/stripe/change-bundle`);
+    expect(JSON.parse(seen[0]!.body!)).toEqual({ bundle: 'Growth', billingPeriod: 'Annual' });
+  });
 
-      const out = (await baseQuery(
-        endpoints[key]!.query(HOOKS[key]!.args) as never,
-        {} as never,
-        {},
-      )) as { data?: unknown; error?: { message?: string } };
+  it('getFlexClusters sends GET /v2/account/flex-clusters with no body and returns the clusters', async () => {
+    const payload = {
+      clusters: [{ id: 'flx_1', displayName: 'Main', tierCode: 'FLEX', status: 'Active' }],
+      canCreateNew: false,
+      cannotCreateReason: 'ClusterLimitReached',
+    };
+    const { seen, result } = run('getFlexClusters', undefined, payload);
+    const out = (await result) as { data?: unknown; error?: unknown };
+    expect(out.error).toBeUndefined();
+    expect(out.data).toMatchObject(payload);
+    expect(seen).toHaveLength(1);
+    expect(seen[0]!.method).toBe('GET');
+    expect(seen[0]!.url).toBe(`${HUB}/account/flex-clusters`);
+    expect(seen[0]!.body).toBeUndefined();
+  });
 
-      expect(out.data).toBeUndefined();
-      expect(out.error).toBeDefined();
-    },
-  );
+  it('upgradeFlexCluster sends POST /v2/account/flex-clusters/{flexClusterId}/upgrade: the id in the path, tierCode in the JSON body', async () => {
+    const { seen, result } = run('upgradeFlexCluster', {
+      flexClusterId: 'flx_1',
+      tierCode: 'M10',
+    });
+    expect(((await result) as { error?: unknown }).error).toBeUndefined();
+    expect(seen).toHaveLength(1);
+    expect(seen[0]!.method).toBe('POST');
+    expect(seen[0]!.url).toBe(`${HUB}/account/flex-clusters/flx_1/upgrade`);
+    expect(JSON.parse(seen[0]!.body!)).toEqual({ tierCode: 'M10' });
+  });
 });
