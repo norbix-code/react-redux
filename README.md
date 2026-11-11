@@ -180,6 +180,8 @@ A _curated_ set of hooks for the most common endpoints. Every hook is end-to-end
 | `useCreateEmailTemplateMutation`   | `hub.notifications.createEmailTemplate` | invalidates `Notification/EMAIL_TEMPLATE_LIST` |
 | `useUpdateEmailTemplateMutation`   | `hub.notifications.updateEmailTemplate` | invalidates list + per-id                      |
 | `useDeleteEmailTemplateMutation`   | `hub.notifications.deleteEmailTemplate` | invalidates list                               |
+| `useUpdateEmailClickTrackingMutation` | `hub.notifications.updateEmailClickTracking` (email click ids on / off; core SDK 4.56.0+) | invalidates `Projects` (the switch is `emailClickTracking` on the project) |
+| `useRecordEmailClicksMutation` | `hub.notifications.recordEmailClicks` (1–500 clicks handed back with their `nblid`; core SDK 4.56.0+) | invalidates `EmailCampaigns` |
 | `useTestFilesIntegrationMutation`  | `hub.files.testFilesIntegration`        | —                                              |
 | `useMakeFilePublicMutation`        | `hub.files.makeFilePublic`              | invalidates `Files`                            |
 | `useMakeFilePrivateMutation`       | `hub.files.makeFilePrivate`             | invalidates `Files`                            |
