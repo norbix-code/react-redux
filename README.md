@@ -1069,6 +1069,28 @@ await signOut().unwrap(); // ends the session on the server
 
 `useSignInMutation` needs no session id in the answer, so your own backend can keep it in an `HttpOnly` cookie and return public user data only. No session id or JWT reaches the Redux store, and no JWT is issued.
 
+### Social sign-in and link identity
+
+Google, Apple, Microsoft, GitHub, Facebook, X and Okta for project users (core SDK `api.auth.socialSignInUrl`, `exchangeSocialCode`, `completeSocialSignIn`, `api.membership.startLinkIdentity` / `finishLinkIdentity`). The project's enabled providers are in `auth.socialSignIn` of the public config.
+
+```tsx
+// The button: a link to the gateway, which redirects to the provider.
+const href = useSocialSignInUrl('google', { returnUrl: `${location.origin}/oauth/callback` });
+
+// /oauth/callback: exchanges ?code=… (2 minutes, once) and stores the JWT on a client with no `auth` mode.
+const [complete] = useCompleteSocialSignInMutation();
+const done = await complete().unwrap(); // { kind: 'signedIn' | 'link' | 'error' | 'none', … }
+
+// Account settings, signed in: link another provider to yourself.
+const [startLink] = useStartLinkIdentityMutation();
+const [finishLink] = useFinishLinkIdentityMutation();
+const { authorizeUrl } = await startLink({ userId, provider: 'github', returnUrl }).unwrap();
+location.assign(authorizeUrl);
+// back on the return page with kind 'link': await finishLink({ userId, code: done.code }).unwrap();
+```
+
+`useExchangeSocialCodeMutation({ provider, code })` is the exchange alone. A link code (`intent=link`) is never exchanged: `completeSocialSignIn` hands it back for `finishLinkIdentity`.
+
 ### Reset the entire cache after login or tenant switch
 
 ```tsx

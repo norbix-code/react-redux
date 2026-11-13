@@ -9,7 +9,7 @@
 // API instance returned by `createNorbixApi`.
 
 export { createNorbixApi, type NorbixApi } from './createNorbixApi.js';
-export { NorbixProvider, useNorbix, useOptionalNorbix } from './provider.js';
+export { NorbixProvider, useNorbix, useOptionalNorbix, useSocialSignInUrl } from './provider.js';
 export type { NorbixProviderProps } from './provider.js';
 
 // Lower-level building blocks for advanced users (custom endpoint sets,

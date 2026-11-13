@@ -92,3 +92,16 @@ export function useNorbix(): Norbix {
 export function useOptionalNorbix(): Norbix | null {
   return useContext(NorbixContext);
 }
+
+/**
+ * The URL that starts a project social sign-in, from the client in context:
+ * `norbix.api.auth.socialSignInUrl(provider, options)`. Not a request: put it
+ * on a link, or `window.location.assign(url)`. The return page then calls
+ * `useCompleteSocialSignInMutation`.
+ */
+export function useSocialSignInUrl(
+  provider: Parameters<Norbix['api']['auth']['socialSignInUrl']>[0],
+  options?: Parameters<Norbix['api']['auth']['socialSignInUrl']>[1],
+): string {
+  return useNorbix().api.auth.socialSignInUrl(provider, options);
+}
