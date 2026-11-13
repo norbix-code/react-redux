@@ -1,4 +1,4 @@
-// AUTO-GENERATED — full coverage of `norbix.api.membership` (37 endpoints).
+// AUTO-GENERATED — full coverage of `norbix.api.membership` (38 endpoints).
 // Synced from the norbix core SDK surface. Re-run the hook sync to refresh.
 import type { Norbix } from '@norbix.ai/ts';
 
@@ -23,6 +23,7 @@ type LinkIdentity = Norbix['api']['membership']['linkIdentity'];
 type StartLinkIdentity = Norbix['api']['membership']['startLinkIdentity'];
 type FinishLinkIdentity = Norbix['api']['membership']['finishLinkIdentity'];
 type ExchangeSocialSignInCode = Norbix['api']['membership']['exchangeSocialSignInCode'];
+type CompleteLinkIdentity = Norbix['api']['membership']['completeLinkIdentity'];
 type AssignRolePermissions = Norbix['api']['membership']['assignRolePermissions'];
 type UnblockUser = Norbix['api']['membership']['unblockUser'];
 type UpdateUser = Norbix['api']['membership']['updateUser'];
@@ -133,22 +134,36 @@ export const apiMembership = (b: Builder) => ({
       provider: Parameters<StartLinkIdentity>[1];
       mode?: string;
       returnUrl?: string;
+      codeChallenge?: string;
     }
   >({
     query:
-      ({ userId, provider, mode, returnUrl }) =>
+      ({ userId, provider, mode, returnUrl, codeChallenge }) =>
       (norbix) =>
-        norbix.api.membership.startLinkIdentity(userId, provider, { mode, returnUrl }),
+        norbix.api.membership.startLinkIdentity(userId, provider, { mode, returnUrl, codeChallenge }),
   }),
 
   finishLinkIdentity: b.mutation<
     Awaited<ReturnType<FinishLinkIdentity>>,
-    { userId: string; code: Parameters<FinishLinkIdentity>[1] }
+    { userId: string; code: Parameters<FinishLinkIdentity>[1]; codeVerifier?: string }
   >({
     query:
-      ({ userId, code }) =>
+      ({ userId, code, codeVerifier }) =>
       (norbix) =>
-        norbix.api.membership.finishLinkIdentity(userId, code),
+        norbix.api.membership.finishLinkIdentity(userId, code, { codeVerifier }),
+    invalidatesTags: ['MembershipUsers'],
+  }),
+
+  // The link return page: finishes a link code with the verifier that
+  // norbix.api.membership.redirectToLinkIdentity kept (PKCE), then forgets it.
+  completeLinkIdentity: b.mutation<
+    Awaited<ReturnType<CompleteLinkIdentity>>,
+    { userId: string; url?: string }
+  >({
+    query:
+      ({ userId, url }) =>
+      (norbix) =>
+        norbix.api.membership.completeLinkIdentity(userId, url),
     invalidatesTags: ['MembershipUsers'],
   }),
 

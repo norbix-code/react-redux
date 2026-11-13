@@ -25,10 +25,12 @@ type CompleteSocialSignInFn = Norbix['api']['auth']['completeSocialSignIn'];
  *   store. `signOut` ends the session on the server; `logout` only clears the
  *   client's local token.
  * - `exchangeSocialCode` trades the one-time code from the social sign-in
- *   return page for the project JWT and, like `login`, stores it on a client
- *   with no `auth` mode. `completeSocialSignIn` reads the return page first
- *   (a link code or an `error=` is handed back without a call). Build the start
- *   URL with `useSocialSignInUrl`.
+ *   return page (and the PKCE `codeVerifier` when the start sent a challenge)
+ *   for the project JWT and, like `login`, stores it on a client with no
+ *   `auth` mode. `completeSocialSignIn` reads the return page first (a link
+ *   code or an `error=` is handed back without a call) and sends the verifier
+ *   that `norbix.api.auth.redirectToSocialSignIn` kept. Build the start URL
+ *   with `useSocialSignInUrl` (pass `codeChallenge` for PKCE).
  */
 const SIGNED_IN_TAGS = [
   { type: 'MembershipUsers', id: 'LIST' },
@@ -59,12 +61,12 @@ export const apiAuth = (b: Builder) => ({
 
   exchangeSocialCode: b.mutation<
     Awaited<ReturnType<ExchangeSocialCodeFn>>,
-    { provider: Parameters<ExchangeSocialCodeFn>[0]; code: string }
+    { provider: Parameters<ExchangeSocialCodeFn>[0]; code: string; codeVerifier?: string }
   >({
     query:
-      ({ provider, code }) =>
+      ({ provider, code, codeVerifier }) =>
       async (norbix) => {
-        const result = await norbix.api.auth.exchangeSocialCode(provider, code);
+        const result = await norbix.api.auth.exchangeSocialCode(provider, code, { codeVerifier });
         if (!norbix.getConfig().auth) norbix.setBearerToken(result.bearerToken);
         return result;
       },

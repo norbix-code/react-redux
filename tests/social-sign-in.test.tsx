@@ -155,6 +155,67 @@ describe('link identity mutations', () => {
   });
 });
 
+describe('PKCE through the hooks', () => {
+  const verifier = 'dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk';
+  const challenge = 'E9Melhoa2OwvFrEMTJguCHaoeK1t8URWbuGJSstw-cM';
+
+  it('exchangeSocialCode sends { code, codeVerifier }', async () => {
+    const { fetch, baseQuery } = client(tokenAnswer);
+    await run(baseQuery, auth, 'exchangeSocialCode', {
+      provider: 'google',
+      code: 'one-time',
+      codeVerifier: verifier,
+    });
+    const [, init] = fetch.mock.calls[0]!;
+    expect(JSON.parse(init?.body as string)).toEqual({ code: 'one-time', codeVerifier: verifier });
+  });
+
+  it('startLinkIdentity sends codeChallenge; finishLinkIdentity sends codeVerifier', async () => {
+    const { fetch, baseQuery } = client({ authorizeUrl: 'https://a' }, { bearerToken: 'jwt-1' });
+    await run(baseQuery, membership, 'startLinkIdentity', {
+      userId: 'usr_1',
+      provider: 'github',
+      codeChallenge: challenge,
+    });
+    expect(JSON.parse(fetch.mock.calls[0]![1]?.body as string)).toEqual({
+      provider: 'github',
+      codeChallenge: challenge,
+    });
+    await run(baseQuery, membership, 'finishLinkIdentity', {
+      userId: 'usr_1',
+      code: 'l1',
+      codeVerifier: verifier,
+    });
+    const [url, init] = fetch.mock.calls[1]!;
+    expect(url).toBe('https://api.test/v3/membership/auth/usr_1/link-identity');
+    expect(JSON.parse(init?.body as string)).toEqual({ code: 'l1', codeVerifier: verifier });
+  });
+
+  it('completeLinkIdentity finishes with the kept verifier and clears it', async () => {
+    const map = new Map<string, string>([['norbix:pkce:link:github', verifier]]);
+    vi.stubGlobal('sessionStorage', {
+      getItem: (k: string) => map.get(k) ?? null,
+      setItem: (k: string, v: string) => void map.set(k, v),
+      removeItem: (k: string) => void map.delete(k),
+    });
+    try {
+      const { fetch, baseQuery } = client({}, { bearerToken: 'jwt-1' });
+      const result = await run(baseQuery, membership, 'completeLinkIdentity', {
+        userId: 'usr_1',
+        url: 'https://app.test/settings?intent=link&code=l1&provider=github',
+      });
+      expect(result).toEqual({ data: { kind: 'linked', provider: 'github' } });
+      expect(JSON.parse(fetch.mock.calls[0]![1]?.body as string)).toEqual({
+        code: 'l1',
+        codeVerifier: verifier,
+      });
+      expect(map.size).toBe(0);
+    } finally {
+      vi.unstubAllGlobals();
+    }
+  });
+});
+
 describe('useSocialSignInUrl', () => {
   it('builds the start URL with the project id, mode and an encoded returnUrl', () => {
     const { norbix, fetch } = client({}, { env: 'TEST' });
