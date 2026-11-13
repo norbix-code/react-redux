@@ -5,7 +5,6 @@ import { createNorbixBaseQuery } from '../src/baseQuery.js';
 import { hubDatabase } from '../src/hooks/hub/database.js';
 import { hubFiles } from '../src/hooks/hub/files.js';
 import { hubLogs } from '../src/hooks/hub/logs.js';
-import { hubMembership } from '../src/hooks/hub/membership.js';
 import { hubNotifications } from '../src/hooks/hub/notifications.js';
 import { hubPayments } from '../src/hooks/hub/payments.js';
 
@@ -31,18 +30,15 @@ type SchemaRow = NonNullable<NonNullable<SchemasResponse['list']>['items']>[numb
  * Module switches (gateway refactoringV2, @norbix.ai/ts 4.10.0): every one
  * moved from GET to PUT. `[hook, SDK module, path, tags, hook module]`.
  * hub.code has no hooks in this package, so EnableCode / DisableCode are not listed.
+ * Membership and Database are always on: the gateway has no switch for them.
  */
 const SWITCHES: Array<[string, string, string, string[], Factory]> = [
-  ['enableDatabase', 'database', '/database/enable', ['Database'], hubDatabase],
-  ['disableDatabase', 'database', '/database/disable', ['Database'], hubDatabase],
   ['enableFiles', 'files', '/files/enable', ['Files'], hubFiles],
   ['disableFiles', 'files', '/files/disable', ['Files'], hubFiles],
   ['enableLogging', 'logs', '/logs/enable', ['Logs'], hubLogs],
   ['disableLogging', 'logs', '/logs/disable', ['Logs'], hubLogs],
   ['enablePayments', 'payments', '/payments/enable', ['Payments'], hubPayments],
   ['disablePayments', 'payments', '/payments/disable', ['Payments'], hubPayments],
-  ['enableMembership', 'membership', '/membership/enable', ['Membership'], hubMembership],
-  ['disableMembership', 'membership', '/membership/disable', ['Membership'], hubMembership],
   ['enableEmail', 'notifications', '/notifications/email/enable', ['Emails'], hubNotifications],
   ['disableEmail', 'notifications', '/notifications/email/disable', ['Emails'], hubNotifications],
   ['enableSms', 'notifications', '/notifications/sms/enable', ['Sms'], hubNotifications],
