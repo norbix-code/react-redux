@@ -1,4 +1,4 @@
-// AUTO-GENERATED — full coverage of `norbix.api.membership` (34 endpoints).
+// AUTO-GENERATED — full coverage of `norbix.api.membership` (37 endpoints).
 // Synced from the norbix core SDK surface. Re-run the hook sync to refresh.
 import type { Norbix } from '@norbix.ai/ts';
 
@@ -20,6 +20,9 @@ type GetUsers = Norbix['api']['membership']['getUsers'];
 type GetUserPreferences = Norbix['api']['membership']['getUserPreferences'];
 type InviteUser = Norbix['api']['membership']['inviteUser'];
 type LinkIdentity = Norbix['api']['membership']['linkIdentity'];
+type StartLinkIdentity = Norbix['api']['membership']['startLinkIdentity'];
+type FinishLinkIdentity = Norbix['api']['membership']['finishLinkIdentity'];
+type ExchangeSocialSignInCode = Norbix['api']['membership']['exchangeSocialSignInCode'];
 type AssignRolePermissions = Norbix['api']['membership']['assignRolePermissions'];
 type UnblockUser = Norbix['api']['membership']['unblockUser'];
 type UpdateUser = Norbix['api']['membership']['updateUser'];
@@ -120,6 +123,37 @@ export const apiMembership = (b: Builder) => ({
   linkIdentity: b.mutation<Result<LinkIdentity>, Arg<LinkIdentity>>({
     query: (args) => (norbix) => norbix.api.membership.linkIdentity(args),
     invalidatesTags: ['MembershipUsers'],
+  }),
+
+  // ---- social sign-in and link identity (hand-written: typed arguments) ----
+  startLinkIdentity: b.mutation<
+    Awaited<ReturnType<StartLinkIdentity>>,
+    {
+      userId: string;
+      provider: Parameters<StartLinkIdentity>[1];
+      mode?: string;
+      returnUrl?: string;
+    }
+  >({
+    query:
+      ({ userId, provider, mode, returnUrl }) =>
+      (norbix) =>
+        norbix.api.membership.startLinkIdentity(userId, provider, { mode, returnUrl }),
+  }),
+
+  finishLinkIdentity: b.mutation<
+    Awaited<ReturnType<FinishLinkIdentity>>,
+    { userId: string; code: Parameters<FinishLinkIdentity>[1] }
+  >({
+    query:
+      ({ userId, code }) =>
+      (norbix) =>
+        norbix.api.membership.finishLinkIdentity(userId, code),
+    invalidatesTags: ['MembershipUsers'],
+  }),
+
+  exchangeSocialSignInCode: b.mutation<Result<ExchangeSocialSignInCode>, Arg<ExchangeSocialSignInCode>>({
+    query: (args) => (norbix) => norbix.api.membership.exchangeSocialSignInCode(args),
   }),
 
   assignRolePermissions: b.mutation<Result<AssignRolePermissions>, Arg<AssignRolePermissions>>({

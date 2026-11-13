@@ -8,6 +8,8 @@ type LoginResult = Awaited<ReturnType<Norbix['login']>>;
 
 type AuthenticateFn = Norbix['api']['auth']['authenticate'];
 type BrowserSignInFn = Norbix['api']['auth']['browserSignIn'];
+type ExchangeSocialCodeFn = Norbix['api']['auth']['exchangeSocialCode'];
+type CompleteSocialSignInFn = Norbix['api']['auth']['completeSocialSignIn'];
 
 /**
  * Auth-related endpoints.
@@ -22,6 +24,11 @@ type BrowserSignInFn = Norbix['api']['auth']['browserSignIn'];
  *   `signIn` calls `api.auth.browserSignIn`, so no session id reaches the Redux
  *   store. `signOut` ends the session on the server; `logout` only clears the
  *   client's local token.
+ * - `exchangeSocialCode` trades the one-time code from the social sign-in
+ *   return page for the project JWT and, like `login`, stores it on a client
+ *   with no `auth` mode. `completeSocialSignIn` reads the return page first
+ *   (a link code or an `error=` is handed back without a call). Build the start
+ *   URL with `useSocialSignInUrl`.
  */
 const SIGNED_IN_TAGS = [
   { type: 'MembershipUsers', id: 'LIST' },
@@ -47,6 +54,34 @@ export const apiAuth = (b: Builder) => ({
 
   signIn: b.mutation<Awaited<ReturnType<BrowserSignInFn>>, Parameters<BrowserSignInFn>[0]>({
     query: (credentials) => (norbix) => norbix.api.auth.browserSignIn(credentials),
+    invalidatesTags: SIGNED_IN_TAGS,
+  }),
+
+  exchangeSocialCode: b.mutation<
+    Awaited<ReturnType<ExchangeSocialCodeFn>>,
+    { provider: Parameters<ExchangeSocialCodeFn>[0]; code: string }
+  >({
+    query:
+      ({ provider, code }) =>
+      async (norbix) => {
+        const result = await norbix.api.auth.exchangeSocialCode(provider, code);
+        if (!norbix.getConfig().auth) norbix.setBearerToken(result.bearerToken);
+        return result;
+      },
+    invalidatesTags: SIGNED_IN_TAGS,
+  }),
+
+  completeSocialSignIn: b.mutation<
+    Awaited<ReturnType<CompleteSocialSignInFn>>,
+    Parameters<CompleteSocialSignInFn>[0] | void
+  >({
+    query: (url) => async (norbix) => {
+      const done = await norbix.api.auth.completeSocialSignIn(url ?? undefined);
+      if (done.kind === 'signedIn' && !norbix.getConfig().auth) {
+        norbix.setBearerToken(done.result.bearerToken);
+      }
+      return done;
+    },
     invalidatesTags: SIGNED_IN_TAGS,
   }),
 
