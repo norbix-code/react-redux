@@ -1,4 +1,4 @@
-/* global Response, RequestInit */
+/* global Headers, Response, RequestInit */
 import { Norbix } from '@norbix.ai/ts';
 import { renderHook } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
@@ -76,6 +76,20 @@ describe('useExchangeSocialCodeMutation', () => {
     expect(result).toMatchObject({ data: { bearerToken: 'a.b.c', userId: 'usr_1' } });
     expect(norbix.getConfig().bearerToken).toBe('a.b.c');
   });
+});
+
+describe('exchange sends no credentials', () => {
+  it.each(['exchangeSocialCode', 'exchangeSocialSignInCode'])(
+    '%s: no Authorization, though the client holds an old JWT',
+    async (name) => {
+      const { fetch, baseQuery } = client(tokenAnswer, { bearerToken: 'old.jwt' });
+      const defs = name === 'exchangeSocialCode' ? auth : membership;
+      await run(baseQuery, defs, name, { provider: 'google', code: 'one-time' });
+
+      const [, init] = fetch.mock.calls[0]!;
+      expect(new Headers(init?.headers).get('Authorization')).toBeNull();
+    },
+  );
 });
 
 describe('useCompleteSocialSignInMutation', () => {
