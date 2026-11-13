@@ -1074,22 +1074,26 @@ await signOut().unwrap(); // ends the session on the server
 Google, Apple, Microsoft, GitHub, Facebook, X and Okta for project users (core SDK `api.auth.socialSignInUrl`, `exchangeSocialCode`, `completeSocialSignIn`, `api.membership.startLinkIdentity` / `finishLinkIdentity`). The project's enabled providers are in `auth.socialSignIn` of the public config.
 
 ```tsx
-// The button: a link to the gateway, which redirects to the provider.
-const href = useSocialSignInUrl('google', { returnUrl: `${location.origin}/oauth/callback` });
+// The button: PKCE by default — the core SDK keeps the verifier in sessionStorage and sends its challenge.
+const norbix = useNorbix();
+const onClick = () =>
+  norbix.api.auth.redirectToSocialSignIn('google', { returnUrl: `${location.origin}/oauth/callback` });
+// (A plain link: useSocialSignInUrl('google', { returnUrl, codeChallenge }) with your own createPkcePair().)
 
-// /oauth/callback: exchanges ?code=… (2 minutes, once) and stores the JWT on a client with no `auth` mode.
+// /oauth/callback: exchanges ?code=… (2 minutes, once) with the kept verifier and stores the JWT on a client with no `auth` mode.
 const [complete] = useCompleteSocialSignInMutation();
 const done = await complete().unwrap(); // { kind: 'signedIn' | 'link' | 'error' | 'none', … }
 
 // Account settings, signed in: link another provider to yourself.
-const [startLink] = useStartLinkIdentityMutation();
-const [finishLink] = useFinishLinkIdentityMutation();
-const { authorizeUrl } = await startLink({ userId, provider: 'github', returnUrl }).unwrap();
-location.assign(authorizeUrl);
-// back on the return page with kind 'link': await finishLink({ userId, code: done.code }).unwrap();
+await norbix.api.membership.redirectToLinkIdentity(userId, 'github', { returnUrl }); // PKCE by default
+// back on the return page:
+const [completeLink] = useCompleteLinkIdentityMutation();
+await completeLink({ userId }).unwrap(); // { kind: 'linked', provider } | …
+// By hand: useStartLinkIdentityMutation({ userId, provider, returnUrl, codeChallenge }) and
+// useFinishLinkIdentityMutation({ userId, code, codeVerifier }).
 ```
 
-`useExchangeSocialCodeMutation({ provider, code })` is the exchange alone. A link code (`intent=link`) is never exchanged: `completeSocialSignIn` hands it back for `finishLinkIdentity`.
+`useExchangeSocialCodeMutation({ provider, code, codeVerifier? })` is the exchange alone. A link code (`intent=link`) is never exchanged: `completeSocialSignIn` hands it back for `completeLinkIdentity` / `finishLinkIdentity`. A PKCE mismatch is `CM-ERRORS-MEMBERSHIP-058` (`context.Reason` `verifier_missing`, `verifier_wrong` or `challenge_missing`; the code is used up — start again), a bad challenge `-059`; a refused `returnUrl` comes back as `error=return_url_not_allowed`.
 
 ### Reset the entire cache after login or tenant switch
 
