@@ -1,12 +1,10 @@
-// AUTO-GENERATED — full coverage of `norbix.hub.database` (74 endpoints).
+// AUTO-GENERATED — full coverage of `norbix.hub.database` (72 endpoints).
 // Synced from the norbix core SDK surface. Re-run the hook sync to refresh.
 import type { Norbix } from '@norbix.ai/ts';
 
 import type { Builder } from '../index.js';
 import type { Arg, Result } from '../types.js';
 
-type DisableDatabase = Norbix['hub']['database']['disableDatabase'];
-type EnableDatabase = Norbix['hub']['database']['enableDatabase'];
 type DeleteSchemaTrigger = Norbix['hub']['database']['deleteSchemaTrigger'];
 type DisableSchemaTrigger = Norbix['hub']['database']['disableSchemaTrigger'];
 type EnableSchemaTrigger = Norbix['hub']['database']['enableSchemaTrigger'];
@@ -97,19 +95,10 @@ const termsTag = (arg: unknown) => [
 ];
 
 /**
- * `hub.database` — 74 endpoints, 1:1 with the core SDK.
+ * `hub.database` — 72 endpoints, 1:1 with the core SDK (no module switch:
+ * Database is always on).
  */
 export const hubDatabase = (b: Builder) => ({
-  disableDatabase: b.mutation<Result<DisableDatabase>, Arg<DisableDatabase>>({
-    query: (args) => (norbix) => norbix.hub.database.disableDatabase(args),
-    invalidatesTags: ['Database'],
-  }),
-
-  enableDatabase: b.mutation<Result<EnableDatabase>, Arg<EnableDatabase>>({
-    query: (args) => (norbix) => norbix.hub.database.enableDatabase(args),
-    invalidatesTags: ['Database'],
-  }),
-
   deleteSchemaTrigger: b.mutation<Result<DeleteSchemaTrigger>, Arg<DeleteSchemaTrigger>>({
     query: (args) => (norbix) => norbix.hub.database.deleteSchemaTrigger(args),
     invalidatesTags: ['Triggers'],

@@ -1,12 +1,10 @@
-// AUTO-GENERATED — full coverage of `norbix.hub.membership` (27 endpoints).
+// AUTO-GENERATED — full coverage of `norbix.hub.membership` (24 endpoints).
 // Synced from the norbix core SDK surface. Re-run the hook sync to refresh.
 import type { Norbix } from '@norbix.ai/ts';
 
 import type { Builder } from '../index.js';
 import type { Arg, Result } from '../types.js';
 
-type DisableMembership = Norbix['hub']['membership']['disableMembership'];
-type EnableMembership = Norbix['hub']['membership']['enableMembership'];
 type DeleteMembershipTrigger = Norbix['hub']['membership']['deleteMembershipTrigger'];
 type DisableMembershipTrigger = Norbix['hub']['membership']['disableMembershipTrigger'];
 type EnableMembershipTrigger = Norbix['hub']['membership']['enableMembershipTrigger'];
@@ -31,22 +29,12 @@ type EnableMembershipIntegration = Norbix['hub']['membership']['enableMembership
 type GetMembershipIntegration = Norbix['hub']['membership']['getMembershipIntegration'];
 type GetMembershipIntegrations = Norbix['hub']['membership']['getMembershipIntegrations'];
 type SaveMembershipIntegration = Norbix['hub']['membership']['saveMembershipIntegration'];
-type SetMembershipIntegrationAsDefault = Norbix['hub']['membership']['setMembershipIntegrationAsDefault'];
 
 /**
- * `hub.membership` — 27 endpoints, 1:1 with the core SDK.
+ * `hub.membership` — 24 endpoints, 1:1 with the core SDK (no module switch and
+ * no set-as-default: the gateway removed those routes).
  */
 export const hubMembership = (b: Builder) => ({
-  disableMembership: b.mutation<Result<DisableMembership>, Arg<DisableMembership>>({
-    query: (args) => (norbix) => norbix.hub.membership.disableMembership(args),
-    invalidatesTags: ['Membership'],
-  }),
-
-  enableMembership: b.mutation<Result<EnableMembership>, Arg<EnableMembership>>({
-    query: (args) => (norbix) => norbix.hub.membership.enableMembership(args),
-    invalidatesTags: ['Membership'],
-  }),
-
   deleteMembershipTrigger: b.mutation<Result<DeleteMembershipTrigger>, Arg<DeleteMembershipTrigger>>({
     query: (args) => (norbix) => norbix.hub.membership.deleteMembershipTrigger(args),
     invalidatesTags: ['Triggers'],
@@ -164,11 +152,6 @@ export const hubMembership = (b: Builder) => ({
 
   saveMembershipIntegration: b.mutation<Result<SaveMembershipIntegration>, Arg<SaveMembershipIntegration>>({
     query: (args) => (norbix) => norbix.hub.membership.saveMembershipIntegration(args),
-    invalidatesTags: ['MembershipIntegrations'],
-  }),
-
-  setMembershipIntegrationAsDefault: b.mutation<Result<SetMembershipIntegrationAsDefault>, Arg<SetMembershipIntegrationAsDefault>>({
-    query: (args) => (norbix) => norbix.hub.membership.setMembershipIntegrationAsDefault(args),
     invalidatesTags: ['MembershipIntegrations'],
   }),
 });
