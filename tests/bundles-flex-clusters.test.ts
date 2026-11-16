@@ -80,13 +80,13 @@ describe('hubAccount — bundles and Flex clusters', () => {
     expect(endpoints[key]![kind === 'query' ? 'providesTags' : 'invalidatesTags']).toEqual(tags);
   });
 
-  it('a bundle change re-reads what shows the bundle: account status, licenses, the bundle list', () => {
+  it('a bundle change re-reads what shows the bundle: account status and the bundle list', () => {
     const invalidated = endpoints['changeManagedServiceBundle']!.invalidatesTags as string[];
     expect(invalidated).toEqual(
       expect.arrayContaining(endpoints['getAccountStatus']!.providesTags as string[]),
     );
     expect(invalidated).toEqual(
-      expect.arrayContaining(endpoints['getLicenses']!.providesTags as string[]),
+      expect.arrayContaining(endpoints['getManagedServiceBundles']!.providesTags as string[]),
     );
     expect(invalidated).toContain('Billing');
   });

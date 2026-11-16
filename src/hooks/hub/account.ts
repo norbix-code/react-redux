@@ -51,7 +51,6 @@ type GetAccountCollaborators = Norbix['hub']['account']['getAccountCollaborators
 type GetMyAccountUserProfile = Norbix['hub']['account']['getMyAccountUserProfile'];
 type UpdateMyAccountUserPhone = Norbix['hub']['account']['updateMyAccountUserPhone'];
 type SendInviteToTeamMember = Norbix['hub']['account']['sendInviteToTeamMember'];
-type GetLicenses = Norbix['hub']['account']['getLicenses'];
 type GetProjectAiSettings = Norbix['hub']['account']['getProjectAiSettings'];
 type UpdateProjectAiSettings = Norbix['hub']['account']['updateProjectAiSettings'];
 type CreateProjectAiAssistant = Norbix['hub']['account']['createProjectAiAssistant'];
@@ -306,11 +305,6 @@ export const hubAccount = (b: Builder) => ({
   sendInviteToTeamMember: b.mutation<Result<SendInviteToTeamMember>, Arg<SendInviteToTeamMember>>({
     query: (args) => (norbix) => norbix.hub.account.sendInviteToTeamMember(args),
     invalidatesTags: ['Account'],
-  }),
-
-  getLicenses: b.query<Result<GetLicenses>, Arg<GetLicenses>>({
-    query: (args) => (norbix) => norbix.hub.account.getLicenses(args),
-    providesTags: ['Billing'],
   }),
 
   getProjectAiSettings: b.query<Result<GetProjectAiSettings>, Arg<GetProjectAiSettings>>({
