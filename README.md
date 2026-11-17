@@ -182,6 +182,7 @@ A _curated_ set of hooks for the most common endpoints. Every hook is end-to-end
 | `useDeleteEmailTemplateMutation`   | `hub.notifications.deleteEmailTemplate` | invalidates list                               |
 | `useUpdateEmailClickTrackingMutation` | `hub.notifications.updateEmailClickTracking` (email click ids on / off; core SDK 4.56.0+) | invalidates `Projects` (the switch is `emailClickTracking` on the project) |
 | `useRecordEmailClicksMutation` | `hub.notifications.recordEmailClicks` (1–500 clicks handed back with their `nblid`; core SDK 4.56.0+) | invalidates `EmailCampaigns` |
+| `useGetMembershipTriggerEventValuesQuery` | `hub.membership.getMembershipTriggerEventValues` (the values each membership trigger event carries by name, with the resolver a token binding is saved with; core SDK 4.67.0+) | provides `Triggers` |
 | `useTestFilesIntegrationMutation`  | `hub.files.testFilesIntegration`        | —                                              |
 | `useMakeFilePublicMutation`        | `hub.files.makeFilePublic`              | invalidates `Files`                            |
 | `useMakeFilePrivateMutation`       | `hub.files.makeFilePrivate`             | invalidates `Files`                            |
@@ -192,7 +193,7 @@ A _curated_ set of hooks for the most common endpoints. Every hook is end-to-end
 
 ### Database — records, trees, bundle, imports — `norbix.hub.database` / `norbix.api.database`
 
-Every `hub.database` method (74) and every `api.database` method (22) of `@norbix.ai/ts` has a hook; Hub hooks keep the SDK method name. `useRevealManagedFlexConnectionStringMutation` is removed: the gateway route is gone and `@norbix.ai/ts` 4.52.0 dropped the method. The rows below are the ones added for `@norbix.ai/ts` >= 4.9.0.
+Every `hub.database` method (75) and every `api.database` method (22) of `@norbix.ai/ts` has a hook; Hub hooks keep the SDK method name. `useRevealManagedFlexConnectionStringMutation` is removed: the gateway route is gone and `@norbix.ai/ts` 4.52.0 dropped the method. The rows below are the ones added for `@norbix.ai/ts` >= 4.9.0.
 
 | Hook                                          | SDK method                                      | Cache                                                                                              |
 | --------------------------------------------- | ----------------------------------------------- | -------------------------------------------------------------------------------------------------- |
@@ -212,6 +213,7 @@ Every `hub.database` method (74) and every `api.database` method (22) of `@norbi
 | `useDeleteManyRecordsMutation`                | `hub.database.deleteManyRecords`                | invalidates `DatabaseRecords/<collectionName>`                                                     |
 | `useChangeRecordResponsibilityMutation`       | `hub.database.changeRecordResponsibility`       | invalidates `DatabaseRecords/<collectionName>`                                                     |
 | `useSeedCollectionRecordsMutation`            | `hub.database.seedCollectionRecords`            | invalidates `DatabaseRecords`                                                                      |
+| `useGetNetworkAddressesQuery` | `hub.database.getNetworkAddresses` (the IP addresses Norbix connects to databases from, per region; core SDK 4.66.0+) | — (not tagged) |
 | `useGetDatabaseTaxonomyTreeQuery`             | `hub.database.getDatabaseTaxonomyTree`          | provides `DatabaseTaxonomies` + `DatabaseTaxonomyTerms`                                            |
 | `useGetDatabaseTaxonomyTermTreeQuery`         | `hub.database.getDatabaseTaxonomyTermTree`      | provides `DatabaseTaxonomyTerms/<taxonomyName>`                                                    |
 | `useGetDatabaseMergedTermTreeQuery`           | `hub.database.getDatabaseMergedTermTree`        | provides `DatabaseTaxonomyTerms/<taxonomyName>`                                                    |

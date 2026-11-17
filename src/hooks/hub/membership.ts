@@ -1,4 +1,4 @@
-// AUTO-GENERATED — full coverage of `norbix.hub.membership` (24 endpoints).
+// AUTO-GENERATED — full coverage of `norbix.hub.membership` (25 endpoints).
 // Synced from the norbix core SDK surface. Re-run the hook sync to refresh.
 import type { Norbix } from '@norbix.ai/ts';
 
@@ -10,6 +10,7 @@ type DisableMembershipTrigger = Norbix['hub']['membership']['disableMembershipTr
 type EnableMembershipTrigger = Norbix['hub']['membership']['enableMembershipTrigger'];
 type GetMembershipTrigger = Norbix['hub']['membership']['getMembershipTrigger'];
 type GetMembershipTriggers = Norbix['hub']['membership']['getMembershipTriggers'];
+type GetMembershipTriggerEventValues = Norbix['hub']['membership']['getMembershipTriggerEventValues'];
 type SaveMembershipTrigger = Norbix['hub']['membership']['saveMembershipTrigger'];
 type CreateRole = Norbix['hub']['membership']['createRole'];
 type DeleteRole = Norbix['hub']['membership']['deleteRole'];
@@ -31,7 +32,7 @@ type GetMembershipIntegrations = Norbix['hub']['membership']['getMembershipInteg
 type SaveMembershipIntegration = Norbix['hub']['membership']['saveMembershipIntegration'];
 
 /**
- * `hub.membership` — 24 endpoints, 1:1 with the core SDK (no module switch and
+ * `hub.membership` — 25 endpoints, 1:1 with the core SDK (no module switch and
  * no set-as-default: the gateway removed those routes).
  */
 export const hubMembership = (b: Builder) => ({
@@ -57,6 +58,12 @@ export const hubMembership = (b: Builder) => ({
 
   getMembershipTriggers: b.query<Result<GetMembershipTriggers>, Arg<GetMembershipTriggers>>({
     query: (args) => (norbix) => norbix.hub.membership.getMembershipTriggers(args),
+    providesTags: ['Triggers'],
+  }),
+
+  /** The values each membership trigger event carries by name, for token bindings (read-only). */
+  getMembershipTriggerEventValues: b.query<Result<GetMembershipTriggerEventValues>, Arg<GetMembershipTriggerEventValues>>({
+    query: (args) => (norbix) => norbix.hub.membership.getMembershipTriggerEventValues(args),
     providesTags: ['Triggers'],
   }),
 

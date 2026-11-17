@@ -1,4 +1,4 @@
-// AUTO-GENERATED — full coverage of `norbix.hub.database` (72 endpoints).
+// AUTO-GENERATED — full coverage of `norbix.hub.database` (73 endpoints).
 // Synced from the norbix core SDK surface. Re-run the hook sync to refresh.
 import type { Norbix } from '@norbix.ai/ts';
 
@@ -39,6 +39,7 @@ type EnableDatabaseIntegration = Norbix['hub']['database']['enableDatabaseIntegr
 type GetDatabaseIntegration = Norbix['hub']['database']['getDatabaseIntegration'];
 type GetDatabaseIntegrations = Norbix['hub']['database']['getDatabaseIntegrations'];
 type GetAllowedFlexTiers = Norbix['hub']['database']['getAllowedFlexTiers'];
+type GetNetworkAddresses = Norbix['hub']['database']['getNetworkAddresses'];
 type SaveDatabaseIntegration = Norbix['hub']['database']['saveDatabaseIntegration'];
 type SetDatabaseIntegrationAsDefault = Norbix['hub']['database']['setDatabaseIntegrationAsDefault'];
 type TestDatabaseIntegration = Norbix['hub']['database']['testDatabaseIntegration'];
@@ -293,6 +294,11 @@ export const hubDatabase = (b: Builder) => ({
   getDatabaseIntegrations: b.query<Result<GetDatabaseIntegrations>, Arg<GetDatabaseIntegrations>>({
     query: (args) => (norbix) => norbix.hub.database.getDatabaseIntegrations(args),
     providesTags: ['DatabaseIntegrations'],
+  }),
+
+  /** The IP addresses Norbix connects to databases from, per region (core SDK 4.66.0+). */
+  getNetworkAddresses: b.query<Result<GetNetworkAddresses>, Arg<GetNetworkAddresses>>({
+    query: (args) => (norbix) => norbix.hub.database.getNetworkAddresses(args),
   }),
 
   getAllowedFlexTiers: b.query<Result<GetAllowedFlexTiers>, Arg<GetAllowedFlexTiers>>({
