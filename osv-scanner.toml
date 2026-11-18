@@ -108,3 +108,8 @@ reason = "glob 13.0.6 is bundled inside the npm package (a dependency of the rel
 id = "GHSA-g3hv-75wg-m249"
 ignoreUntil = 2027-01-31T00:00:00Z
 reason = "minimatch 10.2.5 is bundled inside the npm package, and 10.2.6 is a top-level development dependency of the build tools. Neither is in the published package. npm 12.2.1 still bundles minimatch ^10, so no update is available. Owner approved 2026-10-31."
+
+[[IgnoredVulns]]
+id = "GHSA-fc5q-39xc-vjpf"
+ignoreUntil = 2026-12-17T00:00:00Z
+reason = "picomatch 2.3.2, 4.0.4 and 4.0.7: dev dependency only (semantic-release, vitest, eslint), not in the published package; no fixed version on OSV. Same exception as sdk-ts, owner approved 2026-11-17."
