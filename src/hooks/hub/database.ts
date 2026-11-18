@@ -38,6 +38,7 @@ type DisableDatabaseIntegration = Norbix['hub']['database']['disableDatabaseInte
 type EnableDatabaseIntegration = Norbix['hub']['database']['enableDatabaseIntegration'];
 type GetDatabaseIntegration = Norbix['hub']['database']['getDatabaseIntegration'];
 type GetDatabaseIntegrations = Norbix['hub']['database']['getDatabaseIntegrations'];
+type GetNetworkAddresses = Norbix['hub']['database']['getNetworkAddresses'];
 type GetAllowedFlexTiers = Norbix['hub']['database']['getAllowedFlexTiers'];
 type SaveDatabaseIntegration = Norbix['hub']['database']['saveDatabaseIntegration'];
 type SetDatabaseIntegrationAsDefault = Norbix['hub']['database']['setDatabaseIntegrationAsDefault'];
@@ -293,6 +294,11 @@ export const hubDatabase = (b: Builder) => ({
   getDatabaseIntegrations: b.query<Result<GetDatabaseIntegrations>, Arg<GetDatabaseIntegrations>>({
     query: (args) => (norbix) => norbix.hub.database.getDatabaseIntegrations(args),
     providesTags: ['DatabaseIntegrations'],
+  }),
+
+  /** The IP addresses Norbix connects to databases from, per region (for a database firewall). */
+  getNetworkAddresses: b.query<Result<GetNetworkAddresses>, Arg<GetNetworkAddresses>>({
+    query: (args) => (norbix) => norbix.hub.database.getNetworkAddresses(args),
   }),
 
   getAllowedFlexTiers: b.query<Result<GetAllowedFlexTiers>, Arg<GetAllowedFlexTiers>>({

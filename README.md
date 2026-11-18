@@ -529,6 +529,33 @@ const cluster = flex?.clusters?.[0];
 if (cluster) await upgrade({ flexClusterId: cluster.id, tierCode: 'M10' }).unwrap();
 ```
 
+### Bundle discount codes — `norbix.hub.account`
+
+A discount code (for example `LAUNCH30`) is checked first and then either sent with a checkout
+(`discountCode` on `createStripeCheckoutSession`) or put on the running subscription. The account
+status shows the discount as `item.discount`: `{ code, percentOff, amountOff, currency, months, endsAt }`.
+Needs `@norbix.ai/ts` 4.70.0 or newer.
+
+| Hook                             | SDK method                        | Wire                                  | Cache                             |
+| -------------------------------- | --------------------------------- | ------------------------------------- | --------------------------------- |
+| `useCheckBundleDiscountMutation` | `hub.account.checkBundleDiscount` | `POST /account/stripe/discount/check` | none (checked every time)         |
+| `useApplyBundleDiscountMutation` | `hub.account.applyBundleDiscount` | `POST /account/stripe/discount`       | invalidates `Billing` + `Account` |
+
+A refused code fails with `CM-ERRORS-ACCOUNT-027` and a reason: `not_found`, `not_started`,
+`expired`, `not_for_bundle`, `monthly_only`, `wrong_billing_period`, `already_has_discount` or
+`already_used`.
+
+```tsx
+const [checkDiscount] = useCheckBundleDiscountMutation();
+const [applyDiscount] = useApplyBundleDiscountMutation();
+
+const { discount } = await checkDiscount({ code: 'LAUNCH30' }).unwrap();
+// discount: { code: 'LAUNCH30', percentOff: 30, months: 3 }
+await applyDiscount({ code: 'LAUNCH30' }).unwrap();
+
+// refused: error.errorCode === 'CM-ERRORS-ACCOUNT-027', error.errors[0].meta.reason === 'already_used'
+```
+
 - `changeBundle` is refused with the error code `CM-ERRORS-ACCOUNT-023` when the
   account has more enabled projects than the new bundle allows. Account status
   carries the bundle, so `useGetAccountStatusQuery` re-reads after a change.

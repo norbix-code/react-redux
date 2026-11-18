@@ -73,11 +73,14 @@ type GetManagedServiceBundles = Norbix['hub']['account']['getManagedServiceBundl
 type ChangeManagedServiceBundle = Norbix['hub']['account']['changeManagedServiceBundle'];
 type GetFlexClusters = Norbix['hub']['account']['getFlexClusters'];
 type UpgradeFlexCluster = Norbix['hub']['account']['upgradeFlexCluster'];
+type CheckBundleDiscount = Norbix['hub']['account']['checkBundleDiscount'];
+type ApplyBundleDiscount = Norbix['hub']['account']['applyBundleDiscount'];
 
 /**
- * `hub.account` — 52 endpoints, 1:1 with the core SDK.
+ * `hub.account` — 54 endpoints, 1:1 with the core SDK.
  *
- * The last four (bundles and Flex clusters) need `@norbix.ai/ts` 4.53.0 or newer.
+ * Bundles and Flex clusters need `@norbix.ai/ts` 4.53.0 or newer; the two
+ * discount-code hooks need 4.70.0 or newer.
  *
  * Not wrapped: `mcp` (`/account/mcp`) — a JSON-RPC stream for MCP clients,
  * not a request/response call a cached hook can model. Use `useNorbix()`.
@@ -453,5 +456,27 @@ export const hubAccount = (b: Builder) => ({
   upgradeFlexCluster: b.mutation<Result<UpgradeFlexCluster>, Arg<UpgradeFlexCluster>>({
     query: (args) => (norbix) => norbix.hub.account.upgradeFlexCluster(args),
     invalidatesTags: ['DatabaseIntegrations'],
+  }),
+
+  /**
+   * Checks a discount code and says what it gives (`discount`), changing
+   * nothing. `bundle` and `billingPeriod` are the plan about to be bought;
+   * leave them out to check against the current plan. A mutation, so a code
+   * is checked each time it is asked and never served from the cache. A
+   * refused code fails with `CM-ERRORS-ACCOUNT-027`; the reason is in
+   * `error.errors[0].meta.reason`.
+   */
+  checkBundleDiscount: b.mutation<Result<CheckBundleDiscount>, Arg<CheckBundleDiscount>>({
+    query: (args) => (norbix) => norbix.hub.account.checkBundleDiscount(args),
+  }),
+
+  /**
+   * Puts a discount code on the running bundle subscription. The discount
+   * reaches the account status a moment later, through the Stripe webhook,
+   * so `getAccountStatus` is read again.
+   */
+  applyBundleDiscount: b.mutation<Result<ApplyBundleDiscount>, Arg<ApplyBundleDiscount>>({
+    query: (args) => (norbix) => norbix.hub.account.applyBundleDiscount(args),
+    invalidatesTags: ['Billing', 'Account'],
   }),
 });
