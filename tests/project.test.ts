@@ -69,7 +69,6 @@ const PROJECT_MUTATIONS = [
   'updateProjectAdminUrl',
   'updateProjectLegalDocuments',
   'updateProjectExposeLegal',
-  'setAdminPortalEnabled',
   'assignAdminPortalServiceUser',
   'updateProjectAiSettings',
   'createProjectAiAssistant',
