@@ -337,7 +337,6 @@ For a signed-in project user. `useStartEndUserChatTurnMutation` answers at once 
 | `useUpdateProjectAiAssistantMutation`   | `hub.account.updateProjectAiAssistant` | invalidates `Projects` |
 | `useDeleteProjectAiAssistantMutation`   | `hub.account.deleteProjectAiAssistant` | invalidates `Projects` |
 | `useGetProjectAiUsageQuery`             | `hub.account.getProjectAiUsage`        | provides `Projects`    |
-| `useSetAdminPortalEnabledMutation`      | `hub.account.setAdminPortalEnabled`    | invalidates `Projects` |
 | `useGetEmbeddingIntegrationsQuery`      | `hub.ai.getEmbeddingIntegrations`      | provides `Ai`          |
 | `useSaveEmbeddingIntegrationMutation`   | `hub.ai.saveEmbeddingIntegration`      | invalidates `Ai`       |
 | `useGetEmbeddingIntegrationQuery`       | `hub.ai.getEmbeddingIntegration`       | provides `Ai`          |

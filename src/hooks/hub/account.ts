@@ -57,7 +57,6 @@ type CreateProjectAiAssistant = Norbix['hub']['account']['createProjectAiAssista
 type UpdateProjectAiAssistant = Norbix['hub']['account']['updateProjectAiAssistant'];
 type DeleteProjectAiAssistant = Norbix['hub']['account']['deleteProjectAiAssistant'];
 type GetProjectAiUsage = Norbix['hub']['account']['getProjectAiUsage'];
-type SetAdminPortalEnabled = Norbix['hub']['account']['setAdminPortalEnabled'];
 type UpdateProjectAdminUrl = Norbix['hub']['account']['updateProjectAdminUrl'];
 type UpdateProjectLegalDocuments = Norbix['hub']['account']['updateProjectLegalDocuments'];
 type UpdateProjectExposeLegal = Norbix['hub']['account']['updateProjectExposeLegal'];
@@ -350,11 +349,6 @@ export const hubAccount = (b: Builder) => ({
   getProjectAiUsage: b.query<Result<GetProjectAiUsage>, Arg<GetProjectAiUsage>>({
     query: (args) => (norbix) => norbix.hub.account.getProjectAiUsage(args),
     providesTags: ['Projects'],
-  }),
-
-  setAdminPortalEnabled: b.mutation<Result<SetAdminPortalEnabled>, Arg<SetAdminPortalEnabled>>({
-    query: (args) => (norbix) => norbix.hub.account.setAdminPortalEnabled(args),
-    invalidatesTags: ['Projects'],
   }),
 
   updateProjectAdminUrl: b.mutation<Result<UpdateProjectAdminUrl>, Arg<UpdateProjectAdminUrl>>({

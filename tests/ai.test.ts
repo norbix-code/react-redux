@@ -60,7 +60,6 @@ function fakeNorbix() {
         'updateProjectAiAssistant',
         'deleteProjectAiAssistant',
         'getProjectAiUsage',
-        'setAdminPortalEnabled',
       ]),
       ai: mod('hub.ai', [
         'getEmbeddingIntegrations',
@@ -82,7 +81,6 @@ const HUB_ACCOUNT = [
   'updateProjectAiAssistant',
   'deleteProjectAiAssistant',
   'getProjectAiUsage',
-  'setAdminPortalEnabled',
 ] as const;
 const HUB_AI = [
   'getEmbeddingIntegrations',
@@ -147,7 +145,7 @@ describe('wave-3 AI hooks', () => {
     },
   );
 
-  it('covers the 29 wave-3 routes', () => {
-    expect(HUB_ACCOUNT.length + HUB_AI.length + API_AI.length).toBe(29);
+  it('covers the 28 wave-3 routes', () => {
+    expect(HUB_ACCOUNT.length + HUB_AI.length + API_AI.length).toBe(28);
   });
 });
