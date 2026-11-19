@@ -369,7 +369,6 @@ Every call takes the `projectId` (or the `norbix-project-id` header your client 
 | `useUpdateProjectDefaultLanguageMutation` | `hub.account.updateProjectDefaultLanguage` | invalidates `Projects` |
 | `useUpdateProjectAdminUrlMutation`        | `hub.account.updateProjectAdminUrl`        | invalidates `Projects` |
 | `useUpdateProjectLegalDocumentsMutation`  | `hub.account.updateProjectLegalDocuments`  | invalidates `Projects` |
-| `useUpdateProjectExposeLegalMutation`     | `hub.account.updateProjectExposeLegal`     | invalidates `Projects` |
 | `useGetAdminPortalStructureQuery`         | `hub.account.getAdminPortalStructure`      | provides `Projects`    |
 | `useAssignAdminPortalServiceUserMutation` | `hub.account.assignAdminPortalServiceUser` | invalidates `Projects` |
 | `useCreateAiServiceUserMutation`          | `hub.account.createAiServiceUser`          | invalidates `Projects` |
@@ -393,7 +392,7 @@ await setOrigins({ projectId, origins: ['https://app.example.com'] }).unwrap();
 | `useGetPublicProjectConfigQuery` | `api.public.getPublicProjectConfig` | provides `Config/PUBLIC`       |
 | `useGetPublicProjectLegalQuery`  | `api.public.getPublicProjectLegal`  | provides `Config/LEGAL:<kind>` |
 
-The legal document is served only when the project exposes it (`useUpdateProjectExposeLegalMutation`).
+A legal document is public as soon as the project saves it (`useUpdateProjectLegalDocumentsMutation`).
 
 ## Public file links
 
