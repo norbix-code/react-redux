@@ -44,6 +44,7 @@ function fakeNorbix() {
         'archiveEndUserChatSession',
         'getEndUserChatEntries',
         'setEndUserChatEntryFeedback',
+        'decideEndUserChatAction',
         'listEndUserChatAttachments',
         'uploadEndUserChatAttachment',
         'deleteEndUserChatAttachment',
@@ -101,6 +102,7 @@ const API_AI = [
   'archiveEndUserChatSession',
   'getEndUserChatEntries',
   'setEndUserChatEntryFeedback',
+  'decideEndUserChatAction',
   'listEndUserChatAttachments',
   'uploadEndUserChatAttachment',
   'deleteEndUserChatAttachment',
@@ -145,7 +147,7 @@ describe('wave-3 AI hooks', () => {
     },
   );
 
-  it('covers the 28 wave-3 routes', () => {
-    expect(HUB_ACCOUNT.length + HUB_AI.length + API_AI.length).toBe(28);
+  it('covers the 28 wave-3 routes and the held-action decision', () => {
+    expect(HUB_ACCOUNT.length + HUB_AI.length + API_AI.length).toBe(29);
   });
 });
