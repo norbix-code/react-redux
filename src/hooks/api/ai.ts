@@ -1,4 +1,4 @@
-// Full coverage of `norbix.api.ai` (16 endpoints) — the end-user AI chat for a
+// Full coverage of `norbix.api.ai` (17 endpoints) — the end-user AI chat for a
 // signed-in project user. Synced from the norbix core SDK surface.
 import type { Norbix } from '@norbix.ai/ts';
 
@@ -15,6 +15,7 @@ type PinEndUserChatSession = Norbix['api']['ai']['pinEndUserChatSession'];
 type ArchiveEndUserChatSession = Norbix['api']['ai']['archiveEndUserChatSession'];
 type GetEndUserChatEntries = Norbix['api']['ai']['getEndUserChatEntries'];
 type SetEndUserChatEntryFeedback = Norbix['api']['ai']['setEndUserChatEntryFeedback'];
+type DecideEndUserChatAction = Norbix['api']['ai']['decideEndUserChatAction'];
 type ListEndUserChatAttachments = Norbix['api']['ai']['listEndUserChatAttachments'];
 type UploadEndUserChatAttachment = Norbix['api']['ai']['uploadEndUserChatAttachment'];
 type DeleteEndUserChatAttachment = Norbix['api']['ai']['deleteEndUserChatAttachment'];
@@ -23,7 +24,7 @@ type ForgetEndUserChatMemory = Norbix['api']['ai']['forgetEndUserChatMemory'];
 type StartEndUserChatTurn = Norbix['api']['ai']['startEndUserChatTurn'];
 
 /**
- * `api.ai` — 16 endpoints, 1:1 with the core SDK.
+ * `api.ai` — 17 endpoints, 1:1 with the core SDK.
  *
  * `startEndUserChatTurn` answers at once with a `turnId`; tokens, tool calls
  * and the final answer arrive on the user's SSE channel
@@ -98,6 +99,17 @@ export const apiAi = (b: Builder) => ({
     Arg<SetEndUserChatEntryFeedback>
   >({
     query: (args) => (norbix) => norbix.api.ai.setEndUserChatEntryFeedback(args),
+    invalidatesTags: ['AiChat'],
+  }),
+
+  // The user's own decision on an action the chat held (a tool that changes
+  // something): `decision: 'apply'` runs it once, as the user; 'dismiss' runs
+  // nothing. A second decision is refused (409). The model never decides.
+  decideEndUserChatAction: b.mutation<
+    Result<DecideEndUserChatAction>,
+    Arg<DecideEndUserChatAction>
+  >({
+    query: (args) => (norbix) => norbix.api.ai.decideEndUserChatAction(args),
     invalidatesTags: ['AiChat'],
   }),
 

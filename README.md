@@ -320,6 +320,7 @@ For a signed-in project user. `useStartEndUserChatTurnMutation` answers at once 
 | `useArchiveEndUserChatSessionMutation`   | `api.ai.archiveEndUserChatSession`   | invalidates `AiChat` |
 | `useGetEndUserChatEntriesQuery`          | `api.ai.getEndUserChatEntries`       | provides `AiChat`    |
 | `useSetEndUserChatEntryFeedbackMutation` | `api.ai.setEndUserChatEntryFeedback` | invalidates `AiChat` |
+| `useDecideEndUserChatActionMutation`     | `api.ai.decideEndUserChatAction`     | invalidates `AiChat` |
 | `useListEndUserChatAttachmentsQuery`     | `api.ai.listEndUserChatAttachments`  | provides `AiChat`    |
 | `useUploadEndUserChatAttachmentMutation` | `api.ai.uploadEndUserChatAttachment` | invalidates `AiChat` |
 | `useDeleteEndUserChatAttachmentMutation` | `api.ai.deleteEndUserChatAttachment` | invalidates `AiChat` |
